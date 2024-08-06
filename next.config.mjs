@@ -1,7 +1,10 @@
-/** @type {{experimental: {appDir: boolean}}} */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
-    swcMinify: true,
-};
-
-export default nextConfig;
+    webpack: (config, { dev }) => {
+      if (dev) {
+        config.cache = false;
+      }
+      return config;
+    },
+  };
+  export default nextConfig;

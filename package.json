@@ -1,30 +1,39 @@
 {
-  "name": "bookdo7stars-ts",
+  "name": "bookdo7star_fe",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run tailwind:build & next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "tailwind:build": "npx tailwindcss-cli@latest build -i ./src/app/styles/globals.css -o ./src/app/styles/styles.css"
   },
   "dependencies": {
-    "next": "14.2.4",
+    "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "14.2.5",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "8.0.0",
+    "@typescript-eslint/parser": "8.0.0",
     "autoprefixer": "10.4.19",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.4",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.5",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-jsx-a11y": "6.9.0",
+    "eslint-plugin-prettier": "5.2.1",
+    "eslint-plugin-react": "7.35.0",
+    "eslint-plugin-react-hooks": "4.6.2",
     "postcss": "^8",
-    "prettier": "^3.3.2",
+    "prettier": "3.3.3",
     "tailwindcss": "^3.4.1",
-    "typescript": "5.4.2"
+    "typescript": "^5.4.5"
   }
 }
