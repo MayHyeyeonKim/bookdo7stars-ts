@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { SagaIterator } from 'redux-saga';
 import { all, fork, takeLatest, put, call } from 'redux-saga/effects';
+import { toast } from 'react-toastify';
 
 import {
   REGISTER_REQUEST,
@@ -28,7 +29,7 @@ function* register(action: RegisterRequestAction) {
   } catch (err: any) {
     yield put({
       type: REGISTER_FAILURE,
-      error: err.response.data,
+      error: err.response.data.message,
     });
   }
 }
@@ -41,7 +42,7 @@ function loginAPI(data: LoginRequestAction['data']) {
 // Login saga
 function* login(action: LoginRequestAction): SagaIterator {
   try {
-    const response: any = yield call(loginAPI, action.data);
+    const response = yield call(loginAPI, action.data);
     yield put({
       type: LOGIN_SUCCESS,
       payload: response.data,
@@ -49,7 +50,7 @@ function* login(action: LoginRequestAction): SagaIterator {
   } catch (err: any) {
     yield put({
       type: LOGIN_FAILURE,
-      error: err.response.data,
+      error: err.response.data.message,
     });
   }
 }

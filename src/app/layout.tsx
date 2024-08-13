@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import './styles.css';
 import StyledComponentsRegistry from './lib/registry';
@@ -23,6 +25,18 @@ const RootLayout = ({
             <StoreProvider>{children}</StoreProvider>
           </ThemeProvider>
         </StyledComponentsRegistry>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </body>
     </html>
   );

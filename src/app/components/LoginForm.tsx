@@ -1,13 +1,15 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 import { Container, Box, Grid, Typography, TextField, Button } from '@mui/material';
 import Image from 'next/image';
-import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import { loginRequest } from '../actions';
-import { AppDispatch } from '../store/store';
+import { AppDispatch, AppState } from '../store/store';
 
 type FormData = {
   email: string;
@@ -16,6 +18,21 @@ type FormData = {
 
 const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { isLoginDone, isLoginError } = useSelector((store: AppState) => store.user);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoginDone) {
+      toast.success('Login successful!');
+      router.push('/');
+    }
+  }, [isLoginDone]);
+
+  useEffect(() => {
+    if (isLoginError) {
+      toast.error(isLoginError);
+    }
+  }, [isLoginError]);
 
   const [formData, setFormData] = useState<FormData>({
     email: '',

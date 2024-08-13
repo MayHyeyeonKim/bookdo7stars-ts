@@ -3,7 +3,9 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 import { Box, Button, Checkbox, Container, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import { registerRequest } from '../actions';
 import { AppDispatch, AppState } from '../store/store';
@@ -20,8 +22,21 @@ type FormData = {
 
 const RegisterForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const rester_state = useSelector<AppState>((state) => state.user);
-  console.log(rester_state);
+  const { isRegisterDone, isRegisterError } = useSelector((store: AppState) => store.user);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isRegisterDone) {
+      toast.success('Registration successful!');
+      router.push('/login');
+    }
+  }, [isRegisterDone]);
+
+  useEffect(() => {
+    if (isRegisterError) {
+      toast.error(isRegisterError);
+    }
+  }, [isRegisterError]);
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -74,11 +89,17 @@ const RegisterForm = () => {
     event.preventDefault();
 
     if (handleErrors(formData)) {
+      console.log('handleOnSubmit called');
       dispatch(
-        registerRequest({ name: formData.name, email: formData.email, password: formData.password, address: formData.address, mobile: formData.mobile }),
+        registerRequest({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          address: formData.address,
+          mobile: formData.mobile,
+        }),
       );
 
-      console.log('formData', formData);
       setFormData({
         name: '',
         email: '',
