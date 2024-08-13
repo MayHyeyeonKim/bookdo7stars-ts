@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { createWrapper } from 'next-redux-wrapper';
 import createSagaMiddleware from 'redux-saga';
 
 import rootReducer from '../reducers/index';
