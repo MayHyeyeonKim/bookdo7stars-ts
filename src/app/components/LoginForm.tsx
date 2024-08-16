@@ -18,19 +18,27 @@ type FormData = {
 
 const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isLoginDone, isLoginError } = useSelector((store: AppState) => store.user);
+  const { isLoginDone, isLoginError, user } = useSelector((store: AppState) => store.user);
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoginDone) {
-      toast.success('Login successful!');
+    console.log('로그인 useEffect 실행 - isLoginDone:', isLoginDone);
+    console.log('로그인 useEffect 실행 - user:', user);
+
+    if (isLoginDone && user && typeof user.name === 'string') {
+      const welcomeMessage = `Login successful! Welcome, ${user.name}`;
+      console.log('Welcome Message:', welcomeMessage);
+      toast.success(welcomeMessage);
       router.push('/');
+    } else {
+      console.log('user.name이 문자열이 아닙니다.');
     }
-  }, [isLoginDone]);
+  }, [isLoginDone, user]);
 
   useEffect(() => {
     if (isLoginError) {
-      toast.error(isLoginError);
+      console.log('유즈이펙트에서 Error:', isLoginError);
+      toast.error(`${isLoginError}`);
     }
   }, [isLoginError]);
 

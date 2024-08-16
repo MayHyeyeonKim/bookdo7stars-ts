@@ -27,14 +27,17 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (isRegisterDone) {
-      toast.success('Registration successful!');
+      console.log('유즈이펙트에서 회원가입 성공:', isRegisterDone);
+      toast.success(`Registration successful! ${isRegisterDone}`);
       router.push('/login');
     }
   }, [isRegisterDone]);
 
   useEffect(() => {
     if (isRegisterError) {
-      toast.error(isRegisterError);
+      console.log('유즈이펙트에서 회원가입 Error:', isRegisterError);
+      const errMessage = typeof isRegisterError === 'object' ? isRegisterError.message : isRegisterError;
+      toast.error(`${errMessage}`);
     }
   }, [isRegisterError]);
 

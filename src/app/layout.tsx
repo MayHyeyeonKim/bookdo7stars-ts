@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
 import './styles.css';
+import { ToastContainer } from 'react-toastify';
+
+import Footer from './components/Footer';
+import Header from './components/Header';
 import StyledComponentsRegistry from './lib/registry';
 import StoreProvider from './providers/StoreProvider';
 import ThemeProvider from './theme-provider';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -22,7 +24,11 @@ const RootLayout = ({
       <body>
         <StyledComponentsRegistry>
           <ThemeProvider>
-            <StoreProvider>{children}</StoreProvider>
+            <StoreProvider>
+              <Header />
+              <main>{children}</main>
+              <Footer />
+            </StoreProvider>
           </ThemeProvider>
         </StyledComponentsRegistry>
         <ToastContainer
