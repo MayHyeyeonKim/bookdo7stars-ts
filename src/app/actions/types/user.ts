@@ -56,6 +56,7 @@ export interface LogoutRequestAction {
 
 export interface LogoutSuccessAction {
   type: typeof LOGOUT_SUCCESS;
+  payload: string;
 }
 
 export interface LogoutFailureAction {
@@ -108,8 +109,9 @@ export const logoutRequest = (): LogoutRequestAction => ({
   type: LOGOUT_REQUEST,
 });
 
-export const logoutSuccess = (): LogoutSuccessAction => ({
+export const logoutSuccess = (payload: LogoutSuccessAction['payload']): LogoutSuccessAction => ({
   type: LOGOUT_SUCCESS,
+  payload,
 });
 
 export const logoutFailure = (error: string): LogoutFailureAction => ({

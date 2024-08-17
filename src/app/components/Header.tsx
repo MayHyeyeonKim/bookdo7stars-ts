@@ -5,6 +5,7 @@ import { Box, Typography, useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { logoutRequest } from '../actions';
 import { AppDispatch, AppState } from '../store/store';
 
 const Header = () => {
@@ -14,7 +15,7 @@ const Header = () => {
   const { user } = useSelector((store: AppState) => store.user);
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutRequest());
   };
 
   return (

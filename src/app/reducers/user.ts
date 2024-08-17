@@ -6,7 +6,6 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
   UserActionTypes,
-  LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
   LOGOUT_FAILURE,
 } from '../actions';
@@ -19,6 +18,7 @@ type InitialState = {
   isLoginDone: boolean;
   isLoginError: string | null;
   user: User | null;
+  message: string | null;
 };
 
 export const initialState: InitialState = {
@@ -29,6 +29,7 @@ export const initialState: InitialState = {
   isLoginDone: false,
   isLoginError: null,
   user: null,
+  message: null,
 };
 
 function userReducer(state = initialState, action: UserActionTypes) {
@@ -44,18 +45,18 @@ function userReducer(state = initialState, action: UserActionTypes) {
     case LOGIN_REQUEST:
       return { ...state, isLoginLoading: true };
     case LOGIN_SUCCESS:
-      console.log('리듀서의 로그인에서 user 들어온 데이타:', action.payload.user);
-      return { ...state, isLoginLoading: false, isLoginDone: true, user: action.payload.user };
+      console.log('리듀서의 로그인에서 user 들어온 데이타:', action.payload);
+      return { ...state, isLoginLoading: false, isLoginDone: true, user: action.payload };
     case LOGIN_FAILURE:
       console.log('리듀서의 로그인 Error payliad:', action.error);
       return { ...state, isLoginLoading: false, isLoginError: action.error };
 
-    case LOGOUT_REQUEST:
-      return { ...state, isLoginLoading: true };
+    // case LOGOUT_REQUEST:
+    //   return { ...state, isLoginLoading: true };
     case LOGOUT_SUCCESS:
-      return { ...state, isLoginLoading: false, isLoginDone: false, user: null };
+      return { ...state, isLoginLoading: false, isLoginDone: false, user: null, message: action.payload };
     case LOGOUT_FAILURE:
-      return { ...state, isLoginLoading: false, isLoginError: action.error };
+      return { ...state, isLoginLoading: false, isLoginError: action.error, message: action.error };
 
     default:
       return state;

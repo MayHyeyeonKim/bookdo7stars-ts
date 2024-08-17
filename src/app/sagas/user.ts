@@ -11,6 +11,8 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
   LoginRequestAction,
+  LOGOUT_SUCCESS,
+  LOGOUT_REQUEST,
 } from '../actions';
 
 // Register API
@@ -46,7 +48,7 @@ function* login(action: LoginRequestAction): SagaIterator {
 
     yield put({
       type: LOGIN_SUCCESS,
-      payload: response.data,
+      payload: response.data.user,
     });
   } catch (err: any) {
     const errMessage = err.response?.data?.message || 'Unknown error occurred';
@@ -54,6 +56,27 @@ function* login(action: LoginRequestAction): SagaIterator {
     yield put({
       type: LOGIN_FAILURE,
       error: errMessage,
+    });
+  }
+}
+
+// Logout API
+function logoutAPI() {
+  return axios.post('/logout');
+}
+
+//Logout saga
+function* logout(): SagaIterator {
+  try {
+    console.log('로그아웃 사가 잘 탔니?');
+    const response: any = yield call(logoutAPI); //{ message: 'User logged out successfully' }
+    yield put({ type: LOGOUT_SUCCESS, payload: response.data.message }); //'User logged out successfully'
+  } catch (err: any) {
+    const errMessage = err.response?.data?.message || 'Unknown error occured'; //{ message: 'Error logging out' }
+    console.log('logout error');
+    yield put({
+      type: LOGIN_FAILURE,
+      error: errMessage, //'Error logging out'
     });
   }
 }
@@ -67,7 +90,11 @@ function* watchLogin() {
   yield takeLatest(LOGIN_REQUEST, login);
 }
 
+function* watchLogout() {
+  yield takeLatest(LOGOUT_REQUEST, logout);
+}
+
 // Root Saga
 export default function* userSaga() {
-  yield all([fork(watchRegister), fork(watchLogin)]);
+  yield all([fork(watchRegister), fork(watchLogin), fork(watchLogout)]);
 }
