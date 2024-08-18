@@ -10,9 +10,11 @@ import {
   LOGOUT_FAILURE,
 } from '../actions';
 import { User } from '../models/user';
+
 type InitialState = {
   isRegisterLoading: boolean;
   isRegisterDone: boolean;
+  register_message: string | null;
   isRegisterError: string | null;
   isLoginLoading: boolean;
   isLoginDone: boolean;
@@ -24,6 +26,7 @@ type InitialState = {
 export const initialState: InitialState = {
   isRegisterLoading: false,
   isRegisterDone: false,
+  register_message: null,
   isRegisterError: null,
   isLoginLoading: false,
   isLoginDone: false,
@@ -37,7 +40,8 @@ function userReducer(state = initialState, action: UserActionTypes) {
     case REGISTER_REQUEST:
       return { ...state, isRegisterLoading: true };
     case REGISTER_SUCCESS:
-      return { ...state, isRegisterLoading: false, isRegisterDone: true };
+      console.log('리듀서의 회원가입 REGISTER_SUCCESS에서 action.register_message:', action.register_message); // User registered successfully
+      return { ...state, isRegisterLoading: false, isRegisterDone: true, register_message: action.register_message };
     case REGISTER_FAILURE:
       console.log('리듀서의 회원가입 Error payliad:', action.error);
       return { ...state, isRegisterError: action.error };

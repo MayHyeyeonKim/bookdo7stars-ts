@@ -25,6 +25,7 @@ export interface RegisterRequestAction {
 
 export interface RegisterSuccessAction {
   type: typeof REGISTER_SUCCESS;
+  register_message: string;
 }
 
 export interface RegisterFailureAction {
@@ -81,8 +82,9 @@ export const registerRequest = (data: RegisterRequestAction['data']): RegisterRe
   data,
 });
 
-export const registerSuccess = (): RegisterSuccessAction => ({
+export const registerSuccess = (register_message: RegisterSuccessAction['register_message']): RegisterSuccessAction => ({
   type: REGISTER_SUCCESS,
+  register_message,
 });
 
 export const registerFailure = (error: string): RegisterFailureAction => ({

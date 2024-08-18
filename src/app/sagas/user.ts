@@ -21,11 +21,18 @@ function registerAPI(data: RegisterRequestAction['data']) {
 }
 
 // Register saga
-function* register(action: RegisterRequestAction) {
+function* register(action: RegisterRequestAction): SagaIterator {
   try {
-    yield call(registerAPI, action.data);
+    console.log('사가에서 회원가입 가공되기전의 action의 모습은? ', action); //{type: 'REGISTER_REQUEST', data: {…}}
+    console.log('사가에서 회원가입 action.data의 모습은? ', action.data); //{name: 'maychu4', email: 'maychu4@gmail.com', password: '****', address: '', mobile: ''
+
+    const response: any = yield call(registerAPI, action.data);
+    console.log('사가에서 회원가입 백엔드에서 응답받은 가공되기전의 response는? ', response); // {data: {…}, status: 201,
+    console.log('사가에서 회원가입 백엔드에서 응답받은 response의 data의 메세지는? ', response.data.message); //User registered successfully
+
     yield put({
       type: REGISTER_SUCCESS,
+      register_message: response.data.message,
     });
   } catch (err: any) {
     console.log('사가에서 회원가입 에러 어떻게 들어오니? ', err.response?.data?.message);
@@ -83,7 +90,7 @@ function* logout(): SagaIterator {
 
 // Watchers
 function* watchRegister() {
-  yield takeLatest(REGISTER_REQUEST, register);
+  yield takeLatest(REGISTER_REQUEST, register); // 첫번째 인자의 이 액션이 디스패치될 때 watchRegister가 감지하여 지정된 작업을 실행, 두번째인자는 작업함수
 }
 
 function* watchLogin() {
