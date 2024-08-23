@@ -6,11 +6,11 @@ import {
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
   REGISTER_FAILURE,
-  RegisterRequestAction,
+  RegisterRequestAction, //요청 보내는 데이타 타입지정때문에 필요
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
-  LoginRequestAction,
+  LoginRequestAction, //요청 보내는 데이타 타입지정때문에 필요
   LOGOUT_SUCCESS,
   LOGOUT_REQUEST,
 } from '../actions';

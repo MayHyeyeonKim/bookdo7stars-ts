@@ -21,6 +21,8 @@ type InitialState = {
   isLoginError: string | null;
   user: User | null;
   message: string | null;
+  isLogoutDone: boolean;
+  isLogoutError: string;
 };
 
 export const initialState: InitialState = {
@@ -33,6 +35,8 @@ export const initialState: InitialState = {
   isLoginError: null,
   user: null,
   message: null,
+  isLogoutDone: false;
+  isLogoutError: '',
 };
 
 function userReducer(state = initialState, action: UserActionTypes) {
@@ -58,9 +62,9 @@ function userReducer(state = initialState, action: UserActionTypes) {
     // case LOGOUT_REQUEST:
     //   return { ...state, isLoginLoading: true };
     case LOGOUT_SUCCESS:
-      return { ...state, isLoginLoading: false, isLoginDone: false, user: null, message: action.payload };
+      return { ...state, isLogoutDone: true, user: null, message: action.payload };
     case LOGOUT_FAILURE:
-      return { ...state, isLoginLoading: false, isLoginError: action.error, message: action.error };
+      return { ...state, isLogoutError: action.error, message: action.error };
 
     default:
       return state;
