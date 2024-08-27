@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { registerRequest } from '@/app/actions';
+import { registerRequest } from '@/app/actions/constants';
 import RegisterForm from '@/app/components/RegisterForm';
 import rootReducer from '@/app/reducers';
 import rootSaga from '@/app/sagas';
@@ -14,10 +14,18 @@ const store = mockStore({
   reducer: rootReducer,
 });
 const mockDispatch = jest.fn();
+const mockUseSelector = jest.fn();
+const mockRouter = jest.fn();
+
+jest.mock('next/navigation', () => ({
+  ...jest.requireActual('next/navigation'),
+  useRouter: () => mockRouter,
+}));
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => mockDispatch,
+  useSelector: () => mockUseSelector,
 }));
 
 sagaMiddleware.run(rootSaga);
@@ -39,7 +47,7 @@ describe('RegisterForm', () => {
         <RegisterForm />
       </Provider>,
     );
-
+    // mockUseSelector.mockReturnValue({ isRegisterDone: true, isRegisterError: '' });
     // get all input fields
     nameInput = screen.getByLabelText('name');
     emailInput = screen.getByLabelText('email');

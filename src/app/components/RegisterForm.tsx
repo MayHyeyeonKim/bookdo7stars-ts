@@ -1,5 +1,5 @@
 'use client';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState, useRef } from 'react';
 
 import { Box, Button, Checkbox, Container, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import Image from 'next/image';
@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { registerRequest } from '../actions';
+import { registerRequest } from '../actions/constants';
 import { AppDispatch, AppState } from '../store/store';
 
 type FormData = {
@@ -21,23 +21,22 @@ type FormData = {
 };
 
 const RegisterForm = () => {
+  const toastDisplayed = useRef(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { register_message, isRegisterError } = useSelector((store: AppState) => store.user);
+  const { registerMessage, isRegisterError } = useSelector((store: AppState) => store.user);
   const router = useRouter();
 
   useEffect(() => {
-    if (register_message) {
-      console.log('유즈이펙트에서 회원가입 성공:', register_message);
-      toast.success(`${register_message}`);
+    if (registerMessage && !toastDisplayed.current) {
+      toast.success(`${registerMessage}`);
       router.push('/login');
+      toastDisplayed.current = true;
     }
-  }, [register_message]);
+  }, [registerMessage]);
 
   useEffect(() => {
     if (isRegisterError) {
-      console.log('유즈이펙트에서 회원가입 Error:', isRegisterError);
-      const errMessage = typeof isRegisterError === 'object' ? isRegisterError.message : isRegisterError;
-      toast.error(`${errMessage}`);
+      toast.error(isRegisterError);
     }
   }, [isRegisterError]);
 
@@ -81,7 +80,7 @@ const RegisterForm = () => {
       email: !formData.email,
       name: !formData.name,
       password: !formData.password,
-      confirmPassword: formData.password !== formData.confirmPassword,
+      confirmPassword: !formData.confirmPassword,
       policyyn: !formData.policyyn,
     };
     setInputErrors(errors);
@@ -91,10 +90,7 @@ const RegisterForm = () => {
   const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // formData가 handleOnSubmit 함수 내부에서 사용될 수 있는 이유는, formData가 이 함수의 외부에서 정의된 변수이기 때문입니다. 이와 같은 방식으로 변수를 사용하는 것을 **클로저(Closure)**라고 합니다.
-    // 클로저란, 함수가 자신이 정의된 환경(즉, 함수가 생성된 시점의 스코프)에 있는 변수들에 접근할 수 있는 능력을 말합니다. 클로저는 함수와 그 함수가 정의된 환경의 변수를 함께 기억합니다.
     if (handleErrors(formData)) {
-      console.log('handleOnSubmit called');
       dispatch(
         registerRequest({
           name: formData.name,
@@ -214,6 +210,7 @@ const RegisterForm = () => {
                   label="address"
                   name="address"
                   value={formData.address}
+                  onChange={handleOnChange}
                   autoComplete="address"
                   InputLabelProps={{
                     shrink: true,

@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { loginRequest } from '../actions';
+import { loginRequest } from '../actions/constants';
 import { AppDispatch, AppState } from '../store/store';
 
 type FormData = {
@@ -22,23 +22,16 @@ const LoginForm = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log('로그인 useEffect 실행 - isLoginDone:', isLoginDone);
-    console.log('로그인 useEffect 실행 - user:', user);
-
-    if (isLoginDone && user && typeof user.name === 'string') {
+    if (isLoginDone && user?.name) {
       const welcomeMessage = `Login successful! Welcome, ${user.name}`;
-      console.log('Welcome Message:', welcomeMessage);
       toast.success(welcomeMessage);
       router.push('/');
-    } else {
-      console.log('user.name이 문자열이 아닙니다.');
     }
   }, [isLoginDone, user]);
 
   useEffect(() => {
     if (isLoginError) {
-      console.log('유즈이펙트에서 Error:', isLoginError);
-      toast.error(`${isLoginError}`);
+      toast.error(isLoginError);
     }
   }, [isLoginError]);
 
