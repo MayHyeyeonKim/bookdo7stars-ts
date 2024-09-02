@@ -6,18 +6,17 @@ import {
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
   REGISTER_FAILURE,
-  RegisterRequestAction,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
-  LoginRequestAction,
   LOGOUT_SUCCESS,
   LOGOUT_REQUEST,
 } from '../actions/constants';
+import { LoginRequestAction, RegisterRequestAction } from '../actions/types';
 
 // Register API
 function registerAPI(data: RegisterRequestAction['data']) {
-  return axios.post('/users', data);
+  return axios.post('/user', data);
 }
 
 // Register saga
@@ -38,7 +37,7 @@ function* register(action: RegisterRequestAction): SagaIterator {
 
 // Login API
 function loginAPI(data: LoginRequestAction['data']) {
-  return axios.post('/login', data);
+  return axios.post('/user/login', data);
 }
 
 // Login saga
@@ -59,7 +58,7 @@ export function* login(action: LoginRequestAction): SagaIterator {
 
 // Logout API
 function logoutAPI() {
-  return axios.post('/logout');
+  return axios.post('/user/logout');
 }
 
 //Logout saga

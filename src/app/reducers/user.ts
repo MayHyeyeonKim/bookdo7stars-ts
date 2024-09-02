@@ -5,10 +5,12 @@ import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
-  UserActionTypes,
   LOGOUT_SUCCESS,
   LOGOUT_FAILURE,
+  RESET_REGISTER_STATE,
+  RESET_LOGIN_STATE,
 } from '../actions/constants';
+import { UserActionTypes } from '../actions/types';
 import { User } from '../models/user';
 type InitialState = {
   isRegisterLoading: boolean;
@@ -46,6 +48,8 @@ function userReducer(state = initialState, action: UserActionTypes) {
       return { ...state, isRegisterLoading: false, isRegisterDone: true, registerMessage: action.payload };
     case REGISTER_FAILURE:
       return { ...state, isRegisterError: action.error };
+    case RESET_REGISTER_STATE:
+      return { ...state, registerMessage: null, isRegisterDone: false, isRegisterLoading: false, isRegisterError: '' };
 
     case LOGIN_REQUEST:
       return { ...state, isLoginLoading: true };
@@ -59,6 +63,8 @@ function userReducer(state = initialState, action: UserActionTypes) {
     case LOGOUT_FAILURE:
       return { ...state, isLogoutError: action.error, message: action.error };
 
+    case RESET_LOGIN_STATE:
+      return { ...state, isLoginError: '', isLoginDone: false, isLoginLoading: false };
     default:
       return state;
   }

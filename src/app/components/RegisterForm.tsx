@@ -1,5 +1,5 @@
 'use client';
-import { ChangeEvent, FormEvent, useEffect, useState, useRef } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 import { Box, Button, Checkbox, Container, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import Image from 'next/image';
@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { registerRequest } from '../actions/constants';
+import { registerRequest, resetRegisterState } from '../actions/types';
 import { AppDispatch, AppState } from '../store/store';
 
 type FormData = {
@@ -21,22 +21,22 @@ type FormData = {
 };
 
 const RegisterForm = () => {
-  const toastDisplayed = useRef(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { registerMessage, isRegisterError } = useSelector((store: AppState) => store.user);
+  const { registerMessage, isRegisterError, isRegisterDone } = useSelector((store: AppState) => store.user);
   const router = useRouter();
 
   useEffect(() => {
-    if (registerMessage && !toastDisplayed.current) {
+    if (isRegisterDone) {
       toast.success(`${registerMessage}`);
       router.push('/login');
-      toastDisplayed.current = true;
+      dispatch(resetRegisterState());
     }
-  }, [registerMessage]);
+  }, [isRegisterDone]);
 
   useEffect(() => {
     if (isRegisterError) {
       toast.error(isRegisterError);
+      dispatch(resetRegisterState());
     }
   }, [isRegisterError]);
 

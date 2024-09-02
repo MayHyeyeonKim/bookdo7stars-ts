@@ -17,7 +17,6 @@ export interface Book {
   queryType: string;
   deleted: boolean;
 }
-//17개의 attribute
 
 export const mockBooks: Book[] = [
   {
@@ -61,7 +60,7 @@ export const mockBooks: Book[] = [
   {
     id: 3,
     isbn: '3456789012',
-    title: '메이의 시애틀 예찬',
+    title: '메이의 시애틀은 대한민국이다',
     author: '시바상',
     description: '시애틀의 매력을 담은 에세이.',
     cover: 'https://t1.gstatic.com/licensed-image?q=tbn:ANd9GcTQNFQKFyHVyta87uusjQyosrpfKpF9bmnwv51eSIKEF0FFYqh0qfLdS5XBHECxF4ot',

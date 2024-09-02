@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { loginRequest } from '../actions/constants';
+import { loginRequest, resetLoginState } from '../actions/types';
 import { AppDispatch, AppState } from '../store/store';
 
 type FormData = {
@@ -26,12 +26,14 @@ const LoginForm = () => {
       const welcomeMessage = `Login successful! Welcome, ${user.name}`;
       toast.success(welcomeMessage);
       router.push('/');
+      dispatch(resetLoginState());
     }
   }, [isLoginDone, user]);
 
   useEffect(() => {
     if (isLoginError) {
       toast.error(isLoginError);
+      dispatch(resetLoginState());
     }
   }, [isLoginError]);
 

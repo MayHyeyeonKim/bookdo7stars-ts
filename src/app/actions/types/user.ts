@@ -9,6 +9,8 @@ import {
   LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
   LOGOUT_FAILURE,
+  RESET_REGISTER_STATE,
+  RESET_LOGIN_STATE,
 } from '../constants';
 
 // action type
@@ -65,6 +67,13 @@ export interface LogoutFailureAction {
   error: string;
 }
 
+export interface ResetRegisterStateAction {
+  type: typeof RESET_REGISTER_STATE;
+}
+export interface ResetLoginStateAction {
+  type: typeof RESET_LOGIN_STATE;
+}
+
 export type UserActionTypes =
   | RegisterRequestAction
   | RegisterSuccessAction
@@ -74,7 +83,9 @@ export type UserActionTypes =
   | LoginFailureAction
   | LogoutRequestAction
   | LogoutSuccessAction
-  | LogoutFailureAction;
+  | LogoutFailureAction
+  | ResetRegisterStateAction
+  | ResetLoginStateAction;
 
 // action creater functions
 export const registerRequest = (data: RegisterRequestAction['data']): RegisterRequestAction => ({
@@ -119,4 +130,12 @@ export const logoutSuccess = (payload: LogoutSuccessAction['payload']): LogoutSu
 export const logoutFailure = (error: string): LogoutFailureAction => ({
   type: LOGOUT_FAILURE,
   error,
+});
+
+export const resetRegisterState = (): ResetRegisterStateAction => ({
+  type: RESET_REGISTER_STATE,
+});
+
+export const resetLoginState = (): ResetLoginStateAction => ({
+  type: RESET_LOGIN_STATE,
 });
