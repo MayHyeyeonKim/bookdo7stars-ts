@@ -1,31 +1,29 @@
 'use client';
 import { useEffect } from 'react';
 
+import { RootState } from '@/app/reducers';
 import { useParams } from 'next/navigation';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { getAllBooksRequest, getBookRequest } from '../../actions/types';
+import { getBookRequest } from '../../actions/types';
 import BookDetailContainer from '../../components/BookDetail/BookDetailContainer';
 import { AppDispatch } from '../../store/store';
+
 const BookDetailPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { book } = useSelector((store: RootState) => store.book);
   const { bookId } = useParams<{ bookId: string }>();
-  console.log('디테일 페이지 대왕부모에서 bookId: ', bookId);
-
-  useEffect(() => {
-    dispatch(getAllBooksRequest());
-  }, [dispatch]);
 
   useEffect(() => {
     if (bookId) {
-      console.log('bookId는 문자열이다: ', bookId);
       dispatch(getBookRequest(bookId));
     }
-  }, [bookId, dispatch]);
+  }, [bookId]);
 
+  const validBook = typeof book === 'string' || Array.isArray(book) ? null : book;
   return (
     <div>
-      <BookDetailContainer />
+      <BookDetailContainer book={validBook} />
     </div>
   );
 };

@@ -16,7 +16,7 @@ function getAllBooksAPI() {
   return axios.get('/book');
 }
 
-function* getAllBooks(): SagaIterator {
+export function* getAllBooks(): SagaIterator {
   try {
     const response: any = yield call(getAllBooksAPI);
     yield put({
@@ -26,7 +26,7 @@ function* getAllBooks(): SagaIterator {
   } catch (err: any) {
     yield put({
       type: GET_ALL_BOOKS_FAILURE,
-      payload: err.response.data.message,
+      error: err.response.data.message,
     });
   }
 }
@@ -35,11 +35,9 @@ function getBookAPI(id: GetBookRequestAction['data']) {
   return axios.get(`/book/detail/${id}`);
 }
 
-function* getBook(action: GetBookRequestAction): SagaIterator {
+export function* getBook(action: GetBookRequestAction): SagaIterator {
   try {
-    console.log('사가로 받은 action:', action);
     const response: any = yield call(getBookAPI, action.data);
-    console.log('사가에서 북한권 어떻게 res받아올까? ', response.data);
     yield put({
       type: GET_BOOK_SUCCESS,
       payload: response.data.book,
@@ -47,7 +45,7 @@ function* getBook(action: GetBookRequestAction): SagaIterator {
   } catch (err: any) {
     yield put({
       type: GET_BOOK_FAILURE,
-      payload: err.response.data.message,
+      error: err.response.data.message,
     });
   }
 }

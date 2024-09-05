@@ -1,30 +1,38 @@
 import React from 'react';
-import { Button, Box } from '@mui/material';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Button, Box } from '@mui/material';
 import { pink } from '@mui/material/colors';
 
 // Props 타입 정의
-interface BookToCartProps {
-  book: {
-    title: string;
-    author: string;
-    price: number;
-    // 필요에 따라 추가적인 필드를 정의할 수 있습니다.
-  };
+
+interface Book {
+  title: string;
+  author: string;
+  priceStandard: number;
+  cover: string;
+  publisher: string;
 }
 
-const BookToCart: React.FC<BookToCartProps> = ({ book }) => {
+interface BookToCartButtonProps {
+  book: Book;
+}
+
+const BookToCartButton: React.FC<BookToCartButtonProps> = ({ book }) => {
   const handleAddToCart = () => {
     // 카트에 추가하는 로직 구현
+    console.log('카트에 추가:', book.title);
   };
 
   const handleFavoriteClick = () => {
     // 찜하기 기능 구현
+    console.log('찜하기: ', book.title);
   };
 
   const deleteFavoriteClick = () => {
     // 찜하기 취소 기능 구현
+    console.log('찜하기 취소: ', book.title);
   };
 
   return (
@@ -44,4 +52,4 @@ const BookToCart: React.FC<BookToCartProps> = ({ book }) => {
   );
 };
 
-export default BookToCart;
+export default BookToCartButton;

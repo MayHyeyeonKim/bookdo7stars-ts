@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { registerRequest } from '@/app/actions/constants';
+import { registerRequest } from '@/app/actions/types';
 import RegisterForm from '@/app/components/RegisterForm';
 import rootReducer from '@/app/reducers';
 import rootSaga from '@/app/sagas';
