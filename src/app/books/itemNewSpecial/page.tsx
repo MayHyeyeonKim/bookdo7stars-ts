@@ -13,6 +13,7 @@ const ItemNewSpecial = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { books } = useSelector((store: RootState) => store.book);
   const [page, setPage] = useState<number>(1);
+  // let page = 1
   useEffect(() => {
     dispatch(resetBooks());
     dispatch(getBooksByGroupNameRequest('ItemNewAll', page, 20));
@@ -20,6 +21,7 @@ const ItemNewSpecial = () => {
 
   const handleClickMore = () => {
     const nextPage = page + 1;
+    // page += 1
     setPage(nextPage);
     dispatch(getBooksByGroupNameRequest('ItemNewAll', nextPage, 20));
   };
