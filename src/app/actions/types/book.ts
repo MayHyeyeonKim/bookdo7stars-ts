@@ -1,9 +1,24 @@
 import { Book } from '@/app/models/book';
 
-import { GET_ALL_BOOKS_REQUEST, GET_ALL_BOOKS_SUCCESS, GET_ALL_BOOKS_FAILURE, GET_BOOK_REQUEST, GET_BOOK_SUCCESS, GET_BOOK_FAILURE } from '../constants';
+import {
+  GET_ALL_BOOKS_REQUEST,
+  GET_ALL_BOOKS_SUCCESS,
+  GET_ALL_BOOKS_FAILURE,
+  GET_BOOK_REQUEST,
+  GET_BOOK_SUCCESS,
+  GET_BOOK_FAILURE,
+  GET_BOOKS_GROUPNAME_REQUEST,
+  GET_BOOKS_GROUPNAME_SUCCESS,
+  GET_BOOKS_GROUPNAME_FAILURE,
+  RESET_BOOKS,
+} from '../constants';
 
 // Action type
 // We’ve decided to define request data as data:{}, response data as payload, and errors simply as error.
+
+export interface ResetBooksAction {
+  type: typeof RESET_BOOKS;
+}
 
 // All Books
 export interface GetAllBooksRequestAction {
@@ -36,6 +51,24 @@ export interface GetBookFailureAction {
   error: string;
 }
 
+//Books by Group Name
+export interface GetBooksByGroupNameRequestAction {
+  type: typeof GET_BOOKS_GROUPNAME_REQUEST;
+  groupName: string;
+  page: number;
+  pageSize: number;
+}
+
+export interface GetBooksByGroupNameSuccessAction {
+  type: typeof GET_BOOKS_GROUPNAME_SUCCESS;
+  payload: Book[];
+}
+
+export interface GetBooksByGroupNameFailureAction {
+  type: typeof GET_BOOKS_GROUPNAME_FAILURE;
+  error: string;
+}
+
 //Union type
 export type BookActionTypes =
   | GetAllBooksRequestAction
@@ -43,7 +76,11 @@ export type BookActionTypes =
   | GetAllBooksFailureAction
   | GetBookRequestAction
   | GetBookSuccessAction
-  | GetBookFailureAction;
+  | GetBookFailureAction
+  | GetBooksByGroupNameRequestAction
+  | GetBooksByGroupNameSuccessAction
+  | GetBooksByGroupNameFailureAction
+  | ResetBooksAction;
 
 // Action creater
 
@@ -76,4 +113,27 @@ export const getBookSuccess = (payload: GetBookSuccessAction['payload']): GetBoo
 export const getBookFailure = (error: string): GetBookFailureAction => ({
   type: GET_BOOK_FAILURE,
   error,
+});
+
+// All books by Group Name
+export const getBooksByGroupNameRequest = (groupName: string, page: number, pageSize: number): GetBooksByGroupNameRequestAction => ({
+  type: GET_BOOKS_GROUPNAME_REQUEST,
+  groupName,
+  page,
+  pageSize,
+});
+
+export const getBooksByGroupNameSuccess = (payload: GetBooksByGroupNameSuccessAction['payload']): GetBooksByGroupNameSuccessAction => ({
+  type: GET_BOOKS_GROUPNAME_SUCCESS,
+  payload,
+});
+
+export const getBooksByGroupNameFailure = (error: string): GetBooksByGroupNameFailureAction => ({
+  type: GET_BOOKS_GROUPNAME_FAILURE,
+  error,
+});
+
+//reset books
+export const resetBooks = (): ResetBooksAction => ({
+  type: RESET_BOOKS,
 });

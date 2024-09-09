@@ -16,14 +16,14 @@ const ItemNewSpecial = () => {
   // let page = 1
   useEffect(() => {
     dispatch(resetBooks());
-    dispatch(getBooksByGroupNameRequest('ItemNewAll', page, 20));
+    dispatch(getBooksByGroupNameRequest('ItemNewSpecial', page, 20));
   }, []);
 
   const handleClickMore = () => {
     const nextPage = page + 1;
-    // page += 1
+    // page += 1;
     setPage(nextPage);
-    dispatch(getBooksByGroupNameRequest('ItemNewAll', nextPage, 20));
+    dispatch(getBooksByGroupNameRequest('ItemNewSpecial', nextPage, 20));
   };
 
   return (
