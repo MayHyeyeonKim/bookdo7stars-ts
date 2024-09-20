@@ -7,17 +7,17 @@ import {
   GET_BOOK_REQUEST,
   GET_BOOK_SUCCESS,
   GET_BOOK_FAILURE,
-  GET_BOOKS_GROUPNAME_REQUEST,
-  GET_BOOKS_GROUPNAME_SUCCESS,
-  GET_BOOKS_GROUPNAME_FAILURE,
-  RESET_BOOKS,
+  GET_BOOKS_BY_GROUP_REQUEST,
+  GET_BOOKS_BY_GROUP_SUCCESS,
+  GET_BOOKS_BY_GROUP_FAILURE,
+  RESET_GROUP_BOOKS,
 } from '../constants';
 
 // Action type
 // We’ve decided to define request data as data:{}, response data as payload, and errors simply as error.
 
-export interface ResetBooksAction {
-  type: typeof RESET_BOOKS;
+export interface ResetGroupBooksAction {
+  type: typeof RESET_GROUP_BOOKS;
 }
 
 // All Books
@@ -52,20 +52,18 @@ export interface GetBookFailureAction {
 }
 
 //Books by Group Name
-export interface GetBooksByGroupNameRequestAction {
-  type: typeof GET_BOOKS_GROUPNAME_REQUEST;
-  groupName: string;
-  page: number;
-  pageSize: number;
+export interface GetBooksByGroupRequestAction {
+  type: typeof GET_BOOKS_BY_GROUP_REQUEST;
+  data: { groupName: string; page?: number; pageSize: number };
 }
 
-export interface GetBooksByGroupNameSuccessAction {
-  type: typeof GET_BOOKS_GROUPNAME_SUCCESS;
+export interface GetBooksByGroupSuccessAction {
+  type: typeof GET_BOOKS_BY_GROUP_SUCCESS;
   payload: Book[];
 }
 
-export interface GetBooksByGroupNameFailureAction {
-  type: typeof GET_BOOKS_GROUPNAME_FAILURE;
+export interface GetBooksByGroupFailureAction {
+  type: typeof GET_BOOKS_BY_GROUP_FAILURE;
   error: string;
 }
 
@@ -77,10 +75,10 @@ export type BookActionTypes =
   | GetBookRequestAction
   | GetBookSuccessAction
   | GetBookFailureAction
-  | GetBooksByGroupNameRequestAction
-  | GetBooksByGroupNameSuccessAction
-  | GetBooksByGroupNameFailureAction
-  | ResetBooksAction;
+  | GetBooksByGroupRequestAction
+  | GetBooksByGroupSuccessAction
+  | GetBooksByGroupFailureAction
+  | ResetGroupBooksAction;
 
 // Action creater
 
@@ -116,24 +114,22 @@ export const getBookFailure = (error: string): GetBookFailureAction => ({
 });
 
 // All books by Group Name
-export const getBooksByGroupNameRequest = (groupName: string, page: number, pageSize: number): GetBooksByGroupNameRequestAction => ({
-  type: GET_BOOKS_GROUPNAME_REQUEST,
-  groupName,
-  page,
-  pageSize,
+export const getBooksByGroupRequest = (data: GetBooksByGroupRequestAction['data']): GetBooksByGroupRequestAction => ({
+  type: GET_BOOKS_BY_GROUP_REQUEST,
+  data,
 });
 
-export const getBooksByGroupNameSuccess = (payload: GetBooksByGroupNameSuccessAction['payload']): GetBooksByGroupNameSuccessAction => ({
-  type: GET_BOOKS_GROUPNAME_SUCCESS,
+export const getBooksByGroupSuccess = (payload: GetBooksByGroupSuccessAction['payload']): GetBooksByGroupSuccessAction => ({
+  type: GET_BOOKS_BY_GROUP_SUCCESS,
   payload,
 });
 
-export const getBooksByGroupNameFailure = (error: string): GetBooksByGroupNameFailureAction => ({
-  type: GET_BOOKS_GROUPNAME_FAILURE,
+export const getBooksByGroupFailure = (error: string): GetBooksByGroupFailureAction => ({
+  type: GET_BOOKS_BY_GROUP_FAILURE,
   error,
 });
 
 //reset books
-export const resetBooks = (): ResetBooksAction => ({
-  type: RESET_BOOKS,
+export const resetGroupBooks = (): ResetGroupBooksAction => ({
+  type: RESET_GROUP_BOOKS,
 });
