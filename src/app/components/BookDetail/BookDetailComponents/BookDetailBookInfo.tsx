@@ -3,10 +3,13 @@ import { Paper, Container, Box, Table, TableRow, TableCell, TableContainer, Tabl
 import { Book } from '../../../models/book';
 
 interface BookDetailBookInfoProps {
-  book: Book;
+  book: Book | null;
 }
 
 const BookDetailBookInfo: React.FC<BookDetailBookInfoProps> = ({ book }) => {
+  if (!book) {
+    return <p> no book! go back!</p>;
+  }
   return (
     <Container>
       <Box>
@@ -19,7 +22,7 @@ const BookDetailBookInfo: React.FC<BookDetailBookInfoProps> = ({ book }) => {
               </TableRow>
               <TableRow sx={{ outline: '1px solid #DFE4DF' }}>
                 <TableCell sx={{ outline: '1px solid #DFE4DF', backgroundColor: '#DADFDA', width: '15%' }}>Publication Date</TableCell>
-                <TableCell sx={{ outline: '1px solid #DFE4DF', width: '85%' }}>{book.pubDate}</TableCell>
+                <TableCell sx={{ outline: '1px solid #DFE4DF', width: '85%' }}>{book.pubDate.toLocaleDateString()}</TableCell>
               </TableRow>
               <TableRow sx={{ outline: '1px solid #DFE4DF' }}>
                 <TableCell sx={{ outline: '1px solid #DFE4DF', backgroundColor: '#DADFDA', width: '15%' }}>Category</TableCell>
