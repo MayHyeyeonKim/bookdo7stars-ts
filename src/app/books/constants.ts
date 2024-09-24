@@ -2,18 +2,18 @@ export enum QueryTypes {
   All = 'All',
   ItemNewAll = 'ItemNewAll',
   ItemNewSpecial = 'ItemNewSpecial',
-  Bestseller = 'Bestseller',
+  BestSeller = 'BestSeller',
   BlogBest = 'BlogBest',
-  ItemEditorChoice = 'ItemEditorChoice',
+  EditorRecommended = 'EditorRecommended',
 }
 
 export const bookGroups: Record<QueryTypes, string> = {
   [QueryTypes.All]: '전체 도서',
   [QueryTypes.ItemNewAll]: '새로 나온 책',
   [QueryTypes.ItemNewSpecial]: '화제의 신간',
-  [QueryTypes.Bestseller]: '베스트 셀러',
+  [QueryTypes.BestSeller]: '베스트 셀러',
   [QueryTypes.BlogBest]: '블로그 베스트',
-  [QueryTypes.ItemEditorChoice]: '에디터 추천',
+  [QueryTypes.EditorRecommended]: '에디터 추천',
 };
 
 export const getBooksPageURL = (query: string) => {
@@ -23,19 +23,19 @@ export const getBooksPageURL = (query: string) => {
       return baseUrl;
     }
     case '새로 나온 책': {
-      return baseUrl + '/ItemNewAll';
+      return baseUrl + '/itemNewAll';
     }
     case '화제의 신간': {
-      return baseUrl + '/ItemNewSpecial';
+      return baseUrl + '/itemNewSpecial';
     }
     case '베스트 셀러': {
-      return baseUrl + '/Bestseller';
+      return baseUrl + '/bestSeller';
     }
     case '블로그 베스트': {
-      return baseUrl + '/BlogBest';
+      return baseUrl + '/blogBest';
     }
     case '에디터 추천': {
-      return baseUrl + '/ItemEditorChoice';
+      return baseUrl + '/editor-recommended';
     }
     default:
       return baseUrl;
