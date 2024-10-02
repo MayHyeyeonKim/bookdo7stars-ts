@@ -6,8 +6,8 @@ import { useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getBookRequest } from '../../actions/types';
-import BookDetails from '../../components/BookDetail/BookDetails';
-import BookOverview from '../../components/BookDetail/BookOverview';
+import BookDetails from '../../components/Book/BookDetails';
+import BookOverview from '../../components/Book/BookOverview';
 import { AppDispatch } from '../../store/store';
 
 const BookDetailPage = () => {
@@ -19,18 +19,13 @@ const BookDetailPage = () => {
     if (bookId) {
       dispatch(getBookRequest(bookId));
     }
-  }, [dispatch, bookId]);
+  }, [bookId]);
 
-  // 책 데이터가 없거나 잘못된 경우 처리
-  if (!book) {
-    return <p>책 정보를 읽어오는 중입니다...</p>;
-  }
-
-  // 책 데이터가 있을 때만 컴포넌트 렌더링
+  const validBook = typeof book === 'string' || Array.isArray(book) ? null : book;
   return (
     <div>
-      <BookOverview book={book} />
-      <BookDetails book={book} />
+      <BookOverview book={validBook} />
+      <BookDetails book={validBook} />
     </div>
   );
 };

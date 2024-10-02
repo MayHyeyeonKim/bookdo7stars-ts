@@ -11,7 +11,7 @@ import BookDetailShippingPolicy from './BookDetailComponents/BookDetailShippingP
 import { Book } from '../../models/book';
 
 interface BookDetailsProps {
-  book: Book;
+  book: Book | null;
 }
 
 const BookDetails: React.FC<BookDetailsProps> = ({ book }) => {
@@ -45,7 +45,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({ book }) => {
   }
 
   return (
-    <Box data-testid="book-detail-box" sx={{ mt: { xs: 8, md: 16 } }}>
+    <Box sx={{ mt: { xs: 8, md: 16 } }}>
       <Container sx={{ mt: 5, mb: 4 }}>
         <Tabs
           value={activeTab}

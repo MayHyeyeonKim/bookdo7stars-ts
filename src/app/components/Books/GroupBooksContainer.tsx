@@ -1,26 +1,17 @@
-import { useState } from 'react';
-
-import { Container, Typography, Grid, Box, Pagination } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { Container, Typography, Grid, Box } from '@mui/material';
 
 import BookCard from './BookCard';
 import { Book } from '../../models/book';
 
-interface BookContainerProps {
+interface GroupBooksContainerProps {
   books: Book[];
   title: string;
+  handleSeeMore: () => void;
+  isGetBooksByGroupLoading: boolean;
 }
 
-const BooksContainer: React.FC<BookContainerProps> = ({ books, title }) => {
-  const [page, setPage] = useState(1);
-
-  const booksPerPage = 8;
-  const pageCount = Math.ceil(books.length / booksPerPage);
-
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
-  const displayedBooks = books.slice((page - 1) * booksPerPage, page * booksPerPage);
-
+const GroupBooksContainer: React.FC<GroupBooksContainerProps> = ({ books, title, handleSeeMore, isGetBooksByGroupLoading }) => {
   return (
     <Container
       sx={{
@@ -39,7 +30,7 @@ const BooksContainer: React.FC<BookContainerProps> = ({ books, title }) => {
       </Box>
       <Box>
         <Grid container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          {displayedBooks.map((book, index) => (
+          {books.map((book, index) => (
             <Grid
               data-testid="book-card"
               key={index}
@@ -53,29 +44,19 @@ const BooksContainer: React.FC<BookContainerProps> = ({ books, title }) => {
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: '20px' }}>
-          <Pagination
-            count={pageCount}
-            page={page}
-            onChange={handlePageChange}
-            color="primary"
-            showFirstButton
-            showLastButton
-            sx={{
-              justifyContent: 'center',
-              '& .MuiPagination-ul': {
-                flexWrap: 'nowrap',
-              },
-              '& .MuiPaginationItem-root': {
-                minWidth: '32px',
-                height: '32px',
-              },
-            }}
-          />
-        </Box>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <LoadingButton
+          loading={isGetBooksByGroupLoading}
+          loadingPosition="start"
+          onClick={handleSeeMore}
+          variant="contained"
+          sx={{ '& .MuiLoadingButton-startIcon': { marginRight: '8px' } }}>
+          See more
+        </LoadingButton>
       </Box>
     </Container>
   );
 };
 
-export default BooksContainer;
+export default GroupBooksContainer;

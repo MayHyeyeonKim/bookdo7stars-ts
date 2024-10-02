@@ -10,14 +10,16 @@ import DeliveryEstimate from '../../../utils/DeliveryEstimate';
 import { Book } from '../../models/book';
 // 타입을 명시적으로 지정 (예시)
 interface BookOverviewProps {
-  book: Book;
+  book: Book | null;
 }
 
 const BookOverview: React.FC<BookOverviewProps> = ({ book }) => {
   const [address, setAddress] = useState('Select your region');
-
+  if (!book) {
+    return <p>책 정보를 읽어오지 못했습니다.</p>;
+  }
   return (
-    <Box data-testid="book-overview-box" sx={{ mt: { xs: 8, md: 16 } }}>
+    <Box sx={{ mt: { xs: 8, md: 16 } }}>
       <Container sx={{ mb: 4 }}>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
