@@ -1,5 +1,6 @@
 'use client';
 
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import HowToRegRoundedIcon from '@mui/icons-material/HowToRegRounded';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
@@ -7,7 +8,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded';
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
 import { alpha, AppBar, Box, Button, IconButton, InputAdornment, styled, TextField, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
-import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,12 +29,12 @@ const StyledSearchField = styled(TextField)(({ theme }) => ({
   height: '40px',
   [theme.breakpoints.up('md')]: {
     marginLeft: theme.spacing(3),
-    width: '70%',
+    width: '35%',
     height: '40px',
   },
   [theme.breakpoints.down('sm')]: {
     marginLeft: theme.spacing(3),
-    width: '40%',
+    width: '30%',
     height: '40px',
   },
   color: 'inherit',
@@ -66,6 +66,26 @@ const StyledButtonSearch = styled(Button)(({ theme }) => ({
   marginRight: theme.spacing(2),
   marginLeft: 0,
   height: '40px',
+  [theme.breakpoints.up('md')]: {
+    width: 'auto',
+    height: '40px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '20px',
+    height: '40px',
+  },
+}));
+
+const StyledButtonDetailSearch = styled(Button)(({ theme }) => ({
+  fontSize: '0.75rem',
+  backgroundColor: 'transparent',
+  marginLeft: 0,
+  height: '40px',
+  whiteSpace: 'nowrap', //텍스트 한 줄로 유지
+  '&:hover': {
+    backgroundColor: 'transparent', // 호버 시 배경색 제거
+    boxShadow: 'none', // 호버 시 그림자 제거
+  },
   [theme.breakpoints.up('md')]: {
     width: 'auto',
     height: '40px',
@@ -117,8 +137,14 @@ const Header = () => {
   };
 
   const handleSession = async () => {
-    const res = await axios.get('/session');
+    //TODO must be implemented
   };
+
+  const handleDetailSearch = () => {
+    router.push('/search');
+  };
+
+  console.log('isMobile:', isMobile);
 
   return (
     <Box>
@@ -169,7 +195,17 @@ const Header = () => {
                 ),
                 style: isMobile ? { fontSize: '0.75rem' } : {}, // 모바일에서 글자 크기 조정
               }}></StyledSearchField>
-            <StyledButtonSearch>Search</StyledButtonSearch>
+            <StyledButtonSearch sx={{ marginRight: '-1px' }}>Search</StyledButtonSearch>
+            {isMobile ? (
+              <IconButton onClick={handleDetailSearch} sx={{ marginLeft: '6px', width: '20px', height: '20px', color: 'black' }} aria-label="상세검색">
+                <SearchIcon sx={{ fontSize: '24px', color: 'black' }} />
+              </IconButton>
+            ) : (
+              <StyledButtonDetailSearch disableRipple onClick={handleDetailSearch}>
+                상세검색
+                <ArrowRightIcon fontSize="small" sx={{ marginLeft: '-5px' }} />
+              </StyledButtonDetailSearch>
+            )}
             <Box sx={{ flexGrow: 0.7 }} />
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               {!user ? (
