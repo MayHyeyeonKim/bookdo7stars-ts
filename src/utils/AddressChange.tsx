@@ -3,7 +3,12 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import './daumAPI.style.css';
-// eslint-disable-next-line import/no-named-as-default
+
+declare global {
+  interface Window {
+    daum: any;
+  }
+}
 
 // Styled component for the dropdown container
 const DropdownContainer = styled.div`
@@ -19,9 +24,13 @@ const PostcodeWidget = styled.div`
   }
 `;
 
-const AddressChange = ({ setAddress }) => {
-  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
-  const elementRef = useRef(null);
+interface AddressChangeProps {
+  setAddress: (address: string) => void;
+}
+
+const AddressChange: React.FC<AddressChangeProps> = ({ setAddress }) => {
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState<boolean>(false);
+  const elementRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -43,7 +52,7 @@ const AddressChange = ({ setAddress }) => {
     if (isPostcodeOpen && elementRef.current) {
       window.daum.postcode.load(() => {
         new window.daum.Postcode({
-          oncomplete: (data) => {
+          oncomplete: (data: any) => {
             let fullAddress = data.address;
             const extraAddress = data.extraAddress ? ` (${data.extraAddress})` : '';
             if (data.userSelectedType === 'R') {

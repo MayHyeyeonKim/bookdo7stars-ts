@@ -1,4 +1,6 @@
-import { Container, Typography, Grid, Box } from '@mui/material';
+import { useState } from 'react';
+
+import { Container, Typography, Grid, Box, Pagination } from '@mui/material';
 
 import BookCard from './BookCard';
 import { Book } from '../../models/book';
@@ -6,10 +8,10 @@ import { Book } from '../../models/book';
 interface BookContainerProps {
   books: Book[];
   title: string;
-  // booksPerPage: number;
+  booksPerPage: number;
 }
 
-const BooksContainer: React.FC<BookContainerProps> = ({ books, title }) => {
+const BooksContainer: React.FC<BookContainerProps> = ({ books, title, booksPerPage }) => {
   return (
     <Container
       sx={{

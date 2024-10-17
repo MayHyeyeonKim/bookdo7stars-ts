@@ -24,7 +24,7 @@ const StyledTypography = styled(Typography)`
 const BookCard: React.FC<BookCardProps> = ({ book }) => {
   const router = useRouter();
   const clickBookCard = (book: Book) => {
-    router.push(`book/${book.id}`);
+    router.push(`/book/${book.id}`);
   };
   return (
     <Card

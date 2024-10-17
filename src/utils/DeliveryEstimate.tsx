@@ -1,11 +1,15 @@
 import { Typography } from '@mui/material';
 
-const DeliveryEstimate = ({ address }) => {
+interface DeliveryEstimateProps {
+  address: string;
+}
+
+const DeliveryEstimate: React.FC<DeliveryEstimateProps> = ({ address }) => {
   const regionsFast = ['서울', '경기', '인천', '부산'];
   const regionsRegular = ['강원', '경북', '경남', '제주', '전남', '전북', '광주', '대구', '울산', '세종', '대전', '충남', '충북'];
 
   let deliveryText = '';
-  let deliveryStyle = {};
+  let deliveryStyle: React.CSSProperties = {};
 
   if (regionsFast.some((region) => address.includes(region))) {
     deliveryText = '하루 배송 - 24시까지 주문하면 내일 도착 예정';

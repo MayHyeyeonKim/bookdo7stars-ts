@@ -1,11 +1,11 @@
 'use client';
-import { useEffect, useState } from 'react';
-
-import { Container, Box, Pagination } from '@mui/material';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { Container,Box, Pagination } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getAllBooksRequest } from '../actions/types';
-import BooksContainer from '../components/Books/BooksContainer';
+import BooksContainer from '../components/Book/BooksContainer';
 import { RootState } from '../reducers';
 import { AppDispatch } from '../store/store';
 
@@ -17,7 +17,7 @@ const Books = () => {
   const pageCount = Math.ceil(count / booksPerPage);
 
   useEffect(() => {
-    dispatch(getAllBooksRequest(page, booksPerPage));
+    dispatch(getAllBooksRequest(page,booksPerPage));
   }, []);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -28,7 +28,7 @@ const Books = () => {
   return (
     <>
       <Container data-testid="books-container" sx={{ width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <BooksContainer books={books} title={'All Books'} />
+        <BooksContainer books={books} title={'All Books'} booksPerPage={booksPerPage} />
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: '20px' }}>
           <Pagination
             count={pageCount}

@@ -21,9 +21,9 @@ const CategoryBar = () => {
     QueryTypes.All,
     QueryTypes.ItemNewAll,
     QueryTypes.ItemNewSpecial,
-    QueryTypes.BestSeller,
+    QueryTypes.Bestseller,
     QueryTypes.BlogBest,
-    QueryTypes.EditorRecommended,
+    QueryTypes.ItemEditorChoice,
   ];
 
   const getGroups = (queryTypes: QueryTypes[], bookGroups: Record<string, string>): string[] => {

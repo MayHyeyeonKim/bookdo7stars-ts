@@ -5,6 +5,15 @@ import { ReactNode } from 'react';
 import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
 import createTheme from '@mui/material/styles/createTheme';
 
+declare module '@mui/material/styles' {
+  interface Palette {
+    third: Palette['primary'];
+  }
+  interface PaletteOptions {
+    third?: PaletteOptions['primary'];
+  }
+}
+
 const theme = createTheme({
   typography: {
     fontFamily: 'IBM Plex Sans KR, sans-serif',
@@ -16,6 +25,9 @@ const theme = createTheme({
     },
     secondary: {
       main: '#AFC6AA',
+    },
+    third: {
+      main: '#dce5e1',
     },
   },
 });

@@ -61,16 +61,16 @@ describe('Books', () => {
 
     const dispatchedAction = mockDispatch.mock.calls[0][0];
 
-    expect(dispatchedAction).toEqual(getAllBooksRequest());
+    expect(dispatchedAction).toEqual(getAllBooksRequest(1,20));
   });
 
   it('should dispatch GET_ALL_BOOKS_SUCCESS, when getAllBooksAPI is successful', async () => {
-    const mockResponse = { data: { books: mockBooks } };
+    const mockResponse = { data: { books: mockBooks, count: 20 } };
     (axios.get as jest.Mock).mockResolvedValueOnce(mockResponse);
 
     const dispatchedActions: any[] = [];
 
-    const fakeAction = getAllBooksRequest();
+    const fakeAction = getAllBooksRequest(1,20);
 
     await runSaga(
       {
@@ -81,7 +81,7 @@ describe('Books', () => {
     ).toPromise();
 
     expect(dispatchedActions[0].type).toEqual('GET_ALL_BOOKS_SUCCESS');
-    expect(dispatchedActions[0]).toEqual(getAllBooksSuccess(mockResponse.data.books));
+    expect(dispatchedActions[0]).toEqual(getAllBooksSuccess(mockResponse.data.books, mockResponse.data.count));
   });
 
   it('should dispatch GET_ALL_BOOKS_FAILURE, when getAllBooksAPI failed', async () => {
@@ -96,7 +96,7 @@ describe('Books', () => {
     (axios.get as jest.Mock).mockRejectedValueOnce(mockErrorResponse);
 
     const dispatchedActions: any[] = [];
-    const fakeAction = getAllBooksRequest();
+    const fakeAction = getAllBooksRequest(1,20);
 
     await runSaga(
       {
@@ -118,7 +118,7 @@ describe('BooksContainer', () => {
 
     render(
       <Provider store={store}>
-        <BooksContainer books={mockBooks} title="All Books" />
+        <BooksContainer books={mockBooks} title="All Books" booksPerPage={20} />
       </Provider>,
     );
   });

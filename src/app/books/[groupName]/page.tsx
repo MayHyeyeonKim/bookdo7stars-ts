@@ -3,12 +3,11 @@
 import { useEffect, useState } from 'react';
 
 import { getBooksByGroupRequest, resetGroupBooks } from '@/app/actions/types';
+import GroupBooksContainer from '@/app/components/Book/GroupBooksContainer';
 import { RootState } from '@/app/reducers';
 import { AppDispatch } from '@/app/store/store';
 import { useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-
-import GroupBooksContainer from '../../components/Books/GroupBooksContainer';
 import { bookGroups, QueryTypes } from '../constants';
 
 const GroupBookPage = () => {

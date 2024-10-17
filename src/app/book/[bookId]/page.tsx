@@ -6,8 +6,8 @@ import { useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getBookRequest } from '../../actions/types';
-import BookDetails from '../../components/Book/BookDetails';
-import BookOverview from '../../components/Book/BookOverview';
+import BookDetails from '../../components/BookDetail/BookDetails';
+import BookOverview from '../../components/BookDetail/BookOverview';
 import { AppDispatch } from '../../store/store';
 
 const BookDetailPage = () => {
