@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { Container,Box, Pagination } from '@mui/material';
+import { Container, Box, Pagination } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getAllBooksRequest } from '../actions/types';
@@ -17,7 +17,7 @@ const Books = () => {
   const pageCount = Math.ceil(count / booksPerPage);
 
   useEffect(() => {
-    dispatch(getAllBooksRequest(page,booksPerPage));
+    dispatch(getAllBooksRequest(page, booksPerPage));
   }, []);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {

@@ -4,6 +4,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import HowToRegRoundedIcon from '@mui/icons-material/HowToRegRounded';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import SearchIcon from '@mui/icons-material/Search';
 import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded';
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
@@ -198,7 +199,7 @@ const Header = () => {
             <StyledButtonSearch sx={{ marginRight: '-1px' }}>Search</StyledButtonSearch>
             {isMobile ? (
               <IconButton onClick={handleDetailSearch} sx={{ marginLeft: '6px', width: '20px', height: '20px', color: 'black' }} aria-label="상세검색">
-                <SearchIcon sx={{ fontSize: '24px', color: 'black' }} />
+                <ManageSearchIcon sx={{ fontSize: '24px', color: 'black' }} />
               </IconButton>
             ) : (
               <StyledButtonDetailSearch disableRipple onClick={handleDetailSearch}>

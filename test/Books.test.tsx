@@ -61,7 +61,7 @@ describe('Books', () => {
 
     const dispatchedAction = mockDispatch.mock.calls[0][0];
 
-    expect(dispatchedAction).toEqual(getAllBooksRequest(1,20));
+    expect(dispatchedAction).toEqual(getAllBooksRequest(1, 20));
   });
 
   it('should dispatch GET_ALL_BOOKS_SUCCESS, when getAllBooksAPI is successful', async () => {
@@ -70,7 +70,7 @@ describe('Books', () => {
 
     const dispatchedActions: any[] = [];
 
-    const fakeAction = getAllBooksRequest(1,20);
+    const fakeAction = getAllBooksRequest(1, 20);
 
     await runSaga(
       {
@@ -96,7 +96,7 @@ describe('Books', () => {
     (axios.get as jest.Mock).mockRejectedValueOnce(mockErrorResponse);
 
     const dispatchedActions: any[] = [];
-    const fakeAction = getAllBooksRequest(1,20);
+    const fakeAction = getAllBooksRequest(1, 20);
 
     await runSaga(
       {
