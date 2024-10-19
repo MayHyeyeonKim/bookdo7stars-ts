@@ -27,6 +27,9 @@ import { SearchType } from './types/searchType';
 import { AppDispatch } from '../../store/store';
 
 const SearchPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {}, []);
+
   const [dateRange, setDateRange] = useState('all');
   const [startYear, setStartYear] = useState('');
   const [endYear, setEndYear] = useState('');
@@ -34,7 +37,7 @@ const SearchPage = () => {
   const [endMonth, setEndMonth] = useState('');
   const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SearchType>({
     title: '',
     author: '',
     publisher: '',
@@ -43,14 +46,18 @@ const SearchPage = () => {
     endDate: '',
   });
 
+  console.log('formData 이렇게 생겼다! ', formData);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleChange = (e: ChangeEvent<HTMLInputElement> | SelectChangeEvent) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
+    const targetName = e.target.name;
+    const targetValue = e.target.value;
+
+    setFormData((prevState: any) => ({
       ...prevState,
-      [name]: value,
+      [targetName]: targetValue,
     }));
   };
 
@@ -77,6 +84,7 @@ const SearchPage = () => {
   };
 
   const handleDateRange = (e: React.MouseEvent<HTMLElement>, newValue: string) => {
+    console.log('New date range selected:', newValue);
     setDateRange(newValue);
     findStartDate(newValue);
     setStartMonth('');
@@ -129,7 +137,7 @@ const SearchPage = () => {
   useEffect(() => {
     const currentEndDate = format(new Date(), 'yyyy-MM-dd');
     if (start_date && !customDate) {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         startDate: start_date,
         endDate: currentEndDate,
@@ -147,11 +155,11 @@ const SearchPage = () => {
   }, [start_date, customDate, formData.startDate, formData.endDate]);
 
   const handleSearch = () => {
-    console.log('formDataaaa: ', formData);
     setStartMonth('');
     setStartYear('');
     setEndMonth('');
     setEndYear('');
+    setDateRange('all');
     setFormData({
       title: '',
       author: '',
@@ -161,8 +169,6 @@ const SearchPage = () => {
       endDate: '',
     });
   };
-
-  console.log('formData 이렇게 생겼다! ', formData);
 
   return (
     <div>
@@ -263,7 +269,7 @@ const SearchPage = () => {
                       </ToggleButton>
                       <ToggleButton
                         disableRipple
-                        value="3months"
+                        value="3"
                         sx={{
                           minWidth: '50px',
                           whiteSpace: 'nowrap',
@@ -272,7 +278,7 @@ const SearchPage = () => {
                       </ToggleButton>
                       <ToggleButton
                         disableRipple
-                        value="6months"
+                        value="6"
                         sx={{
                           minWidth: '50px',
                           whiteSpace: 'nowrap',
@@ -281,7 +287,7 @@ const SearchPage = () => {
                       </ToggleButton>
                       <ToggleButton
                         disableRipple
-                        value="9months"
+                        value="9"
                         sx={{
                           minWidth: '50px',
                           whiteSpace: 'nowrap',
@@ -290,7 +296,7 @@ const SearchPage = () => {
                       </ToggleButton>
                       <ToggleButton
                         disableRipple
-                        value="24months"
+                        value="24"
                         sx={{
                           minWidth: '50px',
                           whiteSpace: 'nowrap',
