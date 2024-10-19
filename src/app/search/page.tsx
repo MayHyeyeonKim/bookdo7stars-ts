@@ -321,15 +321,22 @@ const SearchPage = () => {
                       display="flex"
                       flexDirection={isMobile ? 'column' : 'row'}
                       alignItems="center"
-                      flexWrap="wrap"
+                      flexWrap={isMobile ? 'wrap' : 'nowrap'} // 모바일에서는 줄바꿈 허용
                       mb={2}
-                      sx={{ ml: isMobile ? '0px' : '101px', width: '100%', flexWrap: 'nowrap' }}>
-                      <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0}>
+                      sx={{ ml: isMobile ? '0px' : '101px', width: '100%' }} // 모바일에서는 좌측 여백 제거
+                    >
+                      <Box
+                        display="flex"
+                        flexWrap="wrap"
+                        alignItems="center"
+                        mb={isMobile ? 2 : 0}
+                        sx={{ width: isMobile ? '100%' : 'auto' }} // 모바일에서는 너비 100%
+                      >
                         <TextField
                           name="startYear"
                           label="년"
                           value={startYear}
-                          sx={{ width: '100px', mr: 1 }}
+                          sx={{ width: isMobile ? '90%' : '100px', mr: 1 }} // 모바일에서는 더 넓게 차지
                           onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeDateRange(e)}
                         />
                         <Select
@@ -337,7 +344,7 @@ const SearchPage = () => {
                           value={startMonth}
                           onChange={handleChangeDateRange}
                           displayEmpty
-                          sx={{ width: '80px', mr: isMobile ? 0 : 2 }} // 모바일에서는 우측 여백 최소화
+                          sx={{ width: isMobile ? '90%' : '80px', mr: 1 }} // 모바일에서는 더 넓게 차지
                         >
                           <MenuItem value="" disabled>
                             월
@@ -353,15 +360,28 @@ const SearchPage = () => {
                         </Typography>
                       </Box>
 
-                      <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} mt={isMobile ? 2 : 0}>
+                      <Box
+                        display="flex"
+                        flexWrap="wrap"
+                        alignItems="center"
+                        mb={isMobile ? 2 : 0}
+                        mt={isMobile ? 2 : 0}
+                        sx={{ width: isMobile ? '100%' : 'auto' }} // 모바일에서는 너비 100%
+                      >
                         <TextField
                           name="endYear"
                           label="년"
                           value={endYear}
-                          sx={{ width: '100px', ml: 2, mr: 1 }}
+                          sx={{ width: isMobile ? '90%' : '100px', ml: isMobile ? 0 : 2, mr: 1 }} // 모바일에서는 더 넓게 차지
                           onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeDateRange(e)}
                         />
-                        <Select name="endMonth" value={endMonth} onChange={handleChangeDateRange} displayEmpty sx={{ width: '80px', mr: 2 }}>
+                        <Select
+                          name="endMonth"
+                          value={endMonth}
+                          onChange={handleChangeDateRange}
+                          displayEmpty
+                          sx={{ width: isMobile ? '90%' : '80px', mr: 1 }} // 모바일에서는 더 넓게 차지
+                        >
                           <MenuItem value="" disabled>
                             월
                           </MenuItem>
@@ -371,7 +391,7 @@ const SearchPage = () => {
                             </MenuItem>
                           ))}
                         </Select>
-                        <Typography variant="body2" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                        <Typography variant="body2" sx={{ minWidth: '50px', whiteSpace: 'nowrap', ml: isMobile ? 0 : 2 }}>
                           월까지
                         </Typography>
                       </Box>
@@ -431,8 +451,8 @@ const SearchPage = () => {
                     fullWidth
                     placeholder="-없이 숫자만 입력하세요."
                     variant="outlined"
-                    value={formData.isbn}
-                    onChange={handleChange}
+                    // value={formData.isbn}
+                    // onChange={handleChange}
                     sx={{ flex: 1, mr: 1 }}
                   />
                 </Grid>
