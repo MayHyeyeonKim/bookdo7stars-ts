@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { SearchType } from './types/searchType';
 import { AppDispatch } from '../../store/store';
+import { getBooksSearchRequest } from '../actions/types';
 
 const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -155,6 +156,26 @@ const SearchPage = () => {
   }, [start_date, customDate, formData.startDate, formData.endDate]);
 
   const handleSearch = () => {
+    const searchPayload = {
+      ...(formData.title && { title: formData.title }),
+      ...(formData.author && { author: formData.author }),
+      ...(formData.publisher && { publisher: formData.publisher }),
+      ...(formData.sortOrder && { sortOrder: formData.sortOrder }),
+      ...(formData.startDate && { startDate: formData.startDate }),
+      ...(formData.endDate && { endDate: formData.endDate }),
+    };
+    // 위의 방식이 싫다면 이런식으로 if 조건문을 써도 된다.
+    // if (formData.title) {
+    //   searchPayload.title = formData.title;
+    // }
+    // if (formData.author) {
+    //   searchPayload.author = formData.author;
+    // }
+    // if (formData.publisher) {
+    //   searchPayload.publisher = formData.publisher;
+    // }
+
+    dispatch(getBooksSearchRequest(searchPayload));
     setStartMonth('');
     setStartYear('');
     setEndMonth('');
@@ -169,6 +190,8 @@ const SearchPage = () => {
       endDate: '',
     });
   };
+
+  console.log('formdata안에 필요한 것들 다 모았다! ', formData);
 
   return (
     <div>
@@ -321,22 +344,15 @@ const SearchPage = () => {
                       display="flex"
                       flexDirection={isMobile ? 'column' : 'row'}
                       alignItems="center"
-                      flexWrap={isMobile ? 'wrap' : 'nowrap'} // 모바일에서는 줄바꿈 허용
+                      flexWrap={isMobile ? 'wrap' : 'nowrap'}
                       mb={2}
-                      sx={{ ml: isMobile ? '0px' : '101px', width: '100%' }} // 모바일에서는 좌측 여백 제거
-                    >
-                      <Box
-                        display="flex"
-                        flexWrap="wrap"
-                        alignItems="center"
-                        mb={isMobile ? 2 : 0}
-                        sx={{ width: isMobile ? '100%' : 'auto' }} // 모바일에서는 너비 100%
-                      >
+                      sx={{ ml: isMobile ? '103px' : '101px', width: '80%' }}>
+                      <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} sx={{ width: isMobile ? '100%' : 'auto' }}>
                         <TextField
                           name="startYear"
                           label="년"
                           value={startYear}
-                          sx={{ width: isMobile ? '90%' : '100px', mr: 1 }} // 모바일에서는 더 넓게 차지
+                          sx={{ width: isMobile ? '90%' : '100px', mr: 1 }}
                           onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeDateRange(e)}
                         />
                         <Select
@@ -344,8 +360,7 @@ const SearchPage = () => {
                           value={startMonth}
                           onChange={handleChangeDateRange}
                           displayEmpty
-                          sx={{ width: isMobile ? '90%' : '80px', mr: 1 }} // 모바일에서는 더 넓게 차지
-                        >
+                          sx={{ width: isMobile ? '90%' : '80px', mr: 1 }}>
                           <MenuItem value="" disabled>
                             월
                           </MenuItem>
@@ -360,28 +375,15 @@ const SearchPage = () => {
                         </Typography>
                       </Box>
 
-                      <Box
-                        display="flex"
-                        flexWrap="wrap"
-                        alignItems="center"
-                        mb={isMobile ? 2 : 0}
-                        mt={isMobile ? 2 : 0}
-                        sx={{ width: isMobile ? '100%' : 'auto' }} // 모바일에서는 너비 100%
-                      >
+                      <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} sx={{ width: isMobile ? '100%' : 'auto' }}>
                         <TextField
                           name="endYear"
                           label="년"
                           value={endYear}
-                          sx={{ width: isMobile ? '90%' : '100px', ml: isMobile ? 0 : 2, mr: 1 }} // 모바일에서는 더 넓게 차지
+                          sx={{ width: isMobile ? '90%' : '100px', ml: isMobile ? 0 : 2, mr: 1 }}
                           onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeDateRange(e)}
                         />
-                        <Select
-                          name="endMonth"
-                          value={endMonth}
-                          onChange={handleChangeDateRange}
-                          displayEmpty
-                          sx={{ width: isMobile ? '90%' : '80px', mr: 1 }} // 모바일에서는 더 넓게 차지
-                        >
+                        <Select name="endMonth" value={endMonth} onChange={handleChangeDateRange} displayEmpty sx={{ width: isMobile ? '90%' : '80px', mr: 1 }}>
                           <MenuItem value="" disabled>
                             월
                           </MenuItem>

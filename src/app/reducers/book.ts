@@ -75,6 +75,7 @@ function bookReducer(state = initialState, action: BookActionTypes) {
     case GET_BOOKS_SEARCH_REQUEST:
       return { ...state, isGetBooksSearchLoading: true };
     case GET_BOOKS_SEARCH_SUCCESS:
+      console.log('[리듀서]서치한 책 잘 받아옴: ', action.payload, '카운트: ', action.count);
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: true, books: action.payload, count: action.count };
     case GET_BOOKS_SEARCH_FAILURE:
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: false, isGetSearchError: action.error };
