@@ -20,7 +20,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { format, subMonths } from 'date-fns';
-import { useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { SearchType } from './types/searchType';
@@ -29,7 +29,7 @@ import { getBooksSearchRequest } from '../actions/types';
 
 const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {}, []);
+  const router = useRouter();
 
   const [dateRange, setDateRange] = useState('all');
   const [startYear, setStartYear] = useState('');
@@ -176,6 +176,21 @@ const SearchPage = () => {
     // }
 
     dispatch(getBooksSearchRequest(searchPayload));
+    console.log('라우팅 경로: ', '/search/result', searchPayload);
+
+    router.push('/search/result');
+    router.push({
+      pathname: '/search/result',
+      query: { 
+        title: formData.title || '', 
+        author: formData.author || '', 
+        publisher: formData.publisher || '',
+        sortOrder: formData.sortOrder || '',
+        startDate: formData.startDate || '',
+        endDate: formData.endDate || ''
+      },
+    });
+
     setStartMonth('');
     setStartYear('');
     setEndMonth('');
