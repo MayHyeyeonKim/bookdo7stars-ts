@@ -156,40 +156,11 @@ const SearchPage = () => {
   }, [start_date, customDate, formData.startDate, formData.endDate]);
 
   const handleSearch = () => {
-    const searchPayload = {
-      ...(formData.title && { title: formData.title }),
-      ...(formData.author && { author: formData.author }),
-      ...(formData.publisher && { publisher: formData.publisher }),
-      ...(formData.sortOrder && { sortOrder: formData.sortOrder }),
-      ...(formData.startDate && { startDate: formData.startDate }),
-      ...(formData.endDate && { endDate: formData.endDate }),
-    };
-    // 위의 방식이 싫다면 이런식으로 if 조건문을 써도 된다.
-    // if (formData.title) {
-    //   searchPayload.title = formData.title;
-    // }
-    // if (formData.author) {
-    //   searchPayload.author = formData.author;
-    // }
-    // if (formData.publisher) {
-    //   searchPayload.publisher = formData.publisher;
-    // }
 
-    dispatch(getBooksSearchRequest(searchPayload));
-    console.log('라우팅 경로: ', '/search/result', searchPayload);
+    dispatch(getBooksSearchRequest(formData));
+    console.log('라우팅 경로: ', '/search/result', formData);
 
     router.push('/search/result');
-    router.push({
-      pathname: '/search/result',
-      query: { 
-        title: formData.title || '', 
-        author: formData.author || '', 
-        publisher: formData.publisher || '',
-        sortOrder: formData.sortOrder || '',
-        startDate: formData.startDate || '',
-        endDate: formData.endDate || ''
-      },
-    });
 
     setStartMonth('');
     setStartYear('');
