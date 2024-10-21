@@ -8,7 +8,21 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import SearchIcon from '@mui/icons-material/Search';
 import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded';
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
-import { alpha, AppBar, Box, Button, IconButton, InputAdornment, styled, TextField, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
+import {
+  alpha,
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  styled,
+  TextField,
+  Toolbar,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  Tooltip,
+} from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -198,9 +212,11 @@ const Header = () => {
               }}></StyledSearchField>
             <StyledButtonSearch sx={{ marginRight: '-1px' }}>Search</StyledButtonSearch>
             {isMobile ? (
-              <IconButton onClick={handleDetailSearch} sx={{ marginLeft: '6px', width: '20px', height: '20px', color: 'black' }} aria-label="상세검색">
-                <ManageSearchIcon sx={{ fontSize: '24px', color: 'black' }} />
-              </IconButton>
+              <Tooltip title={'상세검색'}>
+                <IconButton onClick={handleDetailSearch} sx={{ marginLeft: '6px', width: '20px', height: '20px', color: 'black' }} aria-label="상세검색">
+                  <ManageSearchIcon sx={{ fontSize: '24px', color: 'black' }} />
+                </IconButton>
+              </Tooltip>
             ) : (
               <StyledButtonDetailSearch disableRipple onClick={handleDetailSearch}>
                 상세검색

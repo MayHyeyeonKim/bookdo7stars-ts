@@ -85,7 +85,7 @@ const SearchPage = () => {
   };
 
   const handleDateRange = (e: React.MouseEvent<HTMLElement>, newValue: string) => {
-    console.log('New date range selected:', newValue);
+    console.log('선택된 값:', newValue);
     setDateRange(newValue);
     findStartDate(newValue);
     setStartMonth('');
@@ -156,7 +156,6 @@ const SearchPage = () => {
   }, [start_date, customDate, formData.startDate, formData.endDate]);
 
   const handleSearch = () => {
-
     dispatch(getBooksSearchRequest(formData));
     console.log('라우팅 경로: ', '/search/result', formData);
 
@@ -176,8 +175,6 @@ const SearchPage = () => {
       endDate: '',
     });
   };
-
-  console.log('formdata안에 필요한 것들 다 모았다! ', formData);
 
   return (
     <div>
@@ -249,79 +246,85 @@ const SearchPage = () => {
                         출간일
                       </Typography>
                     </Box>
-                    <ToggleButtonGroup
-                      value={dateRange}
-                      exclusive
-                      onChange={handleDateRange}
-                      sx={{
-                        display: 'flex',
-                        flexDirection: isMobile ? 'column' : 'row',
-                        paddingLeft: isMobile ? '16px' : '0px',
-                        gap: 0.3,
-                        flexWrap: 'nowrap',
-                        '& .MuiToggleButton-root': {
-                          border: '1px solid rgba(0, 0, 0, 0.12)', // 각 버튼 테두리
-                          borderRadius: 0, // 모든 버튼에 테두리 반경 0으로 설정
-                        },
-                        '& .MuiToggleButtonGroup-grouped': {
-                          borderRadius: '5px !important', // 그룹화된 버튼 모두 테두리 반경 0
-                        },
-                      }}>
-                      <ToggleButton
-                        disableRipple
-                        value="all"
+                    {isMobile ? (
+                      <Grid container spacing={0.8} sx={{ paddingLeft: '16px' }}>
+                        {[
+                          { label: '전체', value: 'all' },
+                          { label: '3개월', value: '3' },
+                          { label: '6개월', value: '6' },
+                          { label: '9개월', value: '9' },
+                          { label: '24개월', value: '24' },
+                          { label: '직접설정', value: 'custom' },
+                        ].map((option) => (
+                          <Grid item xs={4} key={option.value}>
+                            <ToggleButtonGroup
+                              value={dateRange}
+                              exclusive
+                              onChange={handleDateRange}
+                              sx={{
+                                width: '100%',
+                                gap: 0.3,
+                                '& .MuiToggleButton-root': {
+                                  border: '1px solid rgba(0, 0, 0, 0.12)',
+                                  borderRadius: 0,
+                                },
+                                '& .MuiToggleButtonGroup-grouped': {
+                                  borderRadius: '5px !important',
+                                },
+                              }}>
+                              <ToggleButton
+                                disableRipple
+                                value={option.value}
+                                sx={{
+                                  minWidth: '50px',
+                                  whiteSpace: 'nowrap',
+                                  width: '100%',
+                                }}>
+                                {option.label}
+                              </ToggleButton>
+                            </ToggleButtonGroup>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    ) : (
+                      <ToggleButtonGroup
+                        value={dateRange}
+                        exclusive
+                        onChange={handleDateRange}
                         sx={{
-                          minWidth: '50px',
-                          whiteSpace: 'nowrap',
+                          display: 'flex',
+                          flexDirection: 'row',
+                          paddingLeft: '0px',
+                          gap: 0.3,
+                          flexWrap: 'nowrap',
+                          '& .MuiToggleButton-root': {
+                            border: '1px solid rgba(0, 0, 0, 0.12)',
+                            borderRadius: 0,
+                          },
+                          '& .MuiToggleButtonGroup-grouped': {
+                            borderRadius: '5px !important',
+                          },
                         }}>
-                        전체
-                      </ToggleButton>
-                      <ToggleButton
-                        disableRipple
-                        value="3"
-                        sx={{
-                          minWidth: '50px',
-                          whiteSpace: 'nowrap',
-                        }}>
-                        3개월
-                      </ToggleButton>
-                      <ToggleButton
-                        disableRipple
-                        value="6"
-                        sx={{
-                          minWidth: '50px',
-                          whiteSpace: 'nowrap',
-                        }}>
-                        6개월
-                      </ToggleButton>
-                      <ToggleButton
-                        disableRipple
-                        value="9"
-                        sx={{
-                          minWidth: '50px',
-                          whiteSpace: 'nowrap',
-                        }}>
-                        9개월
-                      </ToggleButton>
-                      <ToggleButton
-                        disableRipple
-                        value="24"
-                        sx={{
-                          minWidth: '50px',
-                          whiteSpace: 'nowrap',
-                        }}>
-                        24개월
-                      </ToggleButton>
-                      <ToggleButton
-                        disableRipple
-                        value="custom"
-                        sx={{
-                          minWidth: '30px',
-                          whiteSpace: 'nowrap',
-                        }}>
-                        직접설정
-                      </ToggleButton>
-                    </ToggleButtonGroup>
+                        <ToggleButton disableRipple value="all" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                          전체
+                        </ToggleButton>
+                        <ToggleButton disableRipple value="3" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                          3개월
+                        </ToggleButton>
+                        <ToggleButton disableRipple value="6" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                          6개월
+                        </ToggleButton>
+                        <ToggleButton disableRipple value="9" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                          9개월
+                        </ToggleButton>
+                        <ToggleButton disableRipple value="24" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                          24개월
+                        </ToggleButton>
+                        <ToggleButton disableRipple value="custom" sx={{ minWidth: '30px', whiteSpace: 'nowrap' }}>
+                          직접설정
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    )}
                   </Box>
 
                   {/* 직접설정 선택시 나타나는 인터벌 */}
