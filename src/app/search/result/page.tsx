@@ -20,7 +20,7 @@ const ResultPage = () => {
 
   // router.query를 통해 쿼리 파라미터에서 검색 값을 가져옴
   useEffect(() => {
-    if (!router.isReady) return; // router가 준비되지 않았으면 리턴
+    if (!router.isReady || !router.query.title) return;
     const query = router.query;
     const title = query.title || ''; // 쿼리에서 가져온 title
 

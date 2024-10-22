@@ -183,14 +183,14 @@ const SearchPage = () => {
     });
   };
 
-  const handleIsbnSearch = () => {
+  const handleIsbnSearch = async () => {
     console.log('[01] isbn뭐야? ', isbn);
     if (!isbn) {
       alert('ISBN을 입력해주세요.');
       return;
     }
     console.log('[02] isbn 찾기버튼 눌러짐');
-    dispatch(getBookIsbnSearchRequest(isbn));
+    await dispatch(getBookIsbnSearchRequest(isbn));
     console.log('[03] isbn 찾기버튼 눌려서 디스패치 날라감');
 
     router.push('/search/result');

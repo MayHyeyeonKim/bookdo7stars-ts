@@ -92,7 +92,7 @@ export function* getBooksSearch(action: GetBooksSearchRequestAction): SagaIterat
 
 function getBookIsbnSearchAPI(isbn: string) {
   console.log('API 요청 URL: ', `/search/${isbn}`);
-  return axios.get(`/search/${isbn}`);
+  return axios.get(`/book/search/${isbn}`);
 }
 
 export function* getBookIsbnSearch(action: GetBookIsbnSearchRequestAction): SagaIterator {
