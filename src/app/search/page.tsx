@@ -47,8 +47,6 @@ const SearchPage = () => {
     endDate: '',
   });
 
-  console.log('formData 이렇게 생겼다! ', formData);
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -247,7 +245,7 @@ const SearchPage = () => {
                       </Typography>
                     </Box>
                     {isMobile ? (
-                      <Grid container spacing={0.8} sx={{ paddingLeft: '16px' }}>
+                      <Grid container spacing={0.8}>
                         {[
                           { label: '전체', value: 'all' },
                           { label: '3개월', value: '3' },
@@ -256,7 +254,7 @@ const SearchPage = () => {
                           { label: '24개월', value: '24' },
                           { label: '직접설정', value: 'custom' },
                         ].map((option) => (
-                          <Grid item xs={4} key={option.value}>
+                          <Grid item xs={6} key={option.value}>
                             <ToggleButtonGroup
                               value={dateRange}
                               exclusive
