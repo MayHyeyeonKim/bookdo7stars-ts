@@ -432,18 +432,20 @@ const SearchPage = () => {
             <Box display="flex" alignItems="center" mb={2}>
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sm={10}>
-                  <Typography variant="subtitle1" sx={{ width: '90px', ml: 3 }}>
-                    ISBN 검색
-                  </Typography>
-                  <TextField
-                    name="isbn"
-                    fullWidth
-                    placeholder="-없이 숫자만 입력하세요."
-                    variant="outlined"
-                    // value={formData.isbn}
-                    // onChange={handleChange}
-                    sx={{ flex: 1, mr: 1 }}
-                  />
+                  <Box display="flex" alignItems="center" mb={2}>
+                    <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
+                      ISBN 검색
+                    </Typography>
+                    <TextField
+                      name="isbn"
+                      fullWidth
+                      placeholder="-없이 숫자만 입력하세요."
+                      variant="outlined"
+                      // value={formData.isbn}
+                      // onChange={handleChange}
+                      sx={{ flex: 1 }}
+                    />
+                  </Box>
                 </Grid>
 
                 <Grid item xs={12} sm={2}>
