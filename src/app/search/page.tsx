@@ -23,9 +23,10 @@ import { format, subMonths } from 'date-fns';
 import { useRouter, useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { SearchType } from './types/searchType';
+import { isbnType } from './types/isbnType';
+import { searchType } from './types/searchType';
 import { AppDispatch } from '../../store/store';
-import { getBooksSearchRequest } from '../actions/types';
+import { getBookIsbnSearchRequest, getBooksSearchRequest } from '../actions/types';
 
 const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,7 +39,7 @@ const SearchPage = () => {
   const [endMonth, setEndMonth] = useState('');
   const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 
-  const [formData, setFormData] = useState<SearchType>({
+  const [formData, setFormData] = useState<searchType>({
     title: '',
     author: '',
     publisher: '',
@@ -46,6 +47,8 @@ const SearchPage = () => {
     startDate: '',
     endDate: '',
   });
+
+  const [isbn, setIsbn] = useState<isbnType>('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -58,6 +61,12 @@ const SearchPage = () => {
       ...prevState,
       [targetName]: targetValue,
     }));
+  };
+
+  const handleIsbnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    console.log('isbn value는 이렇게 생겼다 -> ', value);
+    setIsbn(value);
   };
 
   const handleChangeDateRange = (event: ChangeEvent<HTMLInputElement> | SelectChangeEvent) => {
@@ -172,6 +181,20 @@ const SearchPage = () => {
       startDate: '',
       endDate: '',
     });
+  };
+
+  const handleIsbnSearch = () => {
+    console.log('[01] isbn뭐야? ', isbn);
+    if (!isbn) {
+      alert('ISBN을 입력해주세요.');
+      return;
+    }
+    console.log('[02] isbn 찾기버튼 눌러짐');
+    dispatch(getBookIsbnSearchRequest(isbn));
+    console.log('[03] isbn 찾기버튼 눌려서 디스패치 날라감');
+
+    router.push('/search/result');
+    setIsbn('');
   };
 
   return (
@@ -441,8 +464,8 @@ const SearchPage = () => {
                       fullWidth
                       placeholder="-없이 숫자만 입력하세요."
                       variant="outlined"
-                      // value={formData.isbn}
-                      // onChange={handleChange}
+                      value={isbn}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleIsbnChange(e)}
                       sx={{ flex: 1 }}
                     />
                   </Box>
@@ -454,6 +477,7 @@ const SearchPage = () => {
                       disableRipple
                       variant="contained"
                       color="success"
+                      onClick={handleIsbnSearch}
                       sx={{
                         mt: 0,
                         backgroundColor: (theme) => theme.palette.primary.main,

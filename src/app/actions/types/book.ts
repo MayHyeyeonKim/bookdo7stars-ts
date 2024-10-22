@@ -14,6 +14,9 @@ import {
   GET_BOOKS_SEARCH_REQUEST,
   GET_BOOKS_SEARCH_SUCCESS,
   GET_BOOKS_SEARCH_FAILURE,
+  GET_BOOK_ISBN_SEARCH_REQUEST,
+  GET_BOOK_ISBN_SEARCH_SUCCESS,
+  GET_BOOK_ISBN_SEARCH_FAILURE,
 } from '../constants';
 
 // Action type
@@ -89,6 +92,22 @@ export interface GetBooksSearchFailureAction {
   error: string;
 }
 
+//Book ISBN Search
+export interface GetBookIsbnSearchRequestAction {
+  type: typeof GET_BOOK_ISBN_SEARCH_REQUEST;
+  isbn: string | undefined;
+}
+
+export interface GetBookIsbnSearchSuccessAction {
+  type: typeof GET_BOOK_ISBN_SEARCH_SUCCESS;
+  payload: Book;
+}
+
+export interface GetBookIsbnSearchFailureAction {
+  type: typeof GET_BOOK_ISBN_SEARCH_FAILURE;
+  error: string;
+}
+
 //Union type
 export type BookActionTypes =
   | GetAllBooksRequestAction
@@ -103,7 +122,10 @@ export type BookActionTypes =
   | ResetGroupBooksAction
   | GetBooksSearchRequestAction
   | GetBooksSearchSuccessAction
-  | GetBooksSearchFailureAction;
+  | GetBooksSearchFailureAction
+  | GetBookIsbnSearchRequestAction
+  | GetBookIsbnSearchSuccessAction
+  | GetBookIsbnSearchFailureAction;
 
 // Action creater
 
@@ -158,6 +180,22 @@ export const getBooksSearchSuccess = (
 
 export const getBooksSearchFailure = (error: string): GetBooksSearchFailureAction => ({
   type: GET_BOOKS_SEARCH_FAILURE,
+  error,
+});
+
+//Book ISBN Search
+export const getBookIsbnSearchRequest = (isbn: GetBookIsbnSearchRequestAction['isbn']): GetBookIsbnSearchRequestAction => ({
+  type: GET_BOOK_ISBN_SEARCH_REQUEST,
+  isbn,
+});
+
+export const getBookIsbnSearchSuccess = (payload: GetBookIsbnSearchSuccessAction['payload']): GetBookIsbnSearchSuccessAction => ({
+  type: GET_BOOK_ISBN_SEARCH_SUCCESS,
+  payload,
+});
+
+export const getBookIsbnSearchFailure = (error: string): GetBookIsbnSearchFailureAction => ({
+  type: GET_BOOK_ISBN_SEARCH_FAILURE,
   error,
 });
 

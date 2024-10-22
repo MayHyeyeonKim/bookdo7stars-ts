@@ -15,8 +15,17 @@ import {
   GET_BOOKS_SEARCH_REQUEST,
   GET_BOOKS_SEARCH_SUCCESS,
   GET_BOOKS_SEARCH_FAILURE,
+  GET_BOOK_ISBN_SEARCH_REQUEST,
+  GET_BOOK_ISBN_SEARCH_SUCCESS,
+  GET_BOOK_ISBN_SEARCH_FAILURE,
 } from '../actions/constants';
-import { GetAllBooksRequestAction, GetBookRequestAction, GetBooksByGroupRequestAction, GetBooksSearchRequestAction } from '../actions/types';
+import {
+  GetAllBooksRequestAction,
+  GetBookRequestAction,
+  GetBooksByGroupRequestAction,
+  GetBooksSearchRequestAction,
+  GetBookIsbnSearchRequestAction,
+} from '../actions/types';
 
 function getAllBooksAPI(page: number, pageSize: number) {
   return axios.get(`/book?page=${page}&pageSize=${pageSize}`);
@@ -81,6 +90,32 @@ export function* getBooksSearch(action: GetBooksSearchRequestAction): SagaIterat
   }
 }
 
+function getBookIsbnSearchAPI(isbn: string) {
+  console.log('API 요청 URL: ', `/search/${isbn}`);
+  return axios.get(`/search/${isbn}`);
+}
+
+export function* getBookIsbnSearch(action: GetBookIsbnSearchRequestAction): SagaIterator {
+  try {
+    console.log('[05] isbn서치사가이다! data잘들어왔을까?', action.isbn);
+    if (!action.isbn) {
+      console.log('ISBN이 없습니다. API 요청을 건너뜁니다.');
+      return;
+    }
+    const response: any = yield call(getBookIsbnSearchAPI, action.isbn);
+    console.log('잘받아오니?', response.data.book);
+    yield put({
+      type: GET_BOOK_ISBN_SEARCH_SUCCESS,
+      payload: response.data.book,
+    });
+  } catch (error: any) {
+    yield put({
+      type: GET_BOOK_ISBN_SEARCH_FAILURE,
+      error: error.response.data.message || 'Error occurred while fetching the book.',
+    });
+  }
+}
+
 function getBookAPI(id: GetBookRequestAction['data']) {
   return axios.get(`/book/detail/${id}`);
 }
@@ -109,8 +144,12 @@ function* watchGetBooksByGroup() {
 }
 
 function* watchGetBooksSearch() {
-  console.log('여기는 사가의 서치 와쳐이다!!');
   yield takeLatest(GET_BOOKS_SEARCH_REQUEST, getBooksSearch);
+}
+
+function* watchGetBookIsbnSearch() {
+  console.log('[04] 사가에서 ISBN 검색 액션을 감지했습니다.');
+  yield takeLatest(GET_BOOK_ISBN_SEARCH_REQUEST, getBookIsbnSearch);
 }
 
 function* watchGetBook() {
@@ -118,5 +157,5 @@ function* watchGetBook() {
 }
 
 export default function* bookSaga() {
-  yield all([fork(watchGetAllBooks), fork(watchGetBook), fork(watchGetBooksByGroup), fork(watchGetBooksSearch)]);
+  yield all([fork(watchGetAllBooks), fork(watchGetBook), fork(watchGetBooksByGroup), fork(watchGetBooksSearch), fork(watchGetBookIsbnSearch)]);
 }
