@@ -1,4 +1,4 @@
-export type searchType = {
+export type SearchType = {
   title: string | undefined;
   author: string | undefined;
   publisher: string | undefined;
@@ -6,3 +6,5 @@ export type searchType = {
   startDate: string | undefined;
   endDate: string | undefined;
 };
+
+//안돠?
