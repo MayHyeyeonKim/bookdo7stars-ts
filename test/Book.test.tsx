@@ -1,16 +1,17 @@
+import '@testing-library/jest-dom';
 import { getBookRequest } from '@/app/actions/types';
 import Book from '@/app/book/[bookId]/page';
 import BookOverview from '@/app/components/BookDetail/BookOverview';
 import rootReducer from '@/app/reducers';
 import rootSaga from '@/app/sagas';
-import { configureStore } from '@reduxjs/toolkit';
 import { render, screen, waitFor } from '@testing-library/react';
-import { useParams, useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
+import { useParams } from 'next/navigation';
 import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
 import createSagaMiddleware from 'redux-saga';
 
 import { mockBooks } from './mocks/Books';
+
 const sagaMiddleware = createSagaMiddleware();
 const mockStore = configureStore([sagaMiddleware]);
 const store = mockStore({
@@ -52,9 +53,9 @@ describe('Book', () => {
         <Book />
       </Provider>,
     );
+
     expect(screen.getByTestId('book-overview-box')).toBeInTheDocument();
     expect(screen.getByTestId('book-detail-box')).toBeInTheDocument();
-    //closed it
   });
 
   it('should dispatch getBookRequest when it is rendered', async () => {
@@ -74,8 +75,6 @@ describe('Book', () => {
 });
 
 describe('BookOverview', () => {
-  // 책이 있으면 BookBasicInfo가 렌더링된다
-  // 책이 없으면 에러메세지가 나와야 한다.
   it('should render BookBasicInfo when book is provided', () => {
     const mockBook = mockBooks[0];
     render(<BookOverview book={mockBook} />);

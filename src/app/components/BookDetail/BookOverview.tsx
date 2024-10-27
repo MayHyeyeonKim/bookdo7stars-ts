@@ -16,10 +16,10 @@ interface BookOverviewProps {
 const BookOverview: React.FC<BookOverviewProps> = ({ book }) => {
   const [address, setAddress] = useState('Select your region');
   if (!book) {
-    return <p>책 정보를 읽어오지 못했습니다.</p>;
+    return <p>Unable to retrieve book information</p>;
   }
   return (
-    <Box sx={{ mt: { xs: 8, md: 16 } }}>
+    <Box data-testid="book-overview-box" sx={{ mt: { xs: 8, md: 16 } }}>
       <Container sx={{ mb: 4 }}>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
@@ -29,7 +29,7 @@ const BookOverview: React.FC<BookOverviewProps> = ({ book }) => {
             {book ? (
               <BookBasicInfo title={book.title} author={book.author} publisher={book.publisher} priceStandard={book.priceStandard} />
             ) : (
-              <p>책 정보를 읽어오지 못했습니다.</p>
+              <p>Unable to retrieve book information</p>
             )}
             <BookToCartButton book={book} />
             <Box mt={3}>
