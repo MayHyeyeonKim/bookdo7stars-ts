@@ -68,15 +68,12 @@ export function* getBooksByGroup(action: GetBooksByGroupRequestAction): SagaIter
 
 function getBooksSearchAPI(data: GetBooksSearchRequestAction['data']) {
   const queryString: string = new URLSearchParams(data as any).toString();
-  console.log('여기는 아시오스다! ', queryString);
   return axios.get(`/book?${queryString}`);
 }
 
 export function* getBooksSearch(action: GetBooksSearchRequestAction): SagaIterator {
   try {
-    console.log('11여기는 서치사가이다! data잘들어왔을까?', action.data);
     const response: any = yield call(getBooksSearchAPI, action.data);
-    console.log('잘받아오니?', response.data.books);
     yield put({
       type: GET_BOOKS_SEARCH_SUCCESS,
       payload: response.data.books,
@@ -91,19 +88,15 @@ export function* getBooksSearch(action: GetBooksSearchRequestAction): SagaIterat
 }
 
 function getBookIsbnSearchAPI(isbn: string) {
-  console.log('API 요청 URL: ', `/search/${isbn}`);
   return axios.get(`/book/search/${isbn}`);
 }
 
 export function* getBookIsbnSearch(action: GetBookIsbnSearchRequestAction): SagaIterator {
   try {
-    console.log('[05] isbn서치사가이다! data잘들어왔을까?', action.isbn);
     if (!action.isbn) {
-      console.log('ISBN이 없습니다. API 요청을 건너뜁니다.');
       return;
     }
     const response: any = yield call(getBookIsbnSearchAPI, action.isbn);
-    console.log('잘받아오니?', response.data.book);
     yield put({
       type: GET_BOOK_ISBN_SEARCH_SUCCESS,
       payload: response.data.book,
@@ -148,7 +141,6 @@ function* watchGetBooksSearch() {
 }
 
 function* watchGetBookIsbnSearch() {
-  console.log('[04] 사가에서 ISBN 검색 액션을 감지했습니다.');
   yield takeLatest(GET_BOOK_ISBN_SEARCH_REQUEST, getBookIsbnSearch);
 }
 

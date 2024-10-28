@@ -78,7 +78,7 @@ export interface ResetGroupBooksAction {
 //Book Search
 export interface GetBooksSearchRequestAction {
   type: typeof GET_BOOKS_SEARCH_REQUEST;
-  data: { title?: string; author?: string; publisher?: string; sortOrder?: string; startDate?: string; endDate?: string };
+  data: { title?: string; author?: string; publisher?: string; orderTerm?: string; start_date?: string; end_date?: string; page?: number; pageSize?: number };
 }
 
 export interface GetBooksSearchSuccessAction {

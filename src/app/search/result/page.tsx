@@ -1,17 +1,57 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 import { Container, Box, Pagination, Typography } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useSearchParams } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { getBookIsbnSearchRequest, getBooksSearchRequest } from '../../actions/types';
 import BooksContainer from '../../components/Book/BooksContainer';
 import { RootState } from '../../reducers';
+import { AppDispatch } from '../../store/store';
+import { isbnType } from '../types/isbnType';
+import { SearchType } from '../types/searchType';
 
 const ResultPage = () => {
+  const queryParams = useSearchParams();
+  const isbn = queryParams.get('isbn');
+  const searchCondition = queryParams.get('searchCondition');
+
+  const parsedIsbn: isbnType = useMemo(() => {
+    return isbn ? JSON.parse(decodeURIComponent(isbn)) : null;
+  }, [isbn]);
+
+  const parsedSearchCondition: SearchType = useMemo(() => {
+    return searchCondition ? JSON.parse(decodeURIComponent(searchCondition)) : null;
+  }, [searchCondition]);
+
+  const dispatch = useDispatch<AppDispatch>();
   const [page, setPage] = useState(1);
   const { books, count } = useSelector((store: RootState) => store.book);
   const booksPerPage = 20;
   const pageCount = Math.ceil(count / booksPerPage);
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+    if (parsedSearchCondition) {
+      parsedSearchCondition.page = value;
+      parsedSearchCondition.pageSize = booksPerPage;
+      dispatch(getBooksSearchRequest(parsedSearchCondition));
+    }
+    if (parsedIsbn) {
+      dispatch(getBookIsbnSearchRequest(parsedIsbn));
+    }
+  };
+
+  useEffect(() => {
+    if (parsedIsbn) {
+      dispatch(getBookIsbnSearchRequest(parsedIsbn));
+    }
+    if (parsedSearchCondition) {
+      parsedSearchCondition.pageSize = booksPerPage;
+      dispatch(getBooksSearchRequest(parsedSearchCondition));
+    }
+  }, [dispatch, parsedIsbn, booksPerPage, parsedSearchCondition]);
 
   return (
     <>
@@ -23,6 +63,7 @@ const ResultPage = () => {
               <Pagination
                 count={pageCount}
                 page={page}
+                onChange={handlePageChange}
                 color="primary"
                 showFirstButton
                 showLastButton

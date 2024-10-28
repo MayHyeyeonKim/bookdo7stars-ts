@@ -32,6 +32,9 @@ const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
+  const initialPageSize = 20;
+  const initialPage = 1;
+
   const [dateRange, setDateRange] = useState('all');
   const [startYear, setStartYear] = useState('');
   const [endYear, setEndYear] = useState('');
@@ -40,16 +43,19 @@ const SearchPage = () => {
   const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 
   const [formData, setFormData] = useState<SearchType>({
+    page: initialPage,
+    pageSize: initialPageSize,
     title: '',
     author: '',
     publisher: '',
-    sortOrder: 'sales',
+    orderTerm: 'sales',
     startDate: '',
     endDate: '',
   });
 
   const [isbn, setIsbn] = useState<isbnType>('');
 
+  // theme.breakpoints를 사용해 특정 화면 크기 이하(예: 모바일)일 때 조건부 스타일을 손쉽게 적용할 수
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -162,67 +168,34 @@ const SearchPage = () => {
     }
   }, [start_date, customDate, formData.startDate, formData.endDate]);
 
-  // const handleSearch = () => {
-  //   dispatch(getBooksSearchRequest(formData));
-  //   console.log('라우팅 경로: ', '/search/result', formData);
-
-  //   router.push('/search/result');
-
-  //   setStartMonth('');
-  //   setStartYear('');
-  //   setEndMonth('');
-  //   setEndYear('');
-  //   setDateRange('all');
-  //   setFormData({
-  //     title: '',
-  //     author: '',
-  //     publisher: '',
-  //     sortOrder: '',
-  //     startDate: '',
-  //     endDate: '',
-  //   });
-  // };
-
-  // const handleIsbnSearch = () => {
-  //   console.log('[01] isbn뭐야? ', isbn);
-  //   if (!isbn) {
-  //     alert('ISBN을 입력해주세요.');
-  //     return;
-  //   }
-  //   console.log('[02] isbn 찾기버튼 눌러짐');
-  //   dispatch(getBookIsbnSearchRequest(isbn));
-  //   console.log('[03] isbn 찾기버튼 눌려서 디스패치 날라감');
-
-  //   router.push('/search/result');
-  //   setIsbn('');
-  // };
-
   const handleSearch = () => {
     if (isbn) {
-      // ISBN 값이 있으면 ISBN으로 검색
-      console.log('[01] isbn뭐야? ', isbn);
       dispatch(getBookIsbnSearchRequest(isbn));
-      console.log('[02] isbn 찾기버튼 눌려서 디스패치 날라감');
       setIsbn('');
     } else {
-      // ISBN 값이 없으면 다른 검색 조건으로 검색
-      console.log('라우팅 경로: ', '/search/result', formData);
       dispatch(getBooksSearchRequest(formData));
     }
 
-    // 공통 동작: 페이지 이동 및 상태 초기화
-    router.push('/search/result');
+    // encodeURIComponent:  문자열을 URL에 안전하게 포함할 수 있도록 인코딩해주는 JavaScript 함수
+    const searchConditionString = encodeURIComponent(JSON.stringify(formData));
+    const isbnString = encodeURIComponent(JSON.stringify(isbn));
+    // JSON.stringify를 사용하는 이유는 객체 형태의 formData와 isbn 데이터를 URL 쿼리 파라미터에 포함하기 위해 문자열로 변환해야 하기 때문.
+    // URL 쿼리 파라미터는 문자열만 허용하므로, 객체나 배열을 그대로 URL에 넣을 수 없닷!
+    router.push(`/search/result?isbn=${isbnString}&searchCondition=${searchConditionString}`);
 
+    // isbn은 ISBN 검색 후에만 초기화하고, formData는 모든 검색 요청 후에 초기화
     setStartMonth('');
     setStartYear('');
     setEndMonth('');
     setEndYear('');
     setDateRange('all');
     setFormData({
+      page: initialPage,
+      pageSize: initialPageSize,
       title: '',
       author: '',
       publisher: '',
-      sortOrder: '',
+      orderTerm: '',
       startDate: '',
       endDate: '',
     });
@@ -385,7 +358,7 @@ const SearchPage = () => {
                       display="flex"
                       flexDirection={isMobile ? 'column' : 'row'}
                       alignItems="center"
-                      flexWrap={isMobile ? 'wrap' : 'nowrap'}
+                      flexWrap={isMobile ? 'wrap' : 'nowrap'} //wrap은 한 줄에 다 들어가지 않으면 자동으로 다음줄로 넘어가게
                       mb={2}
                       sx={{ ml: isMobile ? '103px' : '101px', width: '80%' }}>
                       <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} sx={{ width: isMobile ? '100%' : 'auto' }}>
@@ -447,7 +420,7 @@ const SearchPage = () => {
                         정렬순서
                       </Typography>
                     </Box>
-                    <Select name="sortOrder" value={formData.sortOrder} onChange={(e: SelectChangeEvent) => handleChange(e)} displayEmpty sx={{ flex: 1 }}>
+                    <Select name="orderTerm" value={formData.orderTerm} onChange={(e: SelectChangeEvent) => handleChange(e)} displayEmpty sx={{ flex: 1 }}>
                       <MenuItem value="" disabled>
                         정렬순서
                       </MenuItem>
