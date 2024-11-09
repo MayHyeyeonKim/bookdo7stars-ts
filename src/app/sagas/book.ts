@@ -73,7 +73,9 @@ function getBooksSearchAPI(data: GetBooksSearchRequestAction['data']) {
 
 export function* getBooksSearch(action: GetBooksSearchRequestAction): SagaIterator {
   try {
+    console.log('액션 잘 왔어? ', action);
     const response: any = yield call(getBooksSearchAPI, action.data);
+    console.log('백엔드 갔다 왔어?', response, '잘 받아왔어');
     yield put({
       type: GET_BOOKS_SEARCH_SUCCESS,
       payload: response.data.books,
@@ -137,6 +139,7 @@ function* watchGetBooksByGroup() {
 }
 
 function* watchGetBooksSearch() {
+  console.log('와쳐까지 잘 들어왔어');
   yield takeLatest(GET_BOOKS_SEARCH_REQUEST, getBooksSearch);
 }
 
