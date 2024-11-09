@@ -1,10 +1,10 @@
 export type SearchType = {
-  page: number | undefined;
-  pageSize: number | undefined;
   title: string | undefined;
   author: string | undefined;
   publisher: string | undefined;
   orderTerm: string;
-  startDate: string | undefined;
-  endDate: string | undefined;
+  start_date: string | undefined;
+  end_date: string | undefined;
+  page: number | undefined;
+  pageSize: number | undefined;
 };

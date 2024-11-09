@@ -31,10 +31,8 @@ import { AppDispatch } from '../store/store';
 const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-
   const initialPageSize = 20;
   const initialPage = 1;
-
   const [dateRange, setDateRange] = useState('all');
   const [startYear, setStartYear] = useState('');
   const [endYear, setEndYear] = useState('');
@@ -43,19 +41,18 @@ const SearchPage = () => {
   const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 
   const [formData, setFormData] = useState<SearchType>({
-    page: initialPage,
-    pageSize: initialPageSize,
     title: '',
     author: '',
     publisher: '',
     orderTerm: 'sales',
-    startDate: '',
-    endDate: '',
+    start_date: '',
+    end_date: '',
+    page: initialPage,
+    pageSize: initialPageSize,
   });
 
   const [isbn, setIsbn] = useState<isbnType>('');
 
-  // theme.breakpoints를 사용해 특정 화면 크기 이하(예: 모바일)일 때 조건부 스타일을 손쉽게 적용할 수
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -71,7 +68,6 @@ const SearchPage = () => {
 
   const handleIsbnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log('isbn value는 이렇게 생겼다 -> ', value);
     setIsbn(value);
   };
 
@@ -98,7 +94,6 @@ const SearchPage = () => {
   };
 
   const handleDateRange = (e: React.MouseEvent<HTMLElement>, newValue: string) => {
-    console.log('선택된 값:', newValue);
     setDateRange(newValue);
     findStartDate(newValue);
     setStartMonth('');
@@ -153,20 +148,20 @@ const SearchPage = () => {
     if (start_date && !customDate) {
       setFormData((prevState: any) => ({
         ...prevState,
-        startDate: start_date,
-        endDate: currentEndDate,
+        start_date: start_date,
+        end_date: currentEndDate,
       }));
     }
     if (customDate) {
-      if (formData.startDate != customDate.start || formData.endDate != customDate.end) {
+      if (formData.start_date != customDate.start || formData.end_date != customDate.end) {
         setFormData((prevState: any) => ({
           ...prevState,
-          startDate: customDate.start,
-          endDate: customDate.end,
+          start_date: customDate.start,
+          end_date: customDate.end,
         }));
       }
     }
-  }, [start_date, customDate, formData.startDate, formData.endDate]);
+  }, [start_date, customDate, formData.start_date, formData.end_date]);
 
   const handleSearch = () => {
     if (isbn) {
@@ -176,28 +171,24 @@ const SearchPage = () => {
       dispatch(getBooksSearchRequest(formData));
     }
 
-    // encodeURIComponent:  문자열을 URL에 안전하게 포함할 수 있도록 인코딩해주는 JavaScript 함수
     const searchConditionString = encodeURIComponent(JSON.stringify(formData));
     const isbnString = encodeURIComponent(JSON.stringify(isbn));
-    // JSON.stringify를 사용하는 이유는 객체 형태의 formData와 isbn 데이터를 URL 쿼리 파라미터에 포함하기 위해 문자열로 변환해야 하기 때문.
-    // URL 쿼리 파라미터는 문자열만 허용하므로, 객체나 배열을 그대로 URL에 넣을 수 없닷!
     router.push(`/search/result?isbn=${isbnString}&searchCondition=${searchConditionString}`);
 
-    // isbn은 ISBN 검색 후에만 초기화하고, formData는 모든 검색 요청 후에 초기화
     setStartMonth('');
     setStartYear('');
     setEndMonth('');
     setEndYear('');
     setDateRange('all');
     setFormData({
-      page: initialPage,
-      pageSize: initialPageSize,
       title: '',
       author: '',
       publisher: '',
       orderTerm: '',
-      startDate: '',
-      endDate: '',
+      start_date: '',
+      end_date: '',
+      page: initialPage,
+      pageSize: initialPageSize,
     });
   };
 
@@ -208,7 +199,7 @@ const SearchPage = () => {
           <Paper elevation={0} sx={{ p: 1 }}>
             <Box
               sx={{
-                backgroundColor: (theme) => theme.palette.third.main,
+                backgroundColor: (theme) => theme.palette.third?.main || '#000',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: isMobile ? 'center' : 'flex-start',
@@ -358,7 +349,7 @@ const SearchPage = () => {
                       display="flex"
                       flexDirection={isMobile ? 'column' : 'row'}
                       alignItems="center"
-                      flexWrap={isMobile ? 'wrap' : 'nowrap'} //wrap은 한 줄에 다 들어가지 않으면 자동으로 다음줄로 넘어가게
+                      flexWrap={isMobile ? 'wrap' : 'nowrap'}
                       mb={2}
                       sx={{ ml: isMobile ? '103px' : '101px', width: '80%' }}>
                       <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} sx={{ width: isMobile ? '100%' : 'auto' }}>
