@@ -16,7 +16,16 @@ interface BookContainerProps {
   resultCount: number;
 }
 
-const SearchResultBooksContainer: React.FC<BookContainerProps> = ({ searchTerm, resultCount, books, count, title, handlePageChange, booksPerPage, currentPage }) => {
+const SearchResultBooksContainer: React.FC<BookContainerProps> = ({
+  searchTerm,
+  resultCount,
+  books,
+  count,
+  title,
+  handlePageChange,
+  booksPerPage,
+  currentPage,
+}) => {
   const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
   const [sortBy, setSortBy] = useState('accuracy');
   const pageCount = Math.ceil(count / booksPerPage);
@@ -30,7 +39,7 @@ const SearchResultBooksContainer: React.FC<BookContainerProps> = ({ searchTerm, 
   };
 
   useEffect(() => {
-    console.log("선택된 책들: ", selectedBooks);
+    console.log('선택된 책들: ', selectedBooks);
   }, [selectedBooks]);
 
   const handleAddToCart = () => {
@@ -59,7 +68,7 @@ const SearchResultBooksContainer: React.FC<BookContainerProps> = ({ searchTerm, 
       // 여기에서 API 요청을 보내거나 상태를 업데이트해서 데이터를 다시 불러옵니다.
     }
   };
-  
+
   return (
     <Container
       sx={{
@@ -77,12 +86,12 @@ const SearchResultBooksContainer: React.FC<BookContainerProps> = ({ searchTerm, 
         </Typography>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
-    <Typography variant="h6" color="textPrimary" sx={{color: 'gray'}}>
-      '{searchTerm}' 검색 결과 총 {resultCount}건
-    </Typography>
-  </Box>
+        <Typography variant="h6" color="textPrimary" sx={{ color: 'gray' }}>
+          '{searchTerm}' 검색 결과 총 {resultCount}건
+        </Typography>
+      </Box>
 
-  <Box sx={{ display: 'flex', justifyContent: 'center', mb: '20px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: '20px' }}>
         <Pagination
           count={pageCount}
           page={currentPage}
@@ -103,38 +112,34 @@ const SearchResultBooksContainer: React.FC<BookContainerProps> = ({ searchTerm, 
         />
       </Box>
 
-      <Box mb={2} sx={{ borderBottom: '0.5px solid #ccc', paddingBottom: '0px'}}>
-      <ToggleButtonGroup
-        value={sortBy}
-        exclusive
-        onChange={handleSortChange}
-        aria-label="Sort options"
-      >
+      <Box mb={2} sx={{ borderBottom: '0.5px solid #ccc', paddingBottom: '0px' }}>
+        <ToggleButtonGroup value={sortBy} exclusive onChange={handleSortChange} aria-label="Sort options">
+          <ToggleButton value="accuracy" aria-label="정확도순" sx={{ borderBottomLeftRadius: '0px' }}>
+            정확도순
+          </ToggleButton>
+          <ToggleButton value="sales" aria-label="판매량순">
+            판매량순
+          </ToggleButton>
+          <ToggleButton value="publication" aria-label="출간일순">
+            출간일순
+          </ToggleButton>
+          <ToggleButton value="title" aria-label="상품명순">
+            상품명순
+          </ToggleButton>
+          <ToggleButton value="rank" aria-label="평점순">
+            평점순
+          </ToggleButton>
+          <ToggleButton value="review" aria-label="리뷰순">
+            {' '}
+            {/*  저자순으로 바꿀까요? */}
+            리뷰순
+          </ToggleButton>
+          <ToggleButton value="lowPrice" aria-label="저가격순" sx={{ borderBottomRightRadius: '0px' }}>
+            저가격순
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
 
-        <ToggleButton value="accuracy" aria-label="정확도순" sx={{borderBottomLeftRadius:"0px"}}>
-          정확도순
-        </ToggleButton>
-        <ToggleButton value="sales" aria-label="판매량순">
-          판매량순
-        </ToggleButton>
-        <ToggleButton value="publication" aria-label="출간일순">
-          출간일순
-        </ToggleButton>
-        <ToggleButton value="title" aria-label="상품명순">
-          상품명순
-        </ToggleButton>
-        <ToggleButton value="rank" aria-label="평점순">
-          평점순
-        </ToggleButton>
-        <ToggleButton value="review" aria-label="리뷰순"> {/*  저자순으로 바꿀까요? */}
-          리뷰순
-        </ToggleButton>
-        <ToggleButton value="lowPrice" aria-label="저가격순" sx={{borderBottomRightRadius:"0px"}}>
-          저가격순
-        </ToggleButton>
-      </ToggleButtonGroup>
-    </Box>
-      
       <Box sx={{ display: 'flex', width: '100%', alignItems: 'end', justifyContent: 'end', gap: '12px', marginBottom: '20px' }}>
         <Button variant="outlined" onClick={handleSelectAll}>
           {selectedBooks.length === books.length ? '전체 해제' : '전체 선택'}
