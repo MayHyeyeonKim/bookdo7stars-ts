@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useMemo } from 'react';
 
-import { Container, Box, Pagination, Typography } from '@mui/material';
+import { Container, Box, Typography } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -16,6 +16,7 @@ const ResultPage = () => {
   const queryParams = useSearchParams();
   const isbn = queryParams.get('isbn');
   const searchCondition = queryParams.get('searchCondition');
+
   const [page, setPage] = useState(1);
 
   const parsedIsbn: isbnType = useMemo(() => {
@@ -28,7 +29,7 @@ const ResultPage = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const { books, count } = useSelector((store: RootState) => store.book);
+  const { books, count, isGetBooksSearchLoading } = useSelector((store: RootState) => store.book);
   const booksPerPage = 20;
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -65,8 +66,10 @@ const ResultPage = () => {
               handlePageChange={handlePageChange}
               booksPerPage={booksPerPage}
               currentPage={page}
-              searchTerm={parsedSearchCondition?.title || ""}
+              searchTerm={parsedSearchCondition?.title || ''}
               resultCount={count}
+              parsedSearchCondition={parsedSearchCondition}
+              isGetBooksSearchLoading={isGetBooksSearchLoading}
             />
           </>
         ) : (
