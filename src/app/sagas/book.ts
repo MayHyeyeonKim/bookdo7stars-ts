@@ -27,13 +27,15 @@ import {
   GetBookIsbnSearchRequestAction,
 } from '../actions/types';
 
-function getAllBooksAPI(page: number, pageSize: number) {
-  return axios.get(`/book?page=${page}&pageSize=${pageSize}`);
+function getAllBooksAPI(page: number, pageSize: number, categoryId: number) {
+  return axios.get(`/book?page=${page}&pageSize=${pageSize}&category_id=${categoryId}`);
 }
 
 export function* getAllBooks(action: GetAllBooksRequestAction): SagaIterator {
   try {
-    const response: any = yield call(getAllBooksAPI, action.page, action.pageSize);
+    console.log('디스패치 잘 들어왔나?', action);
+    const response: any = yield call(getAllBooksAPI, action.page, action.pageSize, action.categoryId);
+    console.log('response잘 받아오니?=>>>>>>>>>>>>>> ', response);
     yield put({
       type: GET_ALL_BOOKS_SUCCESS,
       payload: response.data.books,
@@ -131,6 +133,7 @@ export function* getBook(action: GetBookRequestAction): SagaIterator {
 }
 
 function* watchGetAllBooks() {
+  console.log('getAllbooks와쳐까지 잘 들어왔어');
   yield takeLatest(GET_ALL_BOOKS_REQUEST, getAllBooks);
 }
 
@@ -139,7 +142,6 @@ function* watchGetBooksByGroup() {
 }
 
 function* watchGetBooksSearch() {
-  console.log('와쳐까지 잘 들어왔어');
   yield takeLatest(GET_BOOKS_SEARCH_REQUEST, getBooksSearch);
 }
 

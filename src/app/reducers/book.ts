@@ -62,8 +62,12 @@ export const initialState: InitialState = {
 function bookReducer(state = initialState, action: BookActionTypes) {
   switch (action.type) {
     case GET_ALL_BOOKS_REQUEST:
+      console.log('여기는 겟올북스 리퀘스트 리듀서이다!');
       return { ...state, isGetAllBooksLoading: true };
     case GET_ALL_BOOKS_SUCCESS:
+      console.log('여기는 겟올북스 석세스 리듀서이다!');
+      console.log('기존 books 상태:', state.books); // 이전 상태 출력
+      console.log('새로 추가될 books:', action.payload); // 액션으로 전달된 books 출력
       return { ...state, isGetAllBooksLoading: false, isGetAllBooksDone: true, books: action.payload, count: action.count };
     case GET_ALL_BOOKS_FAILURE:
       return { ...state, isGetAllBooksLoading: false, isGetAllBooksDone: false, isGetAllBooksError: action.error };
