@@ -10,13 +10,13 @@ import {
   GET_BOOKS_BY_GROUP_FAILURE,
   GET_BOOKS_BY_GROUP_REQUEST,
   GET_BOOKS_BY_GROUP_SUCCESS,
-  RESET_GROUP_BOOKS,
   GET_BOOKS_SEARCH_REQUEST,
   GET_BOOKS_SEARCH_SUCCESS,
   GET_BOOKS_SEARCH_FAILURE,
   GET_BOOK_ISBN_SEARCH_REQUEST,
   GET_BOOK_ISBN_SEARCH_SUCCESS,
   GET_BOOK_ISBN_SEARCH_FAILURE,
+  RESET_GROUP_BOOKS,
 } from '../constants';
 
 // Action type
@@ -27,7 +27,6 @@ export interface GetAllBooksRequestAction {
   type: typeof GET_ALL_BOOKS_REQUEST;
   page: number;
   pageSize: number;
-  categoryId: number;
 }
 
 export interface GetAllBooksSuccessAction {
@@ -55,31 +54,22 @@ export interface GetBooksByGroupFailureAction {
   type: typeof GET_BOOKS_BY_GROUP_FAILURE;
   error: string;
 }
-
-// Book Detail
-export interface GetBookRequestAction {
-  type: typeof GET_BOOK_REQUEST;
-  data: string;
-}
-
-export interface GetBookSuccessAction {
-  type: typeof GET_BOOK_SUCCESS;
-  payload: string;
-}
-
-export interface GetBookFailureAction {
-  type: typeof GET_BOOK_FAILURE;
-  error: string;
-}
-
-export interface ResetGroupBooksAction {
-  type: typeof RESET_GROUP_BOOKS;
-}
-
 //Book Search
 export interface GetBooksSearchRequestAction {
   type: typeof GET_BOOKS_SEARCH_REQUEST;
-  data: { title?: string; author?: string; publisher?: string; orderTerm?: string; start_date?: string; end_date?: string; page?: number; pageSize?: number };
+  data: {
+    searchTerm?: string;
+    title?: string;
+    author?: string;
+    publisher?: string;
+    orderTerm?: string;
+    start_date?: string;
+    end_date?: string;
+    page?: number;
+    pageSize?: number;
+    start_price?: number;
+    end_price?: number;
+  };
 }
 
 export interface GetBooksSearchSuccessAction {
@@ -109,6 +99,26 @@ export interface GetBookIsbnSearchFailureAction {
   error: string;
 }
 
+// Book Detail
+export interface GetBookRequestAction {
+  type: typeof GET_BOOK_REQUEST;
+  data: string;
+}
+
+export interface GetBookSuccessAction {
+  type: typeof GET_BOOK_SUCCESS;
+  payload: Book;
+}
+
+export interface GetBookFailureAction {
+  type: typeof GET_BOOK_FAILURE;
+  error: string;
+}
+
+export interface ResetGroupBooksAction {
+  type: typeof RESET_GROUP_BOOKS;
+}
+
 //Union type
 export type BookActionTypes =
   | GetAllBooksRequestAction
@@ -117,13 +127,13 @@ export type BookActionTypes =
   | GetBooksByGroupRequestAction
   | GetBooksByGroupSuccessAction
   | GetBooksByGroupFailureAction
+  | GetBooksSearchRequestAction
+  | GetBooksSearchSuccessAction
+  | GetBooksSearchFailureAction
   | GetBookRequestAction
   | GetBookSuccessAction
   | GetBookFailureAction
   | ResetGroupBooksAction
-  | GetBooksSearchRequestAction
-  | GetBooksSearchSuccessAction
-  | GetBooksSearchFailureAction
   | GetBookIsbnSearchRequestAction
   | GetBookIsbnSearchSuccessAction
   | GetBookIsbnSearchFailureAction;
@@ -131,11 +141,10 @@ export type BookActionTypes =
 // Action creater
 
 //All Books
-export const getAllBooksRequest = (page: number, pageSize: number, categoryId: number): GetAllBooksRequestAction => ({
+export const getAllBooksRequest = (page: number, pageSize: number): GetAllBooksRequestAction => ({
   type: GET_ALL_BOOKS_REQUEST,
   page,
   pageSize,
-  categoryId,
 });
 
 export const getAllBooksSuccess = (payload: GetAllBooksSuccessAction['payload'], count: GetAllBooksSuccessAction['count']): GetAllBooksSuccessAction => ({

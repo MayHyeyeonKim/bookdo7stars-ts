@@ -1,6 +1,6 @@
 'use client';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import { Container, Box, Pagination } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 

@@ -8,9 +8,9 @@ import {
   GET_BOOKS_BY_GROUP_FAILURE,
   GET_BOOKS_BY_GROUP_REQUEST,
   GET_BOOKS_BY_GROUP_SUCCESS,
-  GET_BOOKS_SEARCH_FAILURE,
   GET_BOOKS_SEARCH_REQUEST,
   GET_BOOKS_SEARCH_SUCCESS,
+  GET_BOOKS_SEARCH_FAILURE,
   GET_BOOK_ISBN_SEARCH_REQUEST,
   GET_BOOK_ISBN_SEARCH_SUCCESS,
   GET_BOOK_ISBN_SEARCH_FAILURE,
@@ -21,6 +21,7 @@ import { Book } from '../models/book';
 
 type InitialState = {
   books: Book[];
+  searchData: {};
   count: number;
   groupBooks: Book[];
   isGetAllBooksLoading: boolean;
@@ -41,6 +42,14 @@ type InitialState = {
 
 export const initialState: InitialState = {
   books: [],
+  searchData: {
+    title: "",
+    author: "",
+    publisher: "",
+    orderTerm: "sales",
+    page: 1,
+    pageSize: 20,
+  },
   count: 0,
   groupBooks: [],
   isGetAllBooksLoading: false,
@@ -62,12 +71,8 @@ export const initialState: InitialState = {
 function bookReducer(state = initialState, action: BookActionTypes) {
   switch (action.type) {
     case GET_ALL_BOOKS_REQUEST:
-      console.log('여기는 겟올북스 리퀘스트 리듀서이다!');
       return { ...state, isGetAllBooksLoading: true };
     case GET_ALL_BOOKS_SUCCESS:
-      console.log('여기는 겟올북스 석세스 리듀서이다!');
-      console.log('기존 books 상태:', state.books); // 이전 상태 출력
-      console.log('새로 추가될 books:', action.payload); // 액션으로 전달된 books 출력
       return { ...state, isGetAllBooksLoading: false, isGetAllBooksDone: true, books: action.payload, count: action.count };
     case GET_ALL_BOOKS_FAILURE:
       return { ...state, isGetAllBooksLoading: false, isGetAllBooksDone: false, isGetAllBooksError: action.error };
@@ -80,8 +85,10 @@ function bookReducer(state = initialState, action: BookActionTypes) {
       return { ...state, isGetBooksByGroupLoading: false, isGetBooksByGroupDone: false, isGetBooksByGroupError: action.error };
 
     case GET_BOOKS_SEARCH_REQUEST:
-      return { ...state, isGetBooksSearchLoading: true };
+      console.log("여기는 리듀서의 서치 리퀘스트다!, searchData는 이렇게 생겼다!! =>>>>>>", state.searchData)
+      return { ...state, isGetBooksSearchLoading: true, searchData: action.data };
     case GET_BOOKS_SEARCH_SUCCESS:
+      console.log("여기는 리듀서의 서치 석세스다!")
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: true, books: action.payload, count: action.count };
     case GET_BOOKS_SEARCH_FAILURE:
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: false, isGetBooksSearchError: action.error };
@@ -91,12 +98,12 @@ function bookReducer(state = initialState, action: BookActionTypes) {
     case GET_BOOK_ISBN_SEARCH_SUCCESS:
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: true, books: [action.payload], count: 1 };
     case GET_BOOK_ISBN_SEARCH_FAILURE:
-      return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: false, isGetBooksSearchError: action.error };
+      return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: false, isGetBooksSearchError: action.error, books: [] };
 
     case GET_BOOK_REQUEST:
-      return { ...state, isGetBookLoaing: true };
+      return { ...state, isGetBookLoading: true };
     case GET_BOOK_SUCCESS:
-      return { ...state, isGetBookLoading: false, book: action.payload };
+      return { ...state, isGetBookLoading: false, isGetBookDone: true, book: action.payload };
     case GET_BOOK_FAILURE:
       return { ...state, isGetBookLoading: false, book: null, isGetBookError: action.error };
 

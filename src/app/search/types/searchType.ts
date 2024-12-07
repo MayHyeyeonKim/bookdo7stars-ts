@@ -1,4 +1,5 @@
 export type SearchType = {
+  searchTerm?: string | undefined;
   title: string | undefined;
   author: string | undefined;
   publisher: string | undefined;

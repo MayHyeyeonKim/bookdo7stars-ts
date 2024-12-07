@@ -27,15 +27,13 @@ import {
   GetBookIsbnSearchRequestAction,
 } from '../actions/types';
 
-function getAllBooksAPI(page: number, pageSize: number, categoryId: number) {
-  return axios.get(`/book?page=${page}&pageSize=${pageSize}&category_id=${categoryId}`);
+function getAllBooksAPI(page: number, pageSize: number) {
+  return axios.get(`/book?page=${page}&pageSize=${pageSize}`);
 }
 
 export function* getAllBooks(action: GetAllBooksRequestAction): SagaIterator {
   try {
-    console.log('디스패치 잘 들어왔나?', action);
-    const response: any = yield call(getAllBooksAPI, action.page, action.pageSize, action.categoryId);
-    console.log('response잘 받아오니?=>>>>>>>>>>>>>> ', response);
+    const response: any = yield call(getAllBooksAPI, action.page, action.pageSize);
     yield put({
       type: GET_ALL_BOOKS_SUCCESS,
       payload: response.data.books,
@@ -69,24 +67,29 @@ export function* getBooksByGroup(action: GetBooksByGroupRequestAction): SagaIter
 }
 
 function getBooksSearchAPI(data: GetBooksSearchRequestAction['data']) {
-  const queryString: string = new URLSearchParams(data as any).toString();
+  console.log("겟 북스 서치 API 던지려고!!=======> ", data )
+  const queryString: string = new URLSearchParams({
+    ...data,
+  } as any).toString();
+  console.log("겟 북스 서치 API의 queryString 잘 왔나?====> ", queryString )
+
   return axios.get(`/book?${queryString}`);
 }
 
 export function* getBooksSearch(action: GetBooksSearchRequestAction): SagaIterator {
   try {
-    console.log('액션 잘 왔어? ', action);
+    //  console.log("겟 북스 서치 사가이다!")
     const response: any = yield call(getBooksSearchAPI, action.data);
-    console.log('백엔드 갔다 왔어?', response, '잘 받아왔어');
+    console.log("겟 북스 서치 사가의 레스폰스이다!! =>  ", response)
     yield put({
       type: GET_BOOKS_SEARCH_SUCCESS,
       payload: response.data.books,
       count: response.data.count,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     yield put({
       type: GET_BOOKS_SEARCH_FAILURE,
-      error: error.response.data.message,
+      error: err.response.data.message,
     });
   }
 }
@@ -133,7 +136,6 @@ export function* getBook(action: GetBookRequestAction): SagaIterator {
 }
 
 function* watchGetAllBooks() {
-  console.log('getAllbooks와쳐까지 잘 들어왔어');
   yield takeLatest(GET_ALL_BOOKS_REQUEST, getAllBooks);
 }
 
@@ -142,6 +144,7 @@ function* watchGetBooksByGroup() {
 }
 
 function* watchGetBooksSearch() {
+  console.log("사가 와쳐까지 옴")
   yield takeLatest(GET_BOOKS_SEARCH_REQUEST, getBooksSearch);
 }
 

@@ -22,7 +22,8 @@ const GroupBooksContainer: React.FC<GroupBooksContainerProps> = ({ books, title,
         paddingLeft: '0px',
         paddingRight: '0px',
         marginTop: '20px',
-      }}>
+      }}
+      data-testid="group-container">
       <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
         <Typography variant="h3" component="div" gutterBottom sx={{ width: '400px', height: '60px', fontWeight: 'bold', textAlign: 'center', margin: '0px' }}>
           {title}

@@ -17,4 +17,6 @@ export interface Book {
   customerReviewRank: number;
   queryType: string;
   deleted: boolean;
+  pubDate: Date;
+  salesPoint: number;
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { getCategoryRequest } from '@/app/actions/types';
 import { RootState } from '@/app/reducers';
 import { AppDispatch } from '@/app/store/store';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -9,7 +10,6 @@ import { AppBar, Toolbar, Typography, MenuItem, Box, IconButton, useTheme, useMe
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getCategoryRequest } from '../actions/types/category';
 import { QueryTypes, bookGroups, getBooksPageURL } from '../books/constants';
 
 const CategoryBar = () => {

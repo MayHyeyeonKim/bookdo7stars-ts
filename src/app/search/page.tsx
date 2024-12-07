@@ -34,22 +34,31 @@ const SearchPage = () => {
   const initialPageSize = 20;
   const initialPage = 1;
   const [dateRange, setDateRange] = useState('all');
-  const [startYear, setStartYear] = useState('');
-  const [endYear, setEndYear] = useState('');
-  const [startMonth, setStartMonth] = useState('');
-  const [endMonth, setEndMonth] = useState('');
+  const [startYear, setStartYear] = useState<string|undefined>(undefined);
+  const [endYear, setEndYear] = useState<string|undefined>(undefined);
+  const [startMonth, setStartMonth] = useState<string|undefined>(undefined);
+  const [endMonth, setEndMonth] = useState<string|undefined>(undefined);
   const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+
+  const isFormEmpty = () => {
+    return !formData.title && !formData.author && !formData.publisher && dateRange === 'all' && !startYear && !endYear && !startMonth && !endMonth;
+  };
 
   const [formData, setFormData] = useState<SearchType>({
     title: '',
     author: '',
     publisher: '',
     orderTerm: 'sales',
-    start_date: '',
-    end_date: '',
+    start_date: undefined,
+    end_date: undefined,
     page: initialPage,
     pageSize: initialPageSize,
   });
+
+  // useEffect를 사용하여 입력이 변경될 때 버튼 상태를 업데이트
+  useEffect(() => {
+    // `찾기` 버튼이 비활성화될 조건을 설정하는 데 사용
+  }, [formData, isbn, dateRange, startYear, endYear, startMonth, endMonth]);
 
   const [isbn, setIsbn] = useState<isbnType>('');
 
@@ -68,6 +77,12 @@ const SearchPage = () => {
 
   const handleIsbnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    // 숫자가 아닌 문자가 포함된 경우 알림 표시
+    if (!/^\d*$/.test(value)) {
+      alert('ISBN에는 숫자만 입력할 수 있습니다.');
+      return;
+    }
+
     setIsbn(value);
   };
 
@@ -96,10 +111,10 @@ const SearchPage = () => {
   const handleDateRange = (e: React.MouseEvent<HTMLElement>, newValue: string) => {
     setDateRange(newValue);
     findStartDate(newValue);
-    setStartMonth('');
-    setStartYear('');
-    setEndMonth('');
-    setEndYear('');
+    setStartMonth(undefined);
+    setStartYear(undefined);
+    setEndMonth(undefined);
+    setEndYear(undefined);
   };
 
   const findStartDate = (dateRange: string) => {
@@ -175,18 +190,18 @@ const SearchPage = () => {
     const isbnString = encodeURIComponent(JSON.stringify(isbn));
     router.push(`/search/result?isbn=${isbnString}&searchCondition=${searchConditionString}`);
 
-    setStartMonth('');
-    setStartYear('');
-    setEndMonth('');
-    setEndYear('');
+    setStartMonth(undefined);
+    setStartYear(undefined);
+    setEndMonth(undefined);
+    setEndYear(undefined);
     setDateRange('all');
     setFormData({
       title: '',
       author: '',
       publisher: '',
       orderTerm: '',
-      start_date: '',
-      end_date: '',
+      start_date: undefined,
+      end_date: undefined,
       page: initialPage,
       pageSize: initialPageSize,
     });
@@ -432,6 +447,7 @@ const SearchPage = () => {
                       variant="contained"
                       color="success"
                       onClick={handleSearch}
+                      disabled={isFormEmpty()}
                       sx={{
                         backgroundColor: (theme) => theme.palette.primary.main,
                         '&:hover': {
@@ -473,6 +489,7 @@ const SearchPage = () => {
                       variant="contained"
                       color="success"
                       onClick={handleSearch}
+                      disabled={!isbn}
                       sx={{
                         mt: 0,
                         backgroundColor: (theme) => theme.palette.primary.main,

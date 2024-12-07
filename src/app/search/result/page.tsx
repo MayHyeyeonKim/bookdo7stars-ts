@@ -1,12 +1,14 @@
 'use client';
+
 import { useEffect, useState, useMemo } from 'react';
 
-import { Container, Box, Typography } from '@mui/material';
+import { Container } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getBookIsbnSearchRequest, getBooksSearchRequest } from '../../actions/types';
 import SearchResultBooksContainer from '../../components/Book/SearchResultBooksContainer';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import { RootState } from '../../reducers';
 import { AppDispatch } from '../../store/store';
 import { isbnType } from '../types/isbnType';
@@ -16,7 +18,6 @@ const ResultPage = () => {
   const queryParams = useSearchParams();
   const isbn = queryParams.get('isbn');
   const searchCondition = queryParams.get('searchCondition');
-
   const [page, setPage] = useState(1);
 
   const parsedIsbn: isbnType = useMemo(() => {
@@ -55,30 +56,23 @@ const ResultPage = () => {
   }, [dispatch, parsedIsbn, booksPerPage, parsedSearchCondition]);
 
   return (
-    <>
-      <Container data-testid="books-container" sx={{ width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        {books.length > 0 ? (
-          <>
-            <SearchResultBooksContainer
-              books={books}
-              count={count}
-              title={'Search Result'}
-              handlePageChange={handlePageChange}
-              booksPerPage={booksPerPage}
-              currentPage={page}
-              searchTerm={parsedSearchCondition?.title || ''}
-              resultCount={count}
-              parsedSearchCondition={parsedSearchCondition}
-              isGetBooksSearchLoading={isGetBooksSearchLoading}
-            />
-          </>
-        ) : (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <Typography variant="h6">검색 결과가 없습니다.</Typography>
-          </Box>
-        )}
-      </Container>
-    </>
+    <Container data-testid="books-container" sx={{ width: '100vw', mt: 3 }}>
+      {isGetBooksSearchLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <SearchResultBooksContainer
+          books={books}
+          count={count}
+          title={'Search Result'}
+          handlePageChange={handlePageChange}
+          booksPerPage={booksPerPage}
+          currentPage={page}
+          searchTerm={parsedSearchCondition?.title || ''}
+          resultCount={count}
+          parsedSearchCondition={parsedSearchCondition}
+        />
+      )}
+    </Container>
   );
 };
 

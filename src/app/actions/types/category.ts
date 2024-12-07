@@ -1,4 +1,5 @@
-import { Category } from '../../models/category';
+import { Category } from '@/app/models/category';
+
 import { GET_CATEGORY_REQUEST, GET_CATEGORY_SUCCESS, GET_CATEGORY_FAILURE } from '../constants';
 
 // Action type
