@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import SearchResultBookCard from './SearchResultBookCard';
 import { Book } from '../../models/book';
 import ResultFilters from '../Result/ResultFilters';
-
+import { useTheme } from '@mui/material/styles';
 interface SearchResultBooksContainerProps {
   books: Book[];
   title: string;
@@ -77,6 +77,7 @@ const SearchResultBooksContainer: React.FC<SearchResultBooksContainerProps> = ({
   };
 
   const getTitle = (parsedSearchCondition: SearchType) => {
+    const theme = useTheme();
     if (parsedSearchCondition.searchTerm) {
       return parsedSearchCondition.searchTerm + ` 의 검색 결과 총 ${resultCount}건`;
     } else {
@@ -84,7 +85,10 @@ const SearchResultBooksContainer: React.FC<SearchResultBooksContainerProps> = ({
         .filter(([key, value]) => value !== '' && key !== 'page' && key !== 'pageSize' && key !== 'orderTerm')
         .map(([_, value]) => `${value}`)
         .join(' + ');
-      return resultString + ` 의 검색 결과 총 ${resultCount}건`;
+      return (
+        <span>
+          <span style={{ color:theme.palette.primary.main, fontWeight: 'bold' }}>'{resultString}'</span> 검색 결과 총 <span style={{ fontWeight: 'bold' }}>{resultCount}</span>건
+        </span>)
     }
   };
 
@@ -103,7 +107,7 @@ const SearchResultBooksContainer: React.FC<SearchResultBooksContainerProps> = ({
       }}>
       {books.length > 0 ? (
         <>
-          <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+          {/* <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
             <Typography
               variant="h3"
               component="div"
@@ -111,33 +115,14 @@ const SearchResultBooksContainer: React.FC<SearchResultBooksContainerProps> = ({
               sx={{ width: '400px', height: '60px', fontWeight: 'bold', textAlign: 'center', margin: '0px' }}>
               {title}
             </Typography>
-          </Box>
-          <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
-            <Typography variant="h6" color="textPrimary" sx={{ color: 'gray' }}>
+          </Box> */}
+          <Box display="flex" alignItems="center" justifyContent="left" mt={6} mb={0.2}>
+            <Typography color="textPrimary" sx={{ color: 'gray' }}>
               {pageTitle}
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: '20px' }}>
-            <Pagination
-              count={pageCount}
-              page={currentPage}
-              onChange={handlePageChange}
-              color="primary"
-              showFirstButton
-              showLastButton
-              sx={{
-                justifyContent: 'center',
-                '& .MuiPagination-ul': {
-                  flexWrap: 'nowrap',
-                },
-                '& .MuiPaginationItem-root': {
-                  minWidth: '32px',
-                  height: '32px',
-                },
-              }}
-            />
-          </Box>
+          
 
           <Box mb={2} sx={{ borderBottom: '0.5px solid #ccc', paddingBottom: '0px' }}>
             <ToggleButtonGroup value={sortBy} exclusive onChange={handleSortChange} aria-label="Sort options">
@@ -160,6 +145,27 @@ const SearchResultBooksContainer: React.FC<SearchResultBooksContainerProps> = ({
                 저가격순
               </ToggleButton>
             </ToggleButtonGroup>
+          </Box>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: '20px' }}>
+            <Pagination
+              count={pageCount}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              showFirstButton
+              showLastButton
+              sx={{
+                justifyContent: 'center',
+                '& .MuiPagination-ul': {
+                  flexWrap: 'nowrap',
+                },
+                '& .MuiPaginationItem-root': {
+                  minWidth: '32px',
+                  height: '32px',
+                },
+              }}
+            />
           </Box>
 
           <Box sx={{ display: 'flex', width: '100%', alignItems: 'end', justifyContent: 'end', gap: '12px', marginBottom: '20px' }}>

@@ -8,3 +8,20 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.carousel-item {
+  width: 240px; /* 각 아이템의 너비 */
+  margin: 5px 10px; /* 아이템 간 간격 */
+}
+
+.bestSellerCategory{
+  display: 'inline-block';
+  padding: '10px 20px';
+  cursor: 'pointer';
+  text-align: 'center';
+  font-size: '16px';
+}
+
+.bestSellerCategory:hover {
+  background-color: #f0f0f0;
+}

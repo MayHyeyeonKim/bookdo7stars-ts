@@ -20,6 +20,7 @@ export const mockBooks: Book[] = [
     customerReviewRank: 10,
     queryType: 'queryType1',
     deleted: false,
+    pubDate: new Date(),
   },
   {
     id: 2,
@@ -40,5 +41,6 @@ export const mockBooks: Book[] = [
     customerReviewRank: 10,
     queryType: 'queryType1',
     deleted: false,
+    pubDate: new Date(),
   },
 ];

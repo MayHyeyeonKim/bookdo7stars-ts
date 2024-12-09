@@ -1,17 +1,16 @@
 import { useState } from 'react';
-
-import { RootState } from '@/app/reducers';
-import { SearchType } from '@/app/search/types/searchType';
-import { Container, Box, Typography, Slider, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import { GET_BOOKS_SEARCH_REQUEST } from '../../actions/constants/book' // 액션 정의된 경로
+import { RootState } from '@/app/reducers';
 
-import { GET_BOOKS_SEARCH_REQUEST } from '../../actions/constants/book'; // 액션 정의된 경로
+import { Container, Box, Typography, Slider, Button } from '@mui/material';
+import { SearchType } from '@/app/search/types/searchType';
 
 const ResultFilters = () => {
   const dispatch = useDispatch();
   const searchData = useSelector((store: RootState) => store.book.searchData);
   const [filters, setFilters] = useState({
-    dateRange: [3, 70], // Represents the values in months (3M to 60M or 전체)
+    dateRange: [undefined, undefined], // Represents the values in months (3M to 60M or 전체)
     priceRange: [0, 100000],
   });
 
@@ -26,9 +25,10 @@ const ResultFilters = () => {
   ];
 
   const handleSliderChange = (name: string) => (event: Event, value: number | number[]) => {
+    const newValue = value === 60 ? [undefined, undefined] : [value];
     setFilters({
       ...filters,
-      [name]: [value],
+      [name]: newValue,
     });
   };
 
@@ -41,62 +41,68 @@ const ResultFilters = () => {
 
   const applyFilters = () => {
     const sliderValueToMonthsMap: Record<number, number> = {
-      10: 3, // 10 = 3M
-      20: 12, // 20 = 12M
-      30: 24, // 30 = 24M
-      40: 36, // 40 = 36M
-      50: 60, // 50 = 60M
-      60: 70, // 60 = 전체
+      10: 3,   // 10 = 3M
+      20: 12,  // 20 = 12M
+      30: 24,  // 30 = 24M
+      40: 36,  // 40 = 36M
+      50: 60,  // 50 = 60M
+      60: 70,  // 60 = 전체
     };
-
+    
     const selectedSliderValue = filters.dateRange[0]; // 슬라이더의 첫 번째 값
-    const startMonths = sliderValueToMonthsMap[selectedSliderValue] || 0; // 기본값 0
-
+    const startMonths = selectedSliderValue ? sliderValueToMonthsMap[selectedSliderValue]: 70;
+  
     const today = new Date();
-
+  
     // 시작 날짜 계산
     let startDateISO;
     let endDateISO;
     if (startMonths !== 70) {
       const startDate = new Date(today);
       startDate.setMonth(today.getMonth() - startMonths);
-
+  
       // 날짜 유효성 검증 및 조정
       if (startDate.getDate() !== today.getDate()) {
         startDate.setDate(0); // 이전 달의 마지막 날로 조정
       }
-
+  
       startDateISO = startDate.toISOString().split('T')[0];
-      endDateISO = today.toISOString().split('T')[0];
+      endDateISO = today.toISOString().split('T')[0]
     }
+  
+   console.log("222", startDateISO, endDateISO)
+  const requestData = {
+    ...searchData,
+    start_price: filters.priceRange[0],
+    end_price: filters.priceRange[1],
+  } as any
 
-    console.log('222', startDateISO, endDateISO);
-    const requestData = {
-      ...searchData,
-      start_price: filters.priceRange[0],
-      end_price: filters.priceRange[1],
-    } as any;
+  if(startDateISO !== undefined){
+    requestData.start_date = startDateISO
+  } else {
+    delete requestData.start_date 
+  }
 
-    if (startDateISO !== undefined) {
-      requestData.start_date = startDateISO;
-    }
+  if(endDateISO !== undefined){
+    requestData.end_date = endDateISO
+  } else {
+    delete requestData.end_date
+  }
 
-    if (endDateISO !== undefined) {
-      requestData.end_date = startDateISO;
-    }
-
-    console.log('요청데이타ㅏㅏㅏㅏ ', requestData);
+  console.log("요청데이타ㅏㅏㅏㅏ ", requestData)
 
     dispatch({
       type: GET_BOOKS_SEARCH_REQUEST,
-      data: requestData,
+      data: requestData
     });
-
+  
     console.log('Applied Filters:', {
-      dateRange: [startDateISO, endDateISO],
+      dateRange: [requestData.start_date, requestData.end_date],
       priceRange: filters.priceRange,
     });
   };
+  
+
 
   return (
     <Container>
@@ -108,7 +114,7 @@ const ResultFilters = () => {
       <Box mb={2}>
         <Typography>출간일</Typography>
         <Slider
-          value={filters.dateRange[0]}
+          value={filters.dateRange[0] === undefined ? 60 : filters.dateRange[0]}
           onChange={handleSliderChange('dateRange')}
           //   valueLabelDisplay="auto"
           min={10}

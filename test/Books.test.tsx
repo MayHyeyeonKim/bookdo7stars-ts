@@ -1,13 +1,18 @@
 import '@testing-library/jest-dom';
+
 import { getAllBooksFailure, getAllBooksRequest, getAllBooksSuccess } from '@/app/actions/types';
+import BooksGroup from '@/app/books/[groupName]/page';
+import { bookGroups, QueryTypes } from '@/app/books/constants';
 import Books from '@/app/books/page';
 import BooksContainer from '@/app/components/Book/BooksContainer';
-import rootReducer from '@/app/reducers';
+import GroupBooksContainer from '@/app/components/Book/GroupBooksContainer';
+import rootReducer, { RootState } from '@/app/reducers';
 import rootSaga from '@/app/sagas';
 import { getAllBooks } from '@/app/sagas/book';
 import { render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import { Provider } from 'react-redux';
+import { useParams } from 'next/navigation';
+import { Provider, useSelector } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import createSagaMiddleware, { runSaga } from 'redux-saga';
 
@@ -25,7 +30,7 @@ jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => mockDispatch,
   useSelector: jest.fn(
-    (selector) => selector({ book: { books: mockBooks } }), // mockBooks를 반환
+    (selector) => selector({ book: { books: mockBooks, groupBooks: mockBooks, isGetBooksByGroupLoading: false, pageSize: 10 } }), // mockBooks를 반환
   ),
 }));
 
@@ -34,6 +39,7 @@ sagaMiddleware.run(rootSaga);
 jest.mock('next/navigation', () => ({
   ...jest.requireActual('next/navigation'),
   useRouter: () => mockRouter,
+  useParams: jest.fn(),
 }));
 
 jest.mock('axios');
@@ -129,6 +135,58 @@ describe('BooksContainer', () => {
   });
 
   it('should render the correct number of BookCard components', () => {
+    expect(screen.getAllByTestId('book-card').length).toBe(mockBooks.length);
+  });
+});
+
+describe('Books Group page', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    store.clearActions();
+    jest.resetModules();
+  });
+
+  it('should render GroupBooksContainer Component', () => {
+    (useParams as jest.Mock).mockReturnValue({ groupName: 'ItemNewAll' });
+
+    render(
+      <Provider store={store}>
+        <BooksGroup />
+      </Provider>,
+    );
+
+    expect(screen.getByTestId('book-group-container')).toBeInTheDocument();
+  });
+});
+
+describe('GroupBooksContainer', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    store.clearActions();
+    jest.resetModules();
+
+    (useParams as jest.Mock).mockReturnValue({ groupName: 'ItemNewAll' });
+    const { groupName } = useParams();
+    const title = bookGroups[groupName as QueryTypes];
+    const { groupBooks, isGetBooksByGroupLoading } = useSelector((store: RootState) => store.book);
+
+    const mockHandleSeeMore = jest.fn();
+
+    render(
+      <Provider store={store}>
+        <GroupBooksContainer books={groupBooks} title={title} handleSeeMore={mockHandleSeeMore} isGetBooksByGroupLoading={isGetBooksByGroupLoading} />
+      </Provider>,
+    );
+  });
+  it('should render group-container, when GroupBooksContainer Component is called', () => {
+    const { groupName } = useParams();
+    const title = bookGroups[groupName as QueryTypes];
+
+    expect(title).toBe('새로 나온 책');
+    expect(screen.getByTestId('group-container')).toBeInTheDocument();
+  });
+
+  it('should show two book cards', () => {
     expect(screen.getAllByTestId('book-card').length).toBe(mockBooks.length);
   });
 });

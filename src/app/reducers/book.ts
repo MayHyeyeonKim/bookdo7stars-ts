@@ -14,6 +14,12 @@ import {
   GET_BOOK_ISBN_SEARCH_REQUEST,
   GET_BOOK_ISBN_SEARCH_SUCCESS,
   GET_BOOK_ISBN_SEARCH_FAILURE,
+  GET_MAINPAGE_BOOKS_REQUEST,
+  GET_MAINPAGE_BOOKS_SUCCESS,
+  GET_MAINPAGE_BOOKS_FAILURE,
+  GET_MAINPAGE_BESTSELLER_BOOKS_REQUEST,
+  GET_MAINPAGE_BESTSELLER_BOOKS_SUCCESS,
+  GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE,
   RESET_GROUP_BOOKS,
 } from '../actions/constants';
 import { BookActionTypes } from '../actions/types';
@@ -21,6 +27,7 @@ import { Book } from '../models/book';
 
 type InitialState = {
   books: Book[];
+  mainpageBooks: any;
   searchData: {};
   count: number;
   groupBooks: Book[];
@@ -36,17 +43,24 @@ type InitialState = {
   isGetBookLoading: boolean;
   isGetBookDone: boolean;
   isGetBookError: string;
+  isGetMainpageBooksLoading: boolean;
+  isGetMainpageBooksDone: boolean;
+  isGetMainpageBookError: string;
+  isGetMainPageBestSellerBooksLoading: boolean;
+  isGetMainPageBestSellerBooksDone: boolean;
+  isGetMainPageBestSellerBooksError: string;
   book: Book | null;
   pageSize: number;
 };
 
 export const initialState: InitialState = {
   books: [],
+  mainpageBooks: { banner: [], itemNewSpecial: [], bestSellerCategory: [], itemNewAll: [], itemEditorChoice: [] },
   searchData: {
-    title: "",
-    author: "",
-    publisher: "",
-    orderTerm: "sales",
+    title: '',
+    author: '',
+    publisher: '',
+    orderTerm: 'sales',
     page: 1,
     pageSize: 20,
   },
@@ -64,6 +78,12 @@ export const initialState: InitialState = {
   isGetBookLoading: false,
   isGetBookDone: false,
   isGetBookError: '',
+  isGetMainpageBooksLoading: false,
+  isGetMainpageBooksDone: false,
+  isGetMainpageBookError: '',
+  isGetMainPageBestSellerBooksLoading: false,
+  isGetMainPageBestSellerBooksDone: false,
+  isGetMainPageBestSellerBooksError: '',
   book: null,
   pageSize: 20,
 };
@@ -85,10 +105,10 @@ function bookReducer(state = initialState, action: BookActionTypes) {
       return { ...state, isGetBooksByGroupLoading: false, isGetBooksByGroupDone: false, isGetBooksByGroupError: action.error };
 
     case GET_BOOKS_SEARCH_REQUEST:
-      console.log("여기는 리듀서의 서치 리퀘스트다!, searchData는 이렇게 생겼다!! =>>>>>>", state.searchData)
+      console.log('여기는 리듀서의 서치 리퀘스트다!, searchData는 이렇게 생겼다!! =>>>>>>', state.searchData);
       return { ...state, isGetBooksSearchLoading: true, searchData: action.data };
     case GET_BOOKS_SEARCH_SUCCESS:
-      console.log("여기는 리듀서의 서치 석세스다!")
+      console.log('여기는 리듀서의 서치 석세스다!');
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: true, books: action.payload, count: action.count };
     case GET_BOOKS_SEARCH_FAILURE:
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: false, isGetBooksSearchError: action.error };
@@ -106,6 +126,12 @@ function bookReducer(state = initialState, action: BookActionTypes) {
       return { ...state, isGetBookLoading: false, isGetBookDone: true, book: action.payload };
     case GET_BOOK_FAILURE:
       return { ...state, isGetBookLoading: false, book: null, isGetBookError: action.error };
+    case GET_MAINPAGE_BESTSELLER_BOOKS_REQUEST:
+      return { ...state, isGetMainPageBestSellerBooksLoading: true };
+    case GET_MAINPAGE_BESTSELLER_BOOKS_SUCCESS:
+      return { ...state, isGetMainPageBestSellerBooksLoading: false, isGetMainPageBestSellerBooksDone: true, books: action.payload };
+    case GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE:
+      return { ...state, isGetMainPageBestSellerBooksLoading: false, book: null, isGetMainPageBestSellerBooksError: action.error };
 
     case RESET_GROUP_BOOKS:
       return { ...state, groupBooks: [] };
@@ -114,4 +140,17 @@ function bookReducer(state = initialState, action: BookActionTypes) {
   }
 }
 
-export default bookReducer;
+function mainpageBookReducer(state = initialState, action: BookActionTypes) {
+  switch (action.type) {
+    case GET_MAINPAGE_BOOKS_REQUEST:
+      return { ...state, isGetMainpageBooksLoading: true };
+    case GET_MAINPAGE_BOOKS_SUCCESS:
+      return { ...state, isGetMainpageBooksLoading: false, isGetMainpageBooksDone: true, mainpageBooks: action.payload };
+    case GET_MAINPAGE_BOOKS_FAILURE:
+      return { ...state, isGetBookLoading: false, book: null, isGetMainpageBooksError: action.error };
+    default:
+      return state;
+  }
+}
+
+export { bookReducer, mainpageBookReducer };

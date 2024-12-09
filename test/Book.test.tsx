@@ -60,25 +60,33 @@ describe('Book', () => {
 
   it('should dispatch getBookRequest when it is rendered', async () => {
     (useParams as jest.Mock).mockReturnValue({ bookId: '123' });
+    // useParams에서 bookId를 설정
+    // mockUseParams.mockReturnValue({ bookId: '123' });
+
     render(
       <Provider store={store}>
         <Book />
       </Provider>,
     );
+
+    // waitFor을 사용하여 dispatch가 호출되기를 기다림
     await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
 
     const dispatchedAction = mockDispatch.mock.calls[0][0];
     expect(dispatchedAction).toEqual(getBookRequest('123'));
-    //closed it
   });
-  //closed describe
 });
 
 describe('BookOverview', () => {
+  // 테스트 해야할 것
+  // 1. 책이 있으면 BookBasicInfo가 렌더되어야한다.
+  // 2. 책이 없으면 에러메세지를 내야한다.
+
   it('should render BookBasicInfo when book is provided', () => {
     const mockBook = mockBooks[0];
     render(<BookOverview book={mockBook} />);
 
+    //책 정보가 화면에 표시되는지 확인
     expect(screen.getByText(mockBook.title)).toBeInTheDocument();
     expect(screen.getByText(mockBook.author)).toBeInTheDocument();
     expect(screen.getByText(mockBook.publisher)).toBeInTheDocument();
@@ -87,6 +95,7 @@ describe('BookOverview', () => {
 
   it('should show error message when book is not provided', () => {
     render(<BookOverview book={null} />);
-    expect(screen.getByText('Unable to retrieve book information')).toBeInTheDocument();
+
+    expect(screen.getByText('책 정보를 읽어오지 못했습니다.')).toBeInTheDocument();
   });
 });
