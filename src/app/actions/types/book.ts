@@ -75,6 +75,8 @@ export interface GetBooksSearchRequestAction {
     pageSize?: number;
     start_price?: number;
     end_price?: number;
+    min_review_rank?: number;
+    max_review_rank?: number;
   };
 }
 
