@@ -26,6 +26,29 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
   const clickBookCard = (book: Book) => {
     router.push(`/book/${book.id}`);
   };
+
+  const handleAddToCart = (book: Book) => {
+    // 기존 장바구니 데이터 불러오기
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    // book이 이미 있는지 확인
+    const existingItemIndex = cart.findIndex((item: any) => item.id === book.id);
+
+    if (existingItemIndex !== -1) {
+      // 이미 존재하면 quantity +1
+      cart[existingItemIndex].quantity += 1;
+    } else {
+      // 존재하지 않으면 새로 추가
+      cart.push({ ...book, quantity: 1 });
+    }
+
+    // 로컬 스토리지에 업데이트
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // 장바구니 페이지로 이동
+    router.push('/cart');
+  };
+
   return (
     <Card
       sx={{
@@ -67,7 +90,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
               <IconButton sx={{ padding: '5px' }} aria-label="add to favorites">
                 <FavoriteBorderIcon fontSize="small" sx={{ color: pink[500] }} />
               </IconButton>
-              <IconButton sx={{ padding: '5px' }} aria-label="add to cart">
+              <IconButton sx={{ padding: '5px' }} aria-label="add to cart" onClick={() => handleAddToCart(book)}>
                 <ShoppingCartIcon fontSize="small" />
               </IconButton>
             </Box>

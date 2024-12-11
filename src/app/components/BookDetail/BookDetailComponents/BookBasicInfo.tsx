@@ -19,17 +19,17 @@ interface BookBasicInfo {
   author: string;
   publisher: string;
   priceStandard: number;
+  quantity: number;
+  handleQuantityChange: (newQuantity: number) => void;
 }
 
-const BookBasicInfo: React.FC<BookBasicInfo> = ({ title, author, publisher, priceStandard }) => {
-  const [quantity, setQuantity] = useState(1);
-
+const BookBasicInfo: React.FC<BookBasicInfo> = ({ title, author, publisher, priceStandard, quantity, handleQuantityChange }) => {
   const handleIncrease = () => {
-    setQuantity((prev) => prev + 1);
+    handleQuantityChange(quantity + 1);
   };
 
   const handleDecrease = () => {
-    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+    handleQuantityChange(quantity > 1 ? quantity - 1 : 1);
   };
 
   return (
