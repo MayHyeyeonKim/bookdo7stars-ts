@@ -26,6 +26,7 @@ interface BookBasicInfo {
 const BookBasicInfo: React.FC<BookBasicInfo> = ({ title, author, publisher, priceStandard, quantity, handleQuantityChange }) => {
   const handleIncrease = () => {
     handleQuantityChange(quantity + 1);
+
   };
 
   const handleDecrease = () => {

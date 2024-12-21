@@ -26,11 +26,9 @@ const BookToCartButton: React.FC<BookToCartButtonProps> = ({ book, quantity }) =
   const handleAddToCart = () => {
     // 카트에 추가하는 로직 구현
     const cartItem = { ...book, quantity };
-    console.log('카트에 추가:', cartItem);
+    console.log('북디테일페이지에서 카트에 추가하기 버튼으로 카트에 추가:', cartItem);
 
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    cart.push(cartItem);
-    localStorage.setItem('cart', JSON.stringify(cart));
+    //상태저장하기
 
     router.push(`/cart`);
   };

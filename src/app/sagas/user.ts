@@ -11,8 +11,34 @@ import {
   LOGIN_FAILURE,
   LOGOUT_SUCCESS,
   LOGOUT_REQUEST,
+  CHECK_SESSION_REQUEST,
+  CHECK_SESSION_SUCCESS,
+  CHECK_SESSION_FAILURE,
 } from '../actions/constants';
-import { LoginRequestAction, RegisterRequestAction } from '../actions/types';
+import { CheckSessionRequestAction, LoginRequestAction, RegisterRequestAction } from '../actions/types';
+
+// CheckSession API
+function checkSessionAPI() {
+  return axios.get('/user/session', {
+    withCredentials: true, // 쿠키를 포함하여 서버에 요청
+  });
+}
+
+// CheckSession saga
+export function* checkSession(): SagaIterator {
+  try {
+    const response: any = yield call(checkSessionAPI);
+    yield put({
+      type: CHECK_SESSION_SUCCESS,
+      payload: response.data,
+    });
+  } catch (err: any) {
+    yield put({
+      type: CHECK_SESSION_FAILURE,
+      error: err.response.data.message,
+    });
+  }
+}
 
 // Register API
 function registerAPI(data: RegisterRequestAction['data']) {
@@ -76,6 +102,10 @@ function* logout(): SagaIterator {
 }
 
 // Watchers
+function* watchCheckSession() {
+  yield takeLatest(CHECK_SESSION_REQUEST, checkSession);
+}
+
 function* watchRegister() {
   yield takeLatest(REGISTER_REQUEST, register);
 }
@@ -90,5 +120,5 @@ function* watchLogout() {
 
 // Root Saga
 export default function* userSaga() {
-  yield all([fork(watchRegister), fork(watchLogin), fork(watchLogout)]);
+  yield all([fork(watchRegister), fork(watchLogin), fork(watchLogout), fork(watchCheckSession)]);
 }

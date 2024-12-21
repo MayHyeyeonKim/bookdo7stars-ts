@@ -9,6 +9,9 @@ import {
   LOGOUT_FAILURE,
   RESET_REGISTER_STATE,
   RESET_LOGIN_STATE,
+  CHECK_SESSION_REQUEST,
+  CHECK_SESSION_SUCCESS,
+  CHECK_SESSION_FAILURE,
 } from '../actions/constants';
 import { UserActionTypes } from '../actions/types';
 import { User } from '../models/user';
@@ -20,6 +23,9 @@ type InitialState = {
   isLoginLoading: boolean;
   isLoginDone: boolean;
   isLoginError: string;
+  isCheckSessionLoading: boolean;
+  isCheckSessionDone: boolean;
+  isCheckSessionError: string;
   user: User | null;
   message: string | null;
   isLogoutDone: boolean;
@@ -34,6 +40,9 @@ export const initialState: InitialState = {
   isLoginLoading: false,
   isLoginDone: false,
   isLoginError: '',
+  isCheckSessionLoading: false,
+  isCheckSessionDone: false,
+  isCheckSessionError: '',
   user: null,
   message: null,
   isLogoutDone: false,
@@ -57,6 +66,13 @@ function userReducer(state = initialState, action: UserActionTypes) {
       return { ...state, isLoginLoading: false, isLoginDone: true, user: action.payload };
     case LOGIN_FAILURE:
       return { ...state, isLoginLoading: false, isLoginError: action.error };
+
+    case CHECK_SESSION_REQUEST:
+      return { ...state, isCheckSessionLoading: true };
+    case CHECK_SESSION_SUCCESS:
+      return { ...state, isCheckSessionLoading: false, isCheckSessionDone: true, user: action.payload };
+    case CHECK_SESSION_FAILURE:
+      return { ...state, isCheckSessionLoading: false, isCheckSessionError: action.error };
 
     case LOGOUT_SUCCESS:
       return { ...state, isLogoutDone: true, user: null, message: action.payload };

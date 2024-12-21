@@ -23,6 +23,7 @@ import {
   GET_MAINPAGE_BESTSELLER_BOOKS_SUCCESS,
   GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE,
   RESET_GROUP_BOOKS,
+  RESET_BOOK,
 } from '../constants';
 
 // Action type
@@ -75,8 +76,6 @@ export interface GetBooksSearchRequestAction {
     pageSize?: number;
     start_price?: number;
     end_price?: number;
-    min_review_rank?: number;
-    max_review_rank?: number;
   };
 }
 
@@ -160,6 +159,10 @@ export interface ResetGroupBooksAction {
   type: typeof RESET_GROUP_BOOKS;
 }
 
+export interface ResetBookAction {
+  type: typeof RESET_BOOK;
+}
+
 //Union type
 export type BookActionTypes =
   | GetAllBooksRequestAction
@@ -183,7 +186,8 @@ export type BookActionTypes =
   | GetMainpageBooksFailureAction
   | GetMainpageBestSellerBooksRequestAction
   | GetMainpageBestSellerBooksSuccessAction
-  | GetMainpageBestSellerBooksFailureAction;
+  | GetMainpageBestSellerBooksFailureAction
+  | ResetBookAction;
 
 // Action creater
 
@@ -308,4 +312,8 @@ export const getMainpageBestSellerBooksFailure = (error: string): GetMainpageBes
 
 export const resetGroupBooks = (): ResetGroupBooksAction => ({
   type: RESET_GROUP_BOOKS,
+});
+
+export const resetBook = (): ResetBookAction => ({
+  type: RESET_BOOK,
 });

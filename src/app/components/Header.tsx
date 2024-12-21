@@ -175,8 +175,12 @@ const Header = () => {
     router.push('/');
   };
 
-  const handleSession = async () => {
-    //TODO must be implemented
+  const handleGoToCart = async () => {
+    router.push('/cart');
+  };
+
+  const handleGoToMyPage = () => {
+    router.push('/mypage');
   };
 
   const handleDetailSearch = () => {
@@ -273,7 +277,7 @@ const Header = () => {
               ) : !isMobile ? (
                 <>
                   <StyledButton onClick={handleLogout}>Log out</StyledButton>
-                  <StyledButton onClick={handleSession}>My Page</StyledButton>
+                  <StyledButton onClick={handleGoToMyPage}>My Page</StyledButton>
                 </>
               ) : (
                 <>
@@ -281,12 +285,12 @@ const Header = () => {
                     <LogoutRoundedIcon />
                   </IconButton>
                   <IconButton size="large">
-                    <SentimentVerySatisfiedRoundedIcon onClick={handleSession} />
+                    <SentimentVerySatisfiedRoundedIcon onClick={handleGoToMyPage} />
                   </IconButton>
                 </>
               )}
               {!isMobile ? (
-                <StyledButton onClick={handleSession}>Cart</StyledButton>
+                <StyledButton onClick={handleGoToCart}>Cart</StyledButton>
               ) : (
                 <IconButton size="large">
                   <ShoppingCartRoundedIcon />

@@ -1,13 +1,17 @@
 import { Book } from '@/app/models/book';
+import { AppDispatch } from '@/app/store/store';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import { pink } from '@mui/material/colors';
 import IconButton from '@mui/material/IconButton';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { currencyFormat } from '../../../utils/helpers';
+import { addToCartRequest } from '../../actions/types';
+
 interface BookCardProps {
   book: Book;
 }
@@ -22,31 +26,15 @@ const StyledTypography = styled(Typography)`
 `;
 
 const BookCard: React.FC<BookCardProps> = ({ book }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const clickBookCard = (book: Book) => {
     router.push(`/book/${book.id}`);
   };
 
-  const handleAddToCart = (book: Book) => {
-    // 기존 장바구니 데이터 불러오기
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    // book이 이미 있는지 확인
-    const existingItemIndex = cart.findIndex((item: any) => item.id === book.id);
-
-    if (existingItemIndex !== -1) {
-      // 이미 존재하면 quantity +1
-      cart[existingItemIndex].quantity += 1;
-    } else {
-      // 존재하지 않으면 새로 추가
-      cart.push({ ...book, quantity: 1 });
-    }
-
-    // 로컬 스토리지에 업데이트
-    localStorage.setItem('cart', JSON.stringify(cart));
-
-    // 장바구니 페이지로 이동
-    router.push('/cart');
+  const handleAddToCart = (bookId: number) => {
+    const cartItem = { bookId, quantity: 1 };
+    dispatch(addToCartRequest(cartItem));
   };
 
   return (
@@ -90,7 +78,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
               <IconButton sx={{ padding: '5px' }} aria-label="add to favorites">
                 <FavoriteBorderIcon fontSize="small" sx={{ color: pink[500] }} />
               </IconButton>
-              <IconButton sx={{ padding: '5px' }} aria-label="add to cart" onClick={() => handleAddToCart(book)}>
+              <IconButton sx={{ padding: '5px' }} aria-label="add to cart" onClick={() => handleAddToCart(book.id)}>
                 <ShoppingCartIcon fontSize="small" />
               </IconButton>
             </Box>

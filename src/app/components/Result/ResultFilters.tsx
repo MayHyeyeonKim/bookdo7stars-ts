@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { RootState } from '@/app/reducers';
+import { SearchType } from '@/app/search/types/searchType';
 import { Container, Box, Typography, Slider, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -12,7 +13,6 @@ const ResultFilters = () => {
   const [filters, setFilters] = useState({
     dateRange: [undefined, undefined], // Represents the values in months (3M to 60M or 전체)
     priceRange: [0, 100000],
-    reviewRankRange: [0, 10],
   });
 
   // Marks for the date range slider
@@ -23,20 +23,6 @@ const ResultFilters = () => {
     { value: 40, label: '36M' },
     { value: 50, label: '60M' },
     { value: 60, label: '전체' },
-  ];
-
-  const reviewRankMarks = [
-    { value: 0, label: '0' },
-    { value: 1, label: '1' },
-    { value: 2, label: '2' },
-    { value: 3, label: '3' },
-    { value: 4, label: '4' },
-    { value: 5, label: '5' },
-    { value: 6, label: '6' },
-    { value: 7, label: '7' },
-    { value: 8, label: '8' },
-    { value: 9, label: '9' },
-    { value: 10, label: '10' },
   ];
 
   const handleSliderChange = (name: string) => (event: Event, value: number | number[]) => {
@@ -51,13 +37,6 @@ const ResultFilters = () => {
     setFilters((prev) => ({
       ...prev,
       [name]: value, // value는 배열이어야 함
-    }));
-  };
-
-  const handleReviewSliderChange = (name: string) => (event: Event, value: number | number[]) => {
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
     }));
   };
 
@@ -92,12 +71,11 @@ const ResultFilters = () => {
       endDateISO = today.toISOString().split('T')[0];
     }
 
+    console.log('222', startDateISO, endDateISO);
     const requestData = {
       ...searchData,
       start_price: filters.priceRange[0],
       end_price: filters.priceRange[1],
-      min_review_rank: filters.reviewRankRange[0],
-      max_review_rank: filters.reviewRankRange[1],
     } as any;
 
     if (startDateISO !== undefined) {
@@ -122,12 +100,16 @@ const ResultFilters = () => {
     console.log('Applied Filters:', {
       dateRange: [requestData.start_date, requestData.end_date],
       priceRange: filters.priceRange,
-      reviewRankRange: filters.reviewRankRange,
     });
   };
 
   return (
     <Container>
+      <Box>
+        <Typography variant="h6" mb={2}>
+          필터링
+        </Typography>
+      </Box>
       <Box mb={2}>
         <Typography>출간일</Typography>
         <Slider
@@ -144,18 +126,7 @@ const ResultFilters = () => {
         <Typography>판매가</Typography>
         <Slider value={filters.priceRange} onChange={handlePriceSliderChange('priceRange')} valueLabelDisplay="auto" min={0} max={100000} />
       </Box>
-      <Box mb={2}>
-        <Typography>리뷰 랭크</Typography>
-        <Slider
-          value={filters.reviewRankRange}
-          onChange={handleReviewSliderChange('reviewRankRange')}
-          valueLabelDisplay="auto"
-          min={0}
-          max={10}
-          step={1}
-          marks={reviewRankMarks}
-        />
-      </Box>
+
       <Button variant="contained" color="primary" onClick={applyFilters} fullWidth>
         적용
       </Button>

@@ -11,6 +11,9 @@ import {
   LOGOUT_FAILURE,
   RESET_REGISTER_STATE,
   RESET_LOGIN_STATE,
+  CHECK_SESSION_REQUEST,
+  CHECK_SESSION_SUCCESS,
+  CHECK_SESSION_FAILURE,
 } from '../constants';
 
 // action type
@@ -74,6 +77,20 @@ export interface ResetLoginStateAction {
   type: typeof RESET_LOGIN_STATE;
 }
 
+export interface CheckSessionRequestAction {
+  type: typeof CHECK_SESSION_REQUEST;
+}
+
+export interface CheckSessionSuccessAction {
+  type: typeof CHECK_SESSION_SUCCESS;
+  payload: User;
+}
+
+export interface CheckSessionFailureAction {
+  type: typeof CHECK_SESSION_FAILURE;
+  error: string;
+}
+
 export type UserActionTypes =
   | RegisterRequestAction
   | RegisterSuccessAction
@@ -85,7 +102,10 @@ export type UserActionTypes =
   | LogoutSuccessAction
   | LogoutFailureAction
   | ResetRegisterStateAction
-  | ResetLoginStateAction;
+  | ResetLoginStateAction
+  | CheckSessionRequestAction
+  | CheckSessionSuccessAction
+  | CheckSessionFailureAction;
 
 // action creater functions
 export const registerRequest = (data: RegisterRequestAction['data']): RegisterRequestAction => ({
@@ -138,4 +158,18 @@ export const resetRegisterState = (): ResetRegisterStateAction => ({
 
 export const resetLoginState = (): ResetLoginStateAction => ({
   type: RESET_LOGIN_STATE,
+});
+
+export const checkSessionRequest = (): CheckSessionRequestAction => ({
+  type: CHECK_SESSION_REQUEST,
+});
+
+export const checkSessionSuccess = (payload: CheckSessionSuccessAction['payload']): CheckSessionSuccessAction => ({
+  type: CHECK_SESSION_SUCCESS,
+  payload,
+});
+
+export const checkSessionFailure = (error: string): CheckSessionFailureAction => ({
+  type: CHECK_SESSION_FAILURE,
+  error,
 });

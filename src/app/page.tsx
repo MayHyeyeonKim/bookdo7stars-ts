@@ -10,21 +10,25 @@ import { AppDispatch } from '@/app/store/store';
 import { Typography, Container, Box, Grid } from '@mui/material';
 import Carousel from 'react-multi-carousel';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import { Book } from './models/book';
 import { Category } from './models/category';
+
 import 'react-multi-carousel/lib/styles.css';
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
   const { mainpageBooks } = useSelector((store: RootState) => store.mainpageBook);
   const { books } = useSelector((store: RootState) => store.book);
+  const { isAddToCartDone, addToCartSuccessMessage } = useSelector((store: RootState) => store.cart);
+
   useEffect(() => {
     dispatch(getMainpageBooksRequest());
     dispatch(getMainpageBestSellerBooksRequest(1230, 1, 12));
   }, []);
 
-  const handleBestSellerCategoryhClick = (categoryId: number) => {
+  const handleBestSellerCategoryClick = (categoryId: number) => {
     dispatch(getMainpageBestSellerBooksRequest(categoryId, 1, 12));
   };
   const handleBannerClick = (bookId: number) => {
@@ -185,10 +189,10 @@ export default function Home() {
                 width: '100%',
               }}
               tabIndex={0}
-              onClick={() => handleBestSellerCategoryhClick(category.id)}
+              onClick={() => handleBestSellerCategoryClick(category.id)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  handleBestSellerCategoryhClick(category.id);
+                  handleBestSellerCategoryClick(category.id);
                 }
               }}
               role="button">

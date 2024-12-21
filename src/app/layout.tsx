@@ -8,6 +8,7 @@ import Header from './components/Header';
 import StyledComponentsRegistry from './lib/registry';
 import StoreProvider from './providers/StoreProvider';
 import ThemeProvider from './theme-provider';
+import SessionProvider from './session-provider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -25,9 +26,11 @@ const RootLayout = ({
         <StyledComponentsRegistry>
           <ThemeProvider>
             <StoreProvider>
-              <Header />
-              <main>{children}</main>
-              <Footer />
+              <SessionProvider>
+                <Header />
+                <main>{children}</main>
+                <Footer />
+              </SessionProvider>
             </StoreProvider>
           </ThemeProvider>
         </StyledComponentsRegistry>
