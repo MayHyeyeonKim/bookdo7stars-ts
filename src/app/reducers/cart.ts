@@ -5,6 +5,12 @@ import {
   GET_ITEMS_IN_CART_REQUEST,
   GET_ITEMS_IN_CART_FAILURE,
   GET_ITEMS_IN_CART_SUCCESS,
+  REMOVE_FROM_CART_REQUEST,
+  REMOVE_FROM_CART_SUCCESS,
+  REMOVE_FROM_CART_FAILURE,
+  UPDATE_CART_ITEM_QUANTITY_REQUEST,
+  UPDATE_CART_ITEM_QUANTITY_SUCCESS,
+  UPDATE_CART_ITEM_QUANTITY_FAILURE,
 } from '../actions/constants';
 import { CartActionTypes } from '../actions/types';
 import { CartItem } from '../models/cart';
@@ -20,8 +26,15 @@ interface CartState {
   isGetItemsInCartLoading: boolean;
   isGetItemsInCartDone: boolean;
   isGetItemsInCartError: string;
+  isRemovingFromCartLoading: boolean;
+  isRemovingFromCartDone: boolean;
+  isRemovingFromCartError: string;
+  isUpdatingItemQuantityLoading: boolean;
+  isUpdatingItemQuantityDone: boolean;
+  isUpdatingItemQuantityError: string;
   addToCartSuccessMessage: string | null;
   addToCartFailureMessage: string;
+  
 }
 const initialCartState: CartState = {
   items: [],
@@ -34,6 +47,12 @@ const initialCartState: CartState = {
   isAddToCartLoading: false,
   isAddToCartDone: false,
   isAddToCartError: '',
+  isRemovingFromCartLoading: false,
+  isRemovingFromCartDone: false,
+  isRemovingFromCartError: '',
+  isUpdatingItemQuantityLoading: false,
+  isUpdatingItemQuantityDone: false,
+  isUpdatingItemQuantityError: '',
   addToCartSuccessMessage: null,
   addToCartFailureMessage: '',
 };
@@ -66,25 +85,60 @@ function cartReducer(state = initialCartState, action: CartActionTypes): CartSta
       console.log(action.error);
       return { ...state, isAddToCartLoading: false, isAddToCartDone: false, isAddToCartError: action.error };
 
-    // case REMOVE_FROM_CART: {
-    //   const updatedItems = state.items.filter((item) => item.id !== action.payload);
+    case REMOVE_FROM_CART_REQUEST:
+      return {
+        ...state,
+        isRemovingFromCartLoading: true,
+        isRemovingFromCartDone: false,
+        isRemovingFromCartError: '',
+      }
 
-    //   const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
-    //   const totalPrice = updatedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    case REMOVE_FROM_CART_SUCCESS: {
+      const updatedItems = state.items.filter((item) => item.book.id?.toString() !== action.payload.bookId);
+      const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
+      const totalPrice = updatedItems.reduce((sum, item) => sum + item.book.priceSales * item.quantity, 0);
+    
+      return {
+        ...state,
+        isRemovingFromCartLoading: false, 
+        isRemovingFromCartDone: true, 
+        items: updatedItems, 
+        totalItems,
+        totalPrice,
+      };
+    }
 
-    //   return { ...state, items: updatedItems, totalItems, totalPrice };
-    // }
+    case REMOVE_FROM_CART_FAILURE:
+      return {
+        ...state,
+        isRemovingFromCartLoading: false,
+        isRemovingFromCartDone: false,
+        isRemovingFromCartError: action.error,
+      }
 
-    // case UPDATE_CART_ITEM_QUANTITY: {
-    //   const { bookId, quantity } = action.payload;
+    case UPDATE_CART_ITEM_QUANTITY_REQUEST:
+      return { ...state, isUpdatingItemQuantityLoading: true, isUpdatingItemQuantityDone: false };
 
-    //   const updatedItems = state.items.map((item) => (item.id === bookId ? { ...item, quantity } : item));
+      case UPDATE_CART_ITEM_QUANTITY_SUCCESS: {
+        const updatedItems = state.items.map((item) =>
+          item.book.id === action.payload.book.id ? { ...item, quantity: action.payload.quantity } : item
+        );
+        const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
+        const totalPrice = updatedItems.reduce((sum, item) => sum + item.book.priceSales * item.quantity, 0);
+      
+        return {
+          ...state,
+          isUpdatingItemQuantityLoading: false,
+          isUpdatingItemQuantityDone: true,
+          items: updatedItems,
+          totalItems,
+          totalPrice,
+        };
+      }
 
-    //   const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
-    //   const totalPrice = updatedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    case UPDATE_CART_ITEM_QUANTITY_FAILURE:
+      return { ...state, isUpdatingItemQuantityLoading: false, isUpdatingItemQuantityError: action.error };
 
-    //   return { ...state, items: updatedItems, totalItems, totalPrice };
-    // }
 
     // case CLEAR_CART:
     //   return { ...initialCartState };

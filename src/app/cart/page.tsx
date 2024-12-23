@@ -7,17 +7,31 @@ import { AppDispatch } from '@/app/store/store';
 import { Box, Button, Typography, Grid } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getItemsInCartRequest } from '../actions/types';
+import { getItemsInCartRequest, updateCartItemQuantityRequest } from '../actions/types';
 import CartCard from '../components/Cart/CartCard';
-import { Book } from '../models/book';
-import { CartItem } from '../models/cart';
+import {removeFromCartRequest} from '@/app/actions/types';
 
 const CartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { items } = useSelector((state: RootState) => state.cart);
 
-  // const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [checkedIds, setCheckedIds] = useState<Record<string, boolean>>({});
+  const [localQuantities, setLocalQuantities] = useState<Record<string, number>>({});
+  console.log("localQuantities: ", localQuantities)
+
+  //Sync local quantities with Redux state when items change
+useEffect(() => {
+  if (items.length > 0) {
+    const initialQuantities = items.reduce((acc, item) => {
+      if (item.book?.id) {
+        acc[item.book.id.toString()] = item.quantity;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+    setLocalQuantities(initialQuantities);
+  }
+}, [items]);
+  
   const handleChange = (id: string, isChecked: boolean) => {
     setCheckedIds((prev) => ({
       ...prev,
@@ -25,6 +39,26 @@ const CartPage = () => {
     }));
   };
 
+    const handleIncrease = (id: string, quantity: number) => {
+      const newQuantity = quantity + 1;
+      setLocalQuantities((prev) => ({
+        ...prev,
+        [id]: newQuantity, // 특정 id만 업데이트
+      }));
+      dispatch(updateCartItemQuantityRequest(Number(id), newQuantity));
+    };
+    
+    const handleDecrease = (id: string, quantity: number) => {
+      if (quantity > 1) {
+        const newQuantity = quantity - 1;
+        setLocalQuantities((prev) => ({
+          ...prev,
+          [id]: newQuantity, // 특정 id만 업데이트
+        }));
+        dispatch(updateCartItemQuantityRequest(Number(id), newQuantity));
+      }
+    };
+    
   useEffect(() => {
     dispatch(getItemsInCartRequest());
   }, []);
@@ -60,23 +94,11 @@ const CartPage = () => {
     .filter(([key, value]) => value)
     .map(([key]) => key);
 
-  // 수량 증가
-  const handleIncrease = (id: string, quantity: number) => {
-    // dispatch(updateCartItemQuantity(id, quantity + 1));
-  };
-
-  // 수량 감소
-  const handleDecrease = (id: string, quantity: number) => {
-    if (quantity > 1) {
-      // dispatch(updateCartItemQuantity(id, quantity - 1));
-    }
-  };
-
   // 아이템 삭제
-  const handleDelete = (id: string) => {
-    // dispatch(removeFromCart(id));
-    // setCheckedItems((prev) => prev.filter((itemId) => itemId !== id));
-  };
+  const handleCartDelete = (bookId: string) => {
+    dispatch(removeFromCartRequest(bookId))
+    dispatch(getItemsInCartRequest());
+  }
 
   // 총 금액 및 상품 수 계산
   const selectedItems = items.filter((item) => checkedItems.includes(item.book.id.toString()));
@@ -100,7 +122,16 @@ const CartPage = () => {
       {/* Cart Items */}
       {items.length > 0 ? (
         items.map((item) => (
-          <CartCard key={item.id} book={item.book} quantity={item.quantity} handleCheckboxChange={handleCheckboxChange} checkedIds={checkedIds} />
+          <CartCard
+            key={item.id}
+            book={item.book}
+            quantity={localQuantities[item.book.id.toString()]}
+            handleIncrease={() => handleIncrease(item.book.id.toString(), localQuantities[item.book.id.toString()])}
+            handleDecrease={() => handleDecrease(item.book.id.toString(), localQuantities[item.book.id.toString()])}
+            handleCheckboxChange={handleCheckboxChange}
+            checkedIds={checkedIds}
+            handleCartDelete={() => handleCartDelete(item.book.id.toString())}
+          />
         ))
       ) : (
         <Typography variant="h6" textAlign="center">
