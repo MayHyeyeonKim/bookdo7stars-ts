@@ -10,7 +10,7 @@ import { Container } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { bookGroups, QueryTypes } from '../constants';
+import { bookGroups, QueryTypes } from '../../constants';
 
 const GroupBookPage = () => {
   const dispatch = useDispatch<AppDispatch>();

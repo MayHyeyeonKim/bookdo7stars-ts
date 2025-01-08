@@ -23,7 +23,7 @@ import { format, subMonths } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 
-import { isbnType } from './types/isbnType';
+import { IsbnType } from './types/isbnType';
 import { SearchType } from './types/searchType';
 import { getBookIsbnSearchRequest, getBooksSearchRequest } from '../actions/types';
 import { AppDispatch } from '../store/store';
@@ -34,10 +34,10 @@ const SearchPage = () => {
   const initialPageSize = 20;
   const initialPage = 1;
   const [dateRange, setDateRange] = useState('all');
-  const [startYear, setStartYear] = useState<string|undefined>(undefined);
-  const [endYear, setEndYear] = useState<string|undefined>(undefined);
-  const [startMonth, setStartMonth] = useState<string|undefined>(undefined);
-  const [endMonth, setEndMonth] = useState<string|undefined>(undefined);
+  const [startYear, setStartYear] = useState<string | undefined>(undefined);
+  const [endYear, setEndYear] = useState<string | undefined>(undefined);
+  const [startMonth, setStartMonth] = useState<string | undefined>(undefined);
+  const [endMonth, setEndMonth] = useState<string | undefined>(undefined);
   const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 
   const isFormEmpty = () => {
@@ -58,9 +58,9 @@ const SearchPage = () => {
   // useEffect를 사용하여 입력이 변경될 때 버튼 상태를 업데이트
   useEffect(() => {
     // `찾기` 버튼이 비활성화될 조건을 설정하는 데 사용
-  }, [formData, isbn, dateRange, startYear, endYear, startMonth, endMonth]);
+  }, [formData, dateRange, startYear, endYear, startMonth, endMonth]);
 
-  const [isbn, setIsbn] = useState<isbnType>('');
+  const [isbn, setIsbn] = useState<IsbnType>('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -186,7 +186,15 @@ const SearchPage = () => {
       dispatch(getBooksSearchRequest(formData));
     }
 
-    const searchConditionString = encodeURIComponent(JSON.stringify(formData));
+    const trimmedData = {
+      ...formData,
+      searchTerm: formData.searchTerm?.trim(),
+      title: formData.title?.trim(),
+      author: formData.author?.trim(),
+      publisher: formData.publisher?.trim(),
+    };
+
+    const searchConditionString = encodeURIComponent(JSON.stringify(trimmedData));
     const isbnString = encodeURIComponent(JSON.stringify(isbn));
     router.push(`/search/result?isbn=${isbnString}&searchCondition=${searchConditionString}`);
 
@@ -208,306 +216,297 @@ const SearchPage = () => {
   };
 
   return (
-    <div>
-      <Box sx={{ mt: 5, mb: 5 }}>
-        <Container>
-          <Paper elevation={0} sx={{ p: 1 }}>
-            <Box
-              sx={{
-                backgroundColor: (theme) => theme.palette.third?.main || '#000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: isMobile ? 'center' : 'flex-start',
-                borderRadius: '5px',
-              }}>
-              <ManageSearchIcon sx={{ fontSize: 40, ml: isMobile ? 0 : 2, mr: isMobile ? 0 : 1 }} />
-              {!isMobile && (
-                <Typography variant="h5" sx={{ mt: 1.5, mb: 1.5, p: 0, minWidth: '50px', whiteSpace: 'nowrap' }}>
-                  상세검색
+    <>
+      <Paper elevation={0} sx={{ height: '100vh', p: 2, width: '100%', mt: '6rem' }}>
+        <Box
+          sx={{
+            backgroundColor: (theme) => theme.palette.third?.main || '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: isMobile ? 'center' : 'flex-start',
+            borderRadius: '5px',
+          }}>
+          <ManageSearchIcon sx={{ fontSize: 40, ml: isMobile ? 0 : 2, mr: isMobile ? 0 : 1 }} />
+          {!isMobile && (
+            <Typography variant="h5" sx={{ mt: 1.5, mb: 1.5, p: 0, minWidth: '50px', whiteSpace: 'nowrap' }}>
+              상세검색
+            </Typography>
+          )}
+        </Box>
+
+        <Box mt={2}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={10}>
+              <Box display="flex" alignItems="center" mb={2}>
+                <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
+                  제목
                 </Typography>
-              )}
-            </Box>
+                <TextField
+                  name="title"
+                  placeholder="복합명사는 띄어쓰기 해보세요."
+                  variant="outlined"
+                  value={formData.title}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+                  sx={{ flex: 1 }}
+                />
+              </Box>
 
-            <Box mt={2}>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} sm={10}>
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
-                      제목
-                    </Typography>
-                    <TextField
-                      name="title"
-                      placeholder="복합명사는 띄어쓰기 해보세요."
-                      variant="outlined"
-                      value={formData.title}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-                      sx={{ flex: 1 }}
-                    />
-                  </Box>
+              <Box display="flex" alignItems="center" mb={2}>
+                <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
+                  저자
+                </Typography>
+                <TextField
+                  name="author"
+                  variant="outlined"
+                  value={formData.author}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+                  sx={{ flex: 1 }}
+                />
+              </Box>
 
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
-                      저자
-                    </Typography>
-                    <TextField
-                      name="author"
-                      variant="outlined"
-                      value={formData.author}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-                      sx={{ flex: 1 }}
-                    />
-                  </Box>
+              <Box display="flex" alignItems="center" mb={2}>
+                <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
+                  출판사
+                </Typography>
+                <TextField
+                  name="publisher"
+                  variant="outlined"
+                  value={formData.publisher}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+                  sx={{ flex: 1 }}
+                />
+              </Box>
 
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
-                      출판사
-                    </Typography>
-                    <TextField
-                      name="publisher"
-                      variant="outlined"
-                      value={formData.publisher}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-                      sx={{ flex: 1 }}
-                    />
-                  </Box>
-
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Box display="flex" alignItems="center" mb={2}>
-                      <Typography variant="subtitle1" sx={{ width: '80px', ml: 3, minWidth: '20px', whiteSpace: 'nowrap' }}>
-                        출간일
-                      </Typography>
-                    </Box>
-                    {isMobile ? (
-                      <Grid container spacing={0.8}>
-                        {[
-                          { label: '전체', value: 'all' },
-                          { label: '3개월', value: '3' },
-                          { label: '6개월', value: '6' },
-                          { label: '9개월', value: '9' },
-                          { label: '24개월', value: '24' },
-                          { label: '직접설정', value: 'custom' },
-                        ].map((option) => (
-                          <Grid item xs={6} key={option.value}>
-                            <ToggleButtonGroup
-                              value={dateRange}
-                              exclusive
-                              onChange={handleDateRange}
-                              sx={{
-                                width: '100%',
-                                gap: 0.3,
-                                '& .MuiToggleButton-root': {
-                                  border: '1px solid rgba(0, 0, 0, 0.12)',
-                                  borderRadius: 0,
-                                },
-                                '& .MuiToggleButtonGroup-grouped': {
-                                  borderRadius: '5px !important',
-                                },
-                              }}>
-                              <ToggleButton
-                                disableRipple
-                                value={option.value}
-                                sx={{
-                                  minWidth: '50px',
-                                  whiteSpace: 'nowrap',
-                                  width: '100%',
-                                }}>
-                                {option.label}
-                              </ToggleButton>
-                            </ToggleButtonGroup>
-                          </Grid>
-                        ))}
+              <Box display="flex" alignItems="center" mb={2}>
+                <Box display="flex" alignItems="center" mb={2}>
+                  <Typography variant="subtitle1" sx={{ width: '80px', ml: 3, minWidth: '20px', whiteSpace: 'nowrap' }}>
+                    출간일
+                  </Typography>
+                </Box>
+                {isMobile ? (
+                  <Grid container spacing={0.8}>
+                    {[
+                      { label: '전체', value: 'all' },
+                      { label: '3개월', value: '3' },
+                      { label: '6개월', value: '6' },
+                      { label: '9개월', value: '9' },
+                      { label: '24개월', value: '24' },
+                      { label: '직접설정', value: 'custom' },
+                    ].map((option) => (
+                      <Grid item xs={6} key={option.value}>
+                        <ToggleButtonGroup
+                          value={dateRange}
+                          exclusive
+                          onChange={handleDateRange}
+                          sx={{
+                            width: '100%',
+                            gap: 0.3,
+                            '& .MuiToggleButton-root': {
+                              border: '1px solid rgba(0, 0, 0, 0.12)',
+                              borderRadius: 0,
+                            },
+                            '& .MuiToggleButtonGroup-grouped': {
+                              borderRadius: '5px !important',
+                            },
+                          }}>
+                          <ToggleButton
+                            disableRipple
+                            value={option.value}
+                            sx={{
+                              minWidth: '50px',
+                              whiteSpace: 'nowrap',
+                              width: '100%',
+                            }}>
+                            {option.label}
+                          </ToggleButton>
+                        </ToggleButtonGroup>
                       </Grid>
-                    ) : (
-                      <ToggleButtonGroup
-                        value={dateRange}
-                        exclusive
-                        onChange={handleDateRange}
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          paddingLeft: '0px',
-                          gap: 0.3,
-                          flexWrap: 'nowrap',
-                          '& .MuiToggleButton-root': {
-                            border: '1px solid rgba(0, 0, 0, 0.12)',
-                            borderRadius: 0,
-                          },
-                          '& .MuiToggleButtonGroup-grouped': {
-                            borderRadius: '5px !important',
-                          },
-                        }}>
-                        <ToggleButton disableRipple value="all" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
-                          전체
-                        </ToggleButton>
-                        <ToggleButton disableRipple value="3" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
-                          3개월
-                        </ToggleButton>
-                        <ToggleButton disableRipple value="6" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
-                          6개월
-                        </ToggleButton>
-                        <ToggleButton disableRipple value="9" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
-                          9개월
-                        </ToggleButton>
-                        <ToggleButton disableRipple value="24" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
-                          24개월
-                        </ToggleButton>
-                        <ToggleButton disableRipple value="custom" sx={{ minWidth: '30px', whiteSpace: 'nowrap' }}>
-                          직접설정
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-                    )}
-                  </Box>
+                    ))}
+                  </Grid>
+                ) : (
+                  <ToggleButtonGroup
+                    value={dateRange}
+                    exclusive
+                    onChange={handleDateRange}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      paddingLeft: '0px',
+                      gap: 0.3,
+                      flexWrap: 'nowrap',
+                      '& .MuiToggleButton-root': {
+                        border: '1px solid rgba(0, 0, 0, 0.12)',
+                        borderRadius: 0,
+                      },
+                      '& .MuiToggleButtonGroup-grouped': {
+                        borderRadius: '5px !important',
+                      },
+                    }}>
+                    <ToggleButton disableRipple value="all" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                      전체
+                    </ToggleButton>
+                    <ToggleButton disableRipple value="3" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                      3개월
+                    </ToggleButton>
+                    <ToggleButton disableRipple value="6" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                      6개월
+                    </ToggleButton>
+                    <ToggleButton disableRipple value="9" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                      9개월
+                    </ToggleButton>
+                    <ToggleButton disableRipple value="24" sx={{ minWidth: '50px', whiteSpace: 'nowrap' }}>
+                      24개월
+                    </ToggleButton>
+                    <ToggleButton disableRipple value="custom" sx={{ minWidth: '30px', whiteSpace: 'nowrap' }}>
+                      직접설정
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                )}
+              </Box>
 
-                  {/* 직접설정 선택시 나타나는 인터벌 */}
-                  {dateRange === 'custom' && (
-                    <Box
-                      display="flex"
-                      flexDirection={isMobile ? 'column' : 'row'}
-                      alignItems="center"
-                      flexWrap={isMobile ? 'wrap' : 'nowrap'}
-                      mb={2}
-                      sx={{ ml: isMobile ? '103px' : '101px', width: '80%' }}>
-                      <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} sx={{ width: isMobile ? '100%' : 'auto' }}>
-                        <TextField
-                          name="startYear"
-                          label="년"
-                          value={startYear}
-                          sx={{ width: isMobile ? '90%' : '100px', mr: 1 }}
-                          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeDateRange(e)}
-                        />
-                        <Select
-                          name="startMonth"
-                          value={startMonth}
-                          onChange={handleChangeDateRange}
-                          displayEmpty
-                          sx={{ width: isMobile ? '90%' : '80px', mr: 1 }}>
-                          <MenuItem value="" disabled>
-                            월
-                          </MenuItem>
-                          {months.map((month) => (
-                            <MenuItem key={month} value={month}>
-                              {month}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        <Typography variant="body2" sx={{ minWidth: '50px', whiteSpace: 'nowrap', ml: isMobile ? 0 : 2 }}>
-                          월부터
-                        </Typography>
-                      </Box>
-
-                      <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} sx={{ width: isMobile ? '100%' : 'auto' }}>
-                        <TextField
-                          name="endYear"
-                          label="년"
-                          value={endYear}
-                          sx={{ width: isMobile ? '90%' : '100px', ml: isMobile ? 0 : 2, mr: 1 }}
-                          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeDateRange(e)}
-                        />
-                        <Select name="endMonth" value={endMonth} onChange={handleChangeDateRange} displayEmpty sx={{ width: isMobile ? '90%' : '80px', mr: 1 }}>
-                          <MenuItem value="" disabled>
-                            월
-                          </MenuItem>
-                          {months.map((month) => (
-                            <MenuItem key={month} value={month}>
-                              {month}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        <Typography variant="body2" sx={{ minWidth: '50px', whiteSpace: 'nowrap', ml: isMobile ? 0 : 2 }}>
-                          월까지
-                        </Typography>
-                      </Box>
-                    </Box>
-                  )}
-
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Box display="flex" alignItems="center" mb={2}>
-                      <Typography variant="subtitle1" sx={{ width: '80px', ml: 3, minWidth: '50px', whiteSpace: 'nowrap' }}>
-                        정렬순서
-                      </Typography>
-                    </Box>
-                    <Select name="orderTerm" value={formData.orderTerm} onChange={(e: SelectChangeEvent) => handleChange(e)} displayEmpty sx={{ flex: 1 }}>
-                      <MenuItem value="" disabled>
-                        정렬순서
-                      </MenuItem>
-                      <MenuItem value="accuracy">정확도순</MenuItem>
-                      <MenuItem value="sales">판매량순</MenuItem>
-                      <MenuItem value="publication">출간일순</MenuItem>
-                      <MenuItem value="name">상품명순</MenuItem>
-                      <MenuItem value="rank">평점순</MenuItem>
-                      <MenuItem value="lowPrice">저가격순</MenuItem>
-                    </Select>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={2} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-                  <Box display="flex" justifyContent="center">
-                    <Button
-                      disableRipple
-                      variant="contained"
-                      color="success"
-                      onClick={handleSearch}
-                      disabled={isFormEmpty()}
-                      sx={{
-                        backgroundColor: (theme) => theme.palette.primary.main,
-                        '&:hover': {
-                          backgroundColor: (theme) => theme.palette.primary.dark,
-                        },
-                      }}>
-                      찾기
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Box>
-
-            <Divider sx={{ my: 4 }} />
-
-            <Box display="flex" alignItems="center" mb={2}>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} sm={10}>
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
-                      ISBN 검색
-                    </Typography>
+              {/* 직접설정 선택시 나타나는 인터벌 */}
+              {dateRange === 'custom' && (
+                <Box
+                  display="flex"
+                  flexDirection={isMobile ? 'column' : 'row'}
+                  alignItems="center"
+                  flexWrap={isMobile ? 'wrap' : 'nowrap'}
+                  mb={2}
+                  sx={{ ml: isMobile ? '103px' : '101px', width: '80%' }}>
+                  <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} sx={{ width: isMobile ? '100%' : 'auto' }}>
                     <TextField
-                      name="isbn"
-                      fullWidth
-                      placeholder="-없이 숫자만 입력하세요."
-                      variant="outlined"
-                      value={isbn}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleIsbnChange(e)}
-                      sx={{ flex: 1 }}
+                      name="startYear"
+                      label="년"
+                      value={startYear}
+                      sx={{ width: isMobile ? '90%' : '100px', mr: 1 }}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeDateRange(e)}
                     />
+                    <Select name="startMonth" value={startMonth} onChange={handleChangeDateRange} displayEmpty sx={{ width: isMobile ? '90%' : '80px', mr: 1 }}>
+                      <MenuItem value="" disabled>
+                        월
+                      </MenuItem>
+                      {months.map((month) => (
+                        <MenuItem key={month} value={month}>
+                          {month}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <Typography variant="body2" sx={{ minWidth: '50px', whiteSpace: 'nowrap', ml: isMobile ? 0 : 2 }}>
+                      월부터
+                    </Typography>
                   </Box>
-                </Grid>
 
-                <Grid item xs={12} sm={2}>
-                  <Box display="flex" justifyContent="center">
-                    <Button
-                      disableRipple
-                      variant="contained"
-                      color="success"
-                      onClick={handleSearch}
-                      disabled={!isbn}
-                      sx={{
-                        mt: 0,
-                        backgroundColor: (theme) => theme.palette.primary.main,
-                        '&:hover': {
-                          backgroundColor: (theme) => theme.palette.primary.dark,
-                        },
-                        height: '40px',
-                      }}>
-                      찾기
-                    </Button>
+                  <Box display="flex" alignItems="center" mb={isMobile ? 2 : 0} sx={{ width: isMobile ? '100%' : 'auto' }}>
+                    <TextField
+                      name="endYear"
+                      label="년"
+                      value={endYear}
+                      sx={{ width: isMobile ? '90%' : '100px', ml: isMobile ? 0 : 2, mr: 1 }}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeDateRange(e)}
+                    />
+                    <Select name="endMonth" value={endMonth} onChange={handleChangeDateRange} displayEmpty sx={{ width: isMobile ? '90%' : '80px', mr: 1 }}>
+                      <MenuItem value="" disabled>
+                        월
+                      </MenuItem>
+                      {months.map((month) => (
+                        <MenuItem key={month} value={month}>
+                          {month}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <Typography variant="body2" sx={{ minWidth: '50px', whiteSpace: 'nowrap', ml: isMobile ? 0 : 2 }}>
+                      월까지
+                    </Typography>
                   </Box>
-                </Grid>
-              </Grid>
-            </Box>
-          </Paper>
-        </Container>
-      </Box>
-    </div>
+                </Box>
+              )}
+
+              <Box display="flex" alignItems="center" mb={2}>
+                <Box display="flex" alignItems="center" mb={2}>
+                  <Typography variant="subtitle1" sx={{ width: '80px', ml: 3, minWidth: '50px', whiteSpace: 'nowrap' }}>
+                    정렬순서
+                  </Typography>
+                </Box>
+                <Select name="orderTerm" value={formData.orderTerm} onChange={(e: SelectChangeEvent) => handleChange(e)} displayEmpty sx={{ flex: 1 }}>
+                  <MenuItem value="" disabled>
+                    정렬순서
+                  </MenuItem>
+                  <MenuItem value="accuracy">정확도순</MenuItem>
+                  <MenuItem value="sales">판매량순</MenuItem>
+                  <MenuItem value="publication">출간일순</MenuItem>
+                  <MenuItem value="name">상품명순</MenuItem>
+                  <MenuItem value="rank">평점순</MenuItem>
+                  <MenuItem value="lowPrice">저가격순</MenuItem>
+                </Select>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={2} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <Box display="flex" justifyContent="center">
+                <Button
+                  disableRipple
+                  variant="contained"
+                  color="success"
+                  onClick={handleSearch}
+                  disabled={isFormEmpty()}
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.primary.main,
+                    '&:hover': {
+                      backgroundColor: (theme) => theme.palette.primary.dark,
+                    },
+                  }}>
+                  찾기
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Divider sx={{ my: 4 }} />
+
+        <Box display="flex" alignItems="center" mb={2}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={10}>
+              <Box display="flex" alignItems="center" mb={2}>
+                <Typography variant="subtitle1" sx={{ width: '80px', ml: 3 }}>
+                  ISBN 검색
+                </Typography>
+                <TextField
+                  name="isbn"
+                  fullWidth
+                  placeholder="-없이 숫자만 입력하세요."
+                  variant="outlined"
+                  value={isbn}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleIsbnChange(e)}
+                  sx={{ flex: 1 }}
+                />
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={2}>
+              <Box display="flex" justifyContent="center">
+                <Button
+                  disableRipple
+                  variant="contained"
+                  color="success"
+                  onClick={handleSearch}
+                  disabled={!isbn}
+                  sx={{
+                    mt: 0,
+                    backgroundColor: (theme) => theme.palette.primary.main,
+                    '&:hover': {
+                      backgroundColor: (theme) => theme.palette.primary.dark,
+                    },
+                    height: '40px',
+                  }}>
+                  찾기
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+      </Paper>
+    </>
   );
 };
 

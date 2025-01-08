@@ -1,11 +1,13 @@
 'use client';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from './store/store';
-import { RootState } from './reducers';
 import { useEffect } from 'react';
-import { checkSessionRequest } from './actions/types';
+
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+
+import { checkSessionRequest } from './actions/types';
+import { RootState } from './reducers';
+import { AppDispatch } from './store/store';
 
 const SessionProvider = ({
   children,

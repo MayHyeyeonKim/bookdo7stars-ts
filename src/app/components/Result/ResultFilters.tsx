@@ -1,19 +1,14 @@
-import { useState } from 'react';
-
 import { RootState } from '@/app/reducers';
-import { SearchType } from '@/app/search/types/searchType';
-import { Container, Box, Typography, Slider, Button } from '@mui/material';
+import { Container, Box, Typography, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { GET_BOOKS_SEARCH_REQUEST } from '../../actions/constants/book'; // 액션 정의된 경로
+import FilterSlider from './FilterSlider';
+import { GET_BOOKS_SEARCH_REQUEST, SET_FILTERS } from '../../actions/constants/book'; // 액션 정의된 경로
 
 const ResultFilters = () => {
   const dispatch = useDispatch();
   const searchData = useSelector((store: RootState) => store.book.searchData);
-  const [filters, setFilters] = useState({
-    dateRange: [undefined, undefined], // Represents the values in months (3M to 60M or 전체)
-    priceRange: [0, 100000],
-  });
+  const filters = useSelector((store: RootState) => store.book.filters);
 
   // Marks for the date range slider
   const dateRangeMarks = [
@@ -26,18 +21,15 @@ const ResultFilters = () => {
   ];
 
   const handleSliderChange = (name: string) => (event: Event, value: number | number[]) => {
-    const newValue = value === 60 ? [undefined, undefined] : [value];
-    setFilters({
+    const newFilters = {
       ...filters,
-      [name]: newValue,
-    });
-  };
+      [name]: value,
+    };
 
-  const handlePriceSliderChange = (name: string) => (event: Event, value: number | number[]) => {
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value, // value는 배열이어야 함
-    }));
+    dispatch({
+      type: SET_FILTERS,
+      data: newFilters,
+    });
   };
 
   const applyFilters = () => {
@@ -71,11 +63,12 @@ const ResultFilters = () => {
       endDateISO = today.toISOString().split('T')[0];
     }
 
-    console.log('222', startDateISO, endDateISO);
     const requestData = {
       ...searchData,
       start_price: filters.priceRange[0],
       end_price: filters.priceRange[1],
+      start_rate: filters.rateRange[0],
+      end_rate: filters.rateRange[1],
     } as any;
 
     if (startDateISO !== undefined) {
@@ -90,16 +83,9 @@ const ResultFilters = () => {
       delete requestData.end_date;
     }
 
-    console.log('요청데이타ㅏㅏㅏㅏ ', requestData);
-
     dispatch({
       type: GET_BOOKS_SEARCH_REQUEST,
       data: requestData,
-    });
-
-    console.log('Applied Filters:', {
-      dateRange: [requestData.start_date, requestData.end_date],
-      priceRange: filters.priceRange,
     });
   };
 
@@ -110,22 +96,17 @@ const ResultFilters = () => {
           필터링
         </Typography>
       </Box>
-      <Box mb={2}>
-        <Typography>출간일</Typography>
-        <Slider
-          value={filters.dateRange[0] === undefined ? 60 : filters.dateRange[0]}
-          onChange={handleSliderChange('dateRange')}
-          //   valueLabelDisplay="auto"
-          min={10}
-          max={60} // The maximum value corresponds to '전체'
-          step={null} // Makes the slider snap to marks only
-          marks={dateRangeMarks}
-        />
-      </Box>
-      <Box mb={2}>
-        <Typography>판매가</Typography>
-        <Slider value={filters.priceRange} onChange={handlePriceSliderChange('priceRange')} valueLabelDisplay="auto" min={0} max={100000} />
-      </Box>
+      <FilterSlider
+        label="출간일"
+        value={filters.dateRange[0] === undefined ? 60 : filters.dateRange[0]}
+        onChange={handleSliderChange('dateRange')}
+        min={10}
+        max={60}
+        step={null}
+        marks={dateRangeMarks}
+      />
+      <FilterSlider label="판매가" value={filters.priceRange} onChange={handleSliderChange('priceRange')} min={0} max={100000} />
+      <FilterSlider label="별점" value={filters.rateRange} onChange={handleSliderChange('rateRange')} min={0} max={10} />
 
       <Button variant="contained" color="primary" onClick={applyFilters} fullWidth>
         적용

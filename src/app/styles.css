@@ -1,8 +1,22 @@
 body {
-  margin: 0;
   font-family: 'IBM Plex Sans KR', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-width: '1200px';
+  margin: 0;
+}
+
+@media (min-width: 2560px) {
+  body {
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 code {
@@ -10,11 +24,13 @@ code {
 }
 
 .carousel-item {
-  width: 240px; /* 각 아이템의 너비 */
-  margin: 5px 10px; /* 아이템 간 간격 */
+  width: 240px;
+  /* 각 아이템의 너비 */
+  margin: 5px 10px;
+  /* 아이템 간 간격 */
 }
 
-.bestSellerCategory{
+.bestSellerCategory {
   display: 'inline-block';
   padding: '10px 20px';
   cursor: 'pointer';
@@ -24,4 +40,10 @@ code {
 
 .bestSellerCategory:hover {
   background-color: #f0f0f0;
+}
+
+.MuiContainer-root {
+  @media (min-width: 1200px) {
+    max-width: none !important;
+  }
 }

@@ -15,7 +15,7 @@ import {
   CHECK_SESSION_SUCCESS,
   CHECK_SESSION_FAILURE,
 } from '../actions/constants';
-import { CheckSessionRequestAction, LoginRequestAction, RegisterRequestAction } from '../actions/types';
+import { LoginRequestAction, RegisterRequestAction } from '../actions/types';
 
 // CheckSession API
 function checkSessionAPI() {

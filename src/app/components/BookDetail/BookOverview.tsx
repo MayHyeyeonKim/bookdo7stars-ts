@@ -40,7 +40,7 @@ const BookOverview: React.FC<BookOverviewProps> = ({ book }) => {
                   borderRadius: '4px',
                 }}>
                 <div style={{ marginRight: '14px' }}>배송 정보 </div>
-                <h6 style={{ margin: 0, marginRight: '13px' }}>{address}</h6>
+                <h6 style={{ marginRight: '13px' }}>{address}</h6>
                 <AddressChange setAddress={setAddress} />
               </Box>
               <DeliveryEstimate address={address} />

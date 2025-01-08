@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
+import { Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import './daumAPI.style.css';
@@ -10,17 +11,11 @@ declare global {
   }
 }
 
-// Styled component for the dropdown container
-const DropdownContainer = styled.div`
-  position: relative;
-  z-index: 1501;
-`;
-
 const PostcodeWidget = styled.div`
   &.open {
     position: absolute;
-    z-index: 1502;
-    background: white;
+    z-index: 9999;
+    background: blue;
   }
 `;
 
@@ -71,15 +66,15 @@ const AddressChange: React.FC<AddressChangeProps> = ({ setAddress }) => {
   }, [isPostcodeOpen, setAddress, togglePostcode, dispatch]);
 
   return (
-    <DropdownContainer>
+    <>
       <div className="address-change-container">
         <button className="change-button" onClick={togglePostcode}>
           지역 선택 {'▾'}
         </button>
-        <div style={{ color: 'red' }}>수도권과 부산은 하루배송 가능 지역입니다.</div>
+        <Typography sx={{ fontSize: '12px', color: 'red' }}>수도권과 부산은 하루배송 가능 지역입니다.</Typography>
       </div>
-      <PostcodeWidget className={`postcode-widget ${isPostcodeOpen ? 'open' : ''}`} ref={elementRef}></PostcodeWidget>
-    </DropdownContainer>
+      <PostcodeWidget className={`postcode-widget ${isPostcodeOpen ? 'open' : ''}`} ref={elementRef} />
+    </>
   );
 };
 

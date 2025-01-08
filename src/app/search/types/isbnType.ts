@@ -1,1 +1,1 @@
-export type isbnType = string | undefined;
+export type IsbnType = string | undefined;

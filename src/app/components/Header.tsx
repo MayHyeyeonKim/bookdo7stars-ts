@@ -29,7 +29,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
-import CategoryBar from './CategoryBar';
+import CategoryBar from './Category/CategoryBar';
 import { getBooksSearchRequest, logoutRequest } from '../actions/types';
 import { AppDispatch, AppState } from '../store/store';
 
@@ -140,14 +140,15 @@ const Header = () => {
   const initialPage = 1;
 
   const handleSearch = () => {
-    if (searchTerm.trim() === '') {
+    const trimmedSearchTerm = searchTerm.trim();
+    if (trimmedSearchTerm === '') {
       alert('Please enter a search term.');
       return;
     }
-    const searchCondition = encodeURIComponent(JSON.stringify({ searchTerm, page: 1, pageSize: 20 }));
+    const searchCondition = encodeURIComponent(JSON.stringify({ searchTerm: trimmedSearchTerm, page: 1, pageSize: 20 }));
     router.push(`/search/result?searchCondition=${searchCondition}`);
-    dispatch(getBooksSearchRequest({ page: initialPage, pageSize: initialPageSize, searchTerm }));
-    setSearchTerm('');
+    dispatch(getBooksSearchRequest({ page: initialPage, pageSize: initialPageSize, searchTerm: trimmedSearchTerm }));
+    setTimeout(() => setSearchTerm(''), 0);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -200,9 +201,7 @@ const Header = () => {
           p: 1,
           textAlign: 'center',
         }}>
-        <Typography sx={{ margin: 0, color: '#fff', fontSize: isMobile ? '0.875rem' : '1rem' }}>
-          Free shipping on all orders over $100. (Standard Shipping)
-        </Typography>
+        <Typography sx={{ color: '#fff', fontSize: isMobile ? '0.875rem' : '1rem' }}>Free shipping on all orders over $100. (Standard Shipping)</Typography>
       </Box>
       <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', marginTop: 2 }}>
         <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>

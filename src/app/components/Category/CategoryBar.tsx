@@ -10,7 +10,8 @@ import { AppBar, Toolbar, Typography, MenuItem, Box, IconButton, useTheme, useMe
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { QueryTypes, bookGroups, getBooksPageURL } from '../books/constants';
+import { QueryTypes, bookGroups, getBooksPageURL } from '../../books/constants';
+import { Category } from '../../models/category';
 
 const CategoryBar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -174,7 +175,9 @@ const CategoryBar = () => {
                   <Grid container spacing={3}>
                     {categories.map((obj) => (
                       <Grid key={obj.id} item xs={12} sm={6} md={4} lg={2}>
-                        <Link href="{obj.id}" style={{ fontWeight: searchCategoryText.length > 0 && obj.name.includes(searchCategoryText) ? 600 : 100 }}>
+                        <Link
+                          href={'/books/category/' + obj.id.toString()}
+                          style={{ fontWeight: searchCategoryText.length > 0 && obj.name.includes(searchCategoryText) ? 600 : 100, cursor: 'pointer' }}>
                           {obj.name}
                         </Link>
                         {obj.children.length > 0 && (
@@ -185,6 +188,7 @@ const CategoryBar = () => {
                               top: '5px',
                               transform: expandedId.includes(obj.id) ? 'rotate(180deg)' : 'rotate(0deg)',
                               transition: 'transform 0.3s',
+                              cursor: 'pointer',
                             }}
                           />
                         )}
@@ -196,9 +200,10 @@ const CategoryBar = () => {
                               transition: 'opacity 0.5s ease-in-out',
                               overflow: 'hidden',
                               opacity: expandedId.includes(obj.id) ? 1 : 0,
+                              cursor: 'pointer',
                             }}>
                             <Link
-                              href="{child.id}"
+                              href={'/books/category/' + child.id.toString()}
                               underline="none"
                               style={{
                                 fontSize: '10pt',

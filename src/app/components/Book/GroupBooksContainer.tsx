@@ -40,6 +40,7 @@ const GroupBooksContainer: React.FC<GroupBooksContainerProps> = ({ books, title,
               sm={6}
               md={4}
               lg={3}
+              xl={2}
               sx={{ paddingY: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <BookCard key={index} book={book} />
             </Grid>

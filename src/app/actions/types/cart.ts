@@ -10,9 +10,6 @@ import {
   REMOVE_FROM_CART_REQUEST,
   REMOVE_FROM_CART_SUCCESS,
   REMOVE_FROM_CART_FAILURE,
-  UPDATE_CART_ITEM_QUANTITY_REQUEST,
-  UPDATE_CART_ITEM_QUANTITY_SUCCESS,
-  UPDATE_CART_ITEM_QUANTITY_FAILURE,
 } from '../constants';
 
 export interface GetItemsInCartRequestAction {
@@ -46,12 +43,12 @@ export interface AddToCartFailureAction {
 
 export interface RemoveFromCartRequestAction {
   type: typeof REMOVE_FROM_CART_REQUEST;
-  data: string;
+  data: string; // Book ID
 }
 
 export interface RemoveFromCartSuccessAction {
   type: typeof REMOVE_FROM_CART_SUCCESS;
-  payload: {bookId: string; message: string};
+  payload: { bookId: string; message: string };
 }
 
 export interface RemoveFromCartFailureAction {
@@ -59,20 +56,13 @@ export interface RemoveFromCartFailureAction {
   error: string;
 }
 
-export interface UpdateCartItemQuantityRequestAction {
-  type: typeof UPDATE_CART_ITEM_QUANTITY_REQUEST;
-  data: {bookId: number; quantity: number};
-}
-
-export interface UpdateCartItemQuantitySuccessAction {
-  type: typeof UPDATE_CART_ITEM_QUANTITY_SUCCESS;
-  payload: CartItem
-}
-
-export interface UpdateCartItemQuantityFailureAction {
-  type: typeof UPDATE_CART_ITEM_QUANTITY_FAILURE;
-  error: string;
-}
+// export interface UpdateCartItemQuantityAction {
+//   type: typeof UPDATE_CART_ITEM_QUANTITY;
+//   payload: {
+//     bookId: string;
+//     quantity: number;
+//   };
+// }
 
 // export interface ClearCartAction {
 //   type: typeof CLEAR_CART;
@@ -87,10 +77,7 @@ export type CartActionTypes =
   | AddToCartFailureAction
   | RemoveFromCartRequestAction
   | RemoveFromCartSuccessAction
-  | RemoveFromCartFailureAction
-  | UpdateCartItemQuantityRequestAction
-  | UpdateCartItemQuantitySuccessAction
-  | UpdateCartItemQuantityFailureAction;
+  | RemoveFromCartFailureAction;
 
 export const getItemsInCartRequest = (): GetItemsInCartRequestAction => ({
   type: GET_ITEMS_IN_CART_REQUEST,
@@ -136,20 +123,10 @@ export const removeFromCartFailure = (error: string): RemoveFromCartFailureActio
   error,
 });
 
-export const updateCartItemQuantityRequest = (bookId: number,quantity: number): UpdateCartItemQuantityRequestAction => ({
-  type: UPDATE_CART_ITEM_QUANTITY_REQUEST,
-  data: { bookId, quantity },
-});
-
-export const updateCartItemQuantitySuccess = (cartItem: CartItem):UpdateCartItemQuantitySuccessAction => ({
-  type: UPDATE_CART_ITEM_QUANTITY_SUCCESS,
-  payload: cartItem
-})
-
-export const updateCartItemQuantityFailure = (error:string):UpdateCartItemQuantityFailureAction => ({
-  type: UPDATE_CART_ITEM_QUANTITY_FAILURE,
-  error,
-})
+// export const updateCartItemQuantity = (bookId: string, quantity: number): UpdateCartItemQuantityAction => ({
+//   type: UPDATE_CART_ITEM_QUANTITY,
+//   payload: { bookId, quantity },
+// });
 
 // export const clearCart = (): ClearCartAction => ({
 //   type: CLEAR_CART,

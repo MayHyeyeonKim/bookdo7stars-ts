@@ -10,7 +10,6 @@ import { AppDispatch } from '@/app/store/store';
 import { Typography, Container, Box, Grid } from '@mui/material';
 import Carousel from 'react-multi-carousel';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 
 import { Book } from './models/book';
 import { Category } from './models/category';
@@ -21,7 +20,6 @@ export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
   const { mainpageBooks } = useSelector((store: RootState) => store.mainpageBook);
   const { books } = useSelector((store: RootState) => store.book);
-  const { isAddToCartDone, addToCartSuccessMessage } = useSelector((store: RootState) => store.cart);
 
   useEffect(() => {
     dispatch(getMainpageBooksRequest());
@@ -36,7 +34,7 @@ export default function Home() {
   };
   return (
     <>
-      <Box>
+      <Container className="banner-carousel-box" sx={{ padding: '0 !important' }}>
         <Carousel
           itemClass="carousel-item-padding-40-px"
           infinite={true}
@@ -79,17 +77,18 @@ export default function Home() {
             />
           ))}
         </Carousel>
-      </Box>
-      <Container maxWidth="lg">
+      </Container>
+      <Container maxWidth={false} disableGutters className="Mainpage-Container" sx={{ padding: 2 }}>
         <Container
-          maxWidth="lg"
+          maxWidth={false}
+          disableGutters
           sx={{
             display: 'flex', // Flexbox 활성화
             justifyContent: 'space-between', // 좌우 끝 정렬
             alignItems: 'center', // 세로 가운데 정렬
             padding: '16px', // 적절한 여백 추가
           }}>
-          <Typography variant="h6" style={{ fontWeight: 600 }}>
+          <Typography variant="h4" style={{ fontWeight: 600 }}>
             화제의 신간
           </Typography>
           <MoreButton href="/books/ItemNewSpecial" />
@@ -137,14 +136,15 @@ export default function Home() {
         </Carousel>
 
         <Container
-          maxWidth="lg"
+          maxWidth={false}
+          disableGutters
           sx={{
             display: 'flex', // Flexbox 활성화
             justifyContent: 'space-between', // 좌우 끝 정렬
             alignItems: 'center', // 세로 가운데 정렬
             padding: '16px', // 적절한 여백 추가
           }}>
-          <Typography variant="h6" style={{ fontWeight: 600 }}>
+          <Typography variant="h4" style={{ fontWeight: 600 }}>
             베스트 셀러
           </Typography>
           <MoreButton href="/books/Bestseller" />
@@ -211,6 +211,7 @@ export default function Home() {
                 sm={6}
                 md={4}
                 lg={3}
+                xl={2}
                 sx={{ paddingY: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <BookCard key={index} book={book} />
               </Grid>
@@ -220,14 +221,15 @@ export default function Home() {
         </Box>
 
         <Container
-          maxWidth="lg"
+          maxWidth={false}
+          disableGutters
           sx={{
             display: 'flex', // Flexbox 활성화
             justifyContent: 'space-between', // 좌우 끝 정렬
             alignItems: 'center', // 세로 가운데 정렬
             padding: '16px', // 적절한 여백 추가
           }}>
-          <Typography variant="h6" style={{ fontWeight: 600 }}>
+          <Typography variant="h4" style={{ fontWeight: 600 }}>
             새로 나온 책
           </Typography>
           <MoreButton href="/books/ItemNewAll" />
@@ -243,6 +245,7 @@ export default function Home() {
                 sm={6}
                 md={4}
                 lg={3}
+                xl={2}
                 sx={{ paddingY: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <BookCard key={index} book={book} />
               </Grid>
@@ -251,14 +254,15 @@ export default function Home() {
         </Box>
 
         <Container
-          maxWidth="lg"
+          maxWidth={false}
+          disableGutters
           sx={{
             display: 'flex', // Flexbox 활성화
             justifyContent: 'space-between', // 좌우 끝 정렬
             alignItems: 'center', // 세로 가운데 정렬
             padding: '16px', // 적절한 여백 추가
           }}>
-          <Typography variant="h6" style={{ fontWeight: 600 }}>
+          <Typography variant="h4" style={{ fontWeight: 600 }}>
             에디터 추천
           </Typography>
           <MoreButton href="/books/ItemEditorChoice" />

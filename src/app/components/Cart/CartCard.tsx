@@ -10,16 +10,13 @@ import Checkbox from '@mui/material/Checkbox';
 type CartCardProps = {
   book: Book;
   quantity: number;
-  handleIncrease: () => void;
-  handleDecrease: () => void; 
-  handleCheckboxChange: (id: string, event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCheckboxChange: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
   checkedIds: Record<string, boolean>;
-  handleCartDelete: (id: string | number) => void;
+  handleCartDelete: (bookid: string) => void;
 };
 
-
 const CartCard = (props: CartCardProps) => {
-  const { book, quantity, handleIncrease, handleDecrease, handleCheckboxChange, checkedIds, handleCartDelete } = props;
+  const { book, quantity, handleCheckboxChange, checkedIds, handleCartDelete } = props;
 
   return (
     <Card variant="outlined" sx={{ mb: 2 }}>
@@ -54,15 +51,15 @@ const CartCard = (props: CartCardProps) => {
           <Grid item xs={3} textAlign="center">
             <Box display="flex" flexDirection="column" alignItems="center">
               <Box display="flex" alignItems="center">
-                <IconButton onClick={handleDecrease} disabled={quantity <= 1}>
+                <IconButton disabled={quantity <= 1}>
                   <RemoveIcon />
                 </IconButton>
                 <Typography sx={{ mx: 1 }}>{quantity}</Typography>
-                <IconButton onClick={handleIncrease}>
+                <IconButton>
                   <AddIcon />
                 </IconButton>
               </Box>
-              <Button variant="outlined" color="error" size="small" startIcon={<DeleteIcon />} onClick={()=>handleCartDelete(book.id.toString())} >
+              <Button variant="outlined" color="error" size="small" startIcon={<DeleteIcon />} onClick={() => handleCartDelete(book.id.toString())}>
                 삭제
               </Button>
             </Box>

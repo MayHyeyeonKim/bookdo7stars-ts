@@ -23,19 +23,19 @@ export const getBooksPageURL = (query: string) => {
       return baseUrl;
     }
     case '새로 나온 책': {
-      return baseUrl + '/ItemNewAll';
+      return baseUrl + '/group/ItemNewAll';
     }
     case '화제의 신간': {
-      return baseUrl + '/ItemNewSpecial';
+      return baseUrl + '/group/ItemNewSpecial';
     }
     case '베스트 셀러': {
-      return baseUrl + '/Bestseller';
+      return baseUrl + '/group/Bestseller';
     }
     case '블로그 베스트': {
-      return baseUrl + '/BlogBest';
+      return baseUrl + '/group/BlogBest';
     }
     case '에디터 추천': {
-      return baseUrl + '/ItemEditorChoice';
+      return baseUrl + '/group/ItemEditorChoice';
     }
     default:
       return baseUrl;

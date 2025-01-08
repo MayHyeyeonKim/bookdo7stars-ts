@@ -8,6 +8,9 @@ import {
   GET_BOOKS_BY_GROUP_FAILURE,
   GET_BOOKS_BY_GROUP_REQUEST,
   GET_BOOKS_BY_GROUP_SUCCESS,
+  GET_BOOKS_BY_CATEGORY_FAILURE,
+  GET_BOOKS_BY_CATEGORY_REQUEST,
+  GET_BOOKS_BY_CATEGORY_SUCCESS,
   GET_BOOKS_SEARCH_REQUEST,
   GET_BOOKS_SEARCH_SUCCESS,
   GET_BOOKS_SEARCH_FAILURE,
@@ -22,6 +25,9 @@ import {
   GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE,
   RESET_GROUP_BOOKS,
   RESET_BOOK,
+  SET_FILTERS,
+  SET_PAGE,
+  SET_SORTBY,
 } from '../actions/constants';
 import { BookActionTypes } from '../actions/types';
 import { Book } from '../models/book';
@@ -32,12 +38,16 @@ type InitialState = {
   searchData: {};
   count: number;
   groupBooks: Book[];
+  categoryBooks: Book[];
   isGetAllBooksLoading: boolean;
   isGetAllBooksDone: boolean;
   isGetAllBooksError: string;
   isGetBooksByGroupLoading: boolean;
   isGetBooksByGroupDone: boolean;
   isGetBooksByGroupError: string;
+  isGetBooksByCategoryLoading: boolean;
+  isGetBooksByCategoryDone: boolean;
+  isGetBooksByCategoryError: string;
   isGetBooksSearchLoading: boolean;
   isGetBooksSearchDone: boolean;
   isGetBooksSearchError: string;
@@ -52,6 +62,13 @@ type InitialState = {
   isGetMainPageBestSellerBooksError: string;
   book: Book | null;
   pageSize: number;
+  filters: {
+    dateRange: [undefined | number, undefined | number];
+    priceRange: [number, number];
+    rateRange: [number, number];
+  };
+  currentPage: number;
+  sortBy: string;
 };
 
 export const initialState: InitialState = {
@@ -67,12 +84,16 @@ export const initialState: InitialState = {
   },
   count: 0,
   groupBooks: [],
+  categoryBooks: [],
   isGetAllBooksLoading: false,
   isGetAllBooksDone: false,
   isGetAllBooksError: '',
   isGetBooksByGroupLoading: false,
   isGetBooksByGroupDone: false,
   isGetBooksByGroupError: '',
+  isGetBooksByCategoryLoading: false,
+  isGetBooksByCategoryDone: false,
+  isGetBooksByCategoryError: '',
   isGetBooksSearchLoading: false,
   isGetBooksSearchDone: false,
   isGetBooksSearchError: '',
@@ -87,6 +108,13 @@ export const initialState: InitialState = {
   isGetMainPageBestSellerBooksError: '',
   book: null,
   pageSize: 20,
+  filters: {
+    dateRange: [undefined, undefined], // Represents the values in months (3M to 60M or 전체)
+    priceRange: [0, 100000],
+    rateRange: [0, 10],
+  },
+  currentPage: 1,
+  sortBy: 'accuracy',
 };
 
 function bookReducer(state = initialState, action: BookActionTypes) {
@@ -105,11 +133,16 @@ function bookReducer(state = initialState, action: BookActionTypes) {
     case GET_BOOKS_BY_GROUP_FAILURE:
       return { ...state, isGetBooksByGroupLoading: false, isGetBooksByGroupDone: false, isGetBooksByGroupError: action.error };
 
+    case GET_BOOKS_BY_CATEGORY_REQUEST:
+      return { ...state, isGetBooksByCategoryLoading: true };
+    case GET_BOOKS_BY_CATEGORY_SUCCESS:
+      return { ...state, isGetBooksByCategoryLoading: false, isGetBooksByCategoryDone: true, categoryBooks: action.payload, count: action.count };
+    case GET_BOOKS_BY_CATEGORY_FAILURE:
+      return { ...state, isGetBooksByCategoryLoading: false, isGetBooksByCategoryDone: false, isGetBooksByGroupError: action.error };
+
     case GET_BOOKS_SEARCH_REQUEST:
-      console.log('여기는 리듀서의 서치 리퀘스트다!, searchData는 이렇게 생겼다!! =>>>>>>', state.searchData);
       return { ...state, isGetBooksSearchLoading: true, searchData: action.data };
     case GET_BOOKS_SEARCH_SUCCESS:
-      console.log('여기는 리듀서의 서치 석세스다!');
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: true, books: action.payload, count: action.count };
     case GET_BOOKS_SEARCH_FAILURE:
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: false, isGetBooksSearchError: action.error };
@@ -138,6 +171,13 @@ function bookReducer(state = initialState, action: BookActionTypes) {
       return { ...state, book: null };
     case RESET_GROUP_BOOKS:
       return { ...state, groupBooks: [] };
+
+    case SET_FILTERS:
+      return { ...state, filters: action.data };
+    case SET_PAGE:
+      return { ...state, currentPage: action.data };
+    case SET_SORTBY:
+      return { ...state, sortBy: action.data };
     default:
       return state;
   }
