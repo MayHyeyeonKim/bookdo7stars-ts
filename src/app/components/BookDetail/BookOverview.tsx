@@ -15,9 +15,19 @@ interface BookOverviewProps {
 
 const BookOverview: React.FC<BookOverviewProps> = ({ book }) => {
   const [address, setAddress] = useState('Select your region');
+  const [quantity, setQuantity] = useState<number>(1);
   if (!book) {
     return <p>책 정보를 읽어오지 못했습니다.</p>;
   }
+
+  const handleIncrease = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const handleDecrease = () => {
+    setQuantity((prev) => prev - 1);
+  };
+
   return (
     <Box data-testid="book-overview-box" sx={{ mt: { xs: 8, md: 16 } }}>
       <Container sx={{ mb: 4 }}>
@@ -26,8 +36,16 @@ const BookOverview: React.FC<BookOverviewProps> = ({ book }) => {
             <BookCover cover={book.cover} />
           </Grid>
           <Grid item xs={12} md={8}>
-            <BookBasicInfo title={book.title} author={book.author} publisher={book.publisher} priceStandard={book.priceStandard} />
-            <BookToCartButton book={book} />
+            <BookBasicInfo
+              title={book.title}
+              author={book.author}
+              publisher={book.publisher}
+              priceStandard={book.priceStandard}
+              quantity={quantity}
+              handleIncrease={handleIncrease}
+              handleDecrease={handleDecrease}
+            />
+            <BookToCartButton book={book} quantity={quantity} />
             <Box mt={3}>
               <Box
                 component="div"

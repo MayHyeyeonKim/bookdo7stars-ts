@@ -5,16 +5,20 @@ import {
   GET_ITEMS_IN_CART_REQUEST,
   GET_ITEMS_IN_CART_FAILURE,
   GET_ITEMS_IN_CART_SUCCESS,
-  REMOVE_FROM_CART_REQUEST,
-  REMOVE_FROM_CART_SUCCESS,
-  REMOVE_FROM_CART_FAILURE,
+  UPDATE_CART_ITEM_REQUEST,
+  UPDATE_CART_ITEM_SUCCESS,
+  UPDATE_CART_ITEM_FAILURE,
+  DELETE_CART_ITEM_FAILURE,
+  DELETE_CART_ITEM_REQUEST,
+  DELETE_CART_ITEM_SUCCESS,
+  SET_QUANTITY_IN_LOCALSTORAGE,
 } from '../actions/constants';
 import { CartActionTypes } from '../actions/types';
 import { CartItem } from '../models/cart';
 
 interface CartState {
   items: CartItem[];
-  addedItem: CartItem | null;
+  addedItem: CartItem[];
   totalItems: number;
   totalPrice: number;
   isAddToCartLoading: boolean;
@@ -23,15 +27,18 @@ interface CartState {
   isGetItemsInCartLoading: boolean;
   isGetItemsInCartDone: boolean;
   isGetItemsInCartError: string;
-  isRemovingFromCartLoading: boolean;
-  isRemovingFromCartDone: boolean;
-  isRemovingFromCartError: string;
   addToCartSuccessMessage: string | null;
   addToCartFailureMessage: string;
+  isUpdateCartItemLoading: boolean;
+  isUpdateCartItemDone: boolean;
+  isUpdateCartItemError: string;
+  isDeleteCartItemLoading: boolean;
+  isDeleteCartItemDone: boolean;
+  isDeleteCartItemError: string;
 }
 const initialCartState: CartState = {
   items: [],
-  addedItem: null,
+  addedItem: [],
   totalItems: 0,
   totalPrice: 0,
   isGetItemsInCartLoading: false,
@@ -40,11 +47,14 @@ const initialCartState: CartState = {
   isAddToCartLoading: false,
   isAddToCartDone: false,
   isAddToCartError: '',
-  isRemovingFromCartLoading: false,
-  isRemovingFromCartDone: false,
-  isRemovingFromCartError: '',
   addToCartSuccessMessage: null,
   addToCartFailureMessage: '',
+  isUpdateCartItemLoading: false,
+  isUpdateCartItemDone: false,
+  isUpdateCartItemError: '',
+  isDeleteCartItemLoading: false,
+  isDeleteCartItemDone: false,
+  isDeleteCartItemError: '',
 };
 function cartReducer(state = initialCartState, action: CartActionTypes): CartState {
   switch (action.type) {
@@ -52,7 +62,9 @@ function cartReducer(state = initialCartState, action: CartActionTypes): CartSta
       return { ...state, isGetItemsInCartLoading: true };
 
     case GET_ITEMS_IN_CART_SUCCESS: {
-      return { ...state, isGetItemsInCartLoading: false, isGetItemsInCartDone: true, items: action.payload };
+      const cartItems = action.payload;
+      cartItems.sort((a, b) => a.book.id - b.book.id);
+      return { ...state, isGetItemsInCartLoading: false, isGetItemsInCartDone: true, items: cartItems, totalItems: action.payload.length };
     }
 
     case GET_ITEMS_IN_CART_FAILURE:
@@ -66,7 +78,7 @@ function cartReducer(state = initialCartState, action: CartActionTypes): CartSta
         ...state,
         isAddToCartLoading: false,
         isAddToCartDone: true,
-        addedItem: action.payload.cartItem,
+        addedItem: action.payload.cartItems,
         addToCartSuccessMessage: action.payload.message,
       };
     }
@@ -74,51 +86,37 @@ function cartReducer(state = initialCartState, action: CartActionTypes): CartSta
     case ADD_TO_CART_FAILURE:
       return { ...state, isAddToCartLoading: false, isAddToCartDone: false, isAddToCartError: action.error };
 
-    case REMOVE_FROM_CART_REQUEST:
+    case UPDATE_CART_ITEM_REQUEST:
+      return { ...state, isUpdateCartItemLoading: true, isUpdateCartItemDone: false };
+
+    case UPDATE_CART_ITEM_SUCCESS: {
       return {
         ...state,
-        isRemovingFromCartLoading: true,
-        isRemovingFromCartDone: false,
-        isRemovingFromCartError: '',
-      };
-
-    case REMOVE_FROM_CART_SUCCESS: {
-      const updatedItems = state.items.filter((item) => item.book.id?.toString() !== action.payload.bookId);
-      const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
-      const totalPrice = updatedItems.reduce((sum, item) => sum + item.book.priceSales * item.quantity, 0);
-
-      return {
-        ...state,
-        isRemovingFromCartLoading: false,
-        isRemovingFromCartDone: true,
-        items: updatedItems,
-        totalItems,
-        totalPrice,
+        isUpdateCartItemLoading: false,
+        isUpdateCartItemDone: true,
       };
     }
 
-    // case REMOVE_FROM_CART: {
-    //   const updatedItems = state.items.filter((item) => item.id !== action.payload);
+    case UPDATE_CART_ITEM_FAILURE:
+      return { ...state, isUpdateCartItemLoading: false, isUpdateCartItemDone: false, isUpdateCartItemError: action.error };
 
-    //   const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
-    //   const totalPrice = updatedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    case DELETE_CART_ITEM_REQUEST:
+      return { ...state, isDeleteCartItemLoading: true, isDeleteCartItemDone: false };
 
-    //   return { ...state, items: updatedItems, totalItems, totalPrice };
-    // }
+    case DELETE_CART_ITEM_SUCCESS: {
+      return {
+        ...state,
+        isDeleteCartItemLoading: false,
+        isDeleteCartItemDone: true,
+      };
+    }
 
-    // case UPDATE_CART_ITEM_QUANTITY: {
-    //   const { bookId, quantity } = action.payload;
+    case DELETE_CART_ITEM_FAILURE:
+      return { ...state, isDeleteCartItemLoading: false, isDeleteCartItemDone: false, isDeleteCartItemError: action.error };
 
-    //   const updatedItems = state.items.map((item) => (item.id === bookId ? { ...item, quantity } : item));
-
-    //   const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
-    //   const totalPrice = updatedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-    //   return { ...state, items: updatedItems, totalItems, totalPrice };
-    // }
-
-    // case CLEAR_CART:
-    //   return { ...initialCartState };
+    case SET_QUANTITY_IN_LOCALSTORAGE: {
+      return { ...state, totalItems: action.data.totalItems };
+    }
 
     default:
       return state;

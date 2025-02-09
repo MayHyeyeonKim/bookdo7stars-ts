@@ -49,7 +49,7 @@ export interface LoginRequestAction {
 
 export interface LoginSuccessAction {
   type: typeof LOGIN_SUCCESS;
-  payload: User;
+  payload: { id: number; name: string; grade: string };
 }
 
 export interface LoginFailureAction {
@@ -83,7 +83,7 @@ export interface CheckSessionRequestAction {
 
 export interface CheckSessionSuccessAction {
   type: typeof CHECK_SESSION_SUCCESS;
-  payload: User;
+  payload: { id: number; name: string; grade: string };
 }
 
 export interface CheckSessionFailureAction {

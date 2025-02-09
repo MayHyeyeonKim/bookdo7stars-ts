@@ -12,12 +12,13 @@ type CartCardProps = {
   quantity: number;
   handleCheckboxChange: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
   checkedIds: Record<string, boolean>;
-  handleCartDelete: (bookid: string) => void;
+  handleIncrease: (id: string, quantity: number) => void;
+  handleDecrease: (id: string, quantity: number) => void;
+  handleDelete: (id: string) => void;
 };
 
 const CartCard = (props: CartCardProps) => {
-  const { book, quantity, handleCheckboxChange, checkedIds, handleCartDelete } = props;
-
+  const { book, quantity, handleCheckboxChange, checkedIds, handleIncrease, handleDecrease, handleDelete } = props;
   return (
     <Card variant="outlined" sx={{ mb: 2 }}>
       <CardContent>
@@ -51,15 +52,15 @@ const CartCard = (props: CartCardProps) => {
           <Grid item xs={3} textAlign="center">
             <Box display="flex" flexDirection="column" alignItems="center">
               <Box display="flex" alignItems="center">
-                <IconButton disabled={quantity <= 1}>
+                <IconButton disabled={quantity <= 1} onClick={() => handleDecrease(book.id.toString(), quantity)}>
                   <RemoveIcon />
                 </IconButton>
                 <Typography sx={{ mx: 1 }}>{quantity}</Typography>
-                <IconButton>
+                <IconButton onClick={() => handleIncrease(book.id.toString(), quantity)}>
                   <AddIcon />
                 </IconButton>
               </Box>
-              <Button variant="outlined" color="error" size="small" startIcon={<DeleteIcon />} onClick={() => handleCartDelete(book.id.toString())}>
+              <Button variant="outlined" color="error" size="small" startIcon={<DeleteIcon />} onClick={() => handleDelete(book.id.toString())}>
                 삭제
               </Button>
             </Box>

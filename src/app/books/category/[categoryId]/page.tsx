@@ -2,25 +2,29 @@
 
 import { useEffect, useState } from 'react';
 
-import { getBooksByCategoryRequest, getCategoriesByIdRequest, getCategoryByIdRequest } from '@/app/actions/types';
+import { getBooksByCategoryRequest, getCategoriesByIdRequest, getCategoryByIdRequest, setSelectedBooks } from '@/app/actions/types';
 import BookDetailCard from '@/app/components/Book/BookDetailCard';
 import ActionButtons from '@/app/components/Buttons/ActionButtons';
 import ToggleButtons from '@/app/components/Buttons/ToggleButtons';
 import CategoryList from '@/app/components/Category/CategoryList';
 import CustomPagination from '@/app/components/CustomPagination';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
+import { CartItemDto } from '@/app/models/cart';
 import { RootState } from '@/app/reducers';
 import { AppDispatch } from '@/app/store/store';
+import { addToCart } from '@/utils/cartUtils';
+import { getTitle } from '@/utils/pageUtils';
 import { Box, Checkbox, Grid, Typography, useTheme } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTitle } from '@/utils/pageUtils';
-import LoadingSpinner from '@/app/components/LoadingSpinner';
 
 const CategoryBookPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { categoriesById, selectedCategory, isGetCategoryByIdLoading, isGetCategoryByIdDone } = useSelector((store: RootState) => store.category);
-  const { categoryBooks, count, sortBy, currentPage } = useSelector((store: RootState) => store.book);
-  const [selectedBooks, setSelectedBooks] = useState<number[]>([]);
+  const { categoryBooks, count, sortBy, currentPage, selectedBooks } = useSelector((store: RootState) => store.book);
+  const { user } = useSelector((store: RootState) => store.user);
+  const { isAddToCartDone } = useSelector((store: RootState) => store.cart);
+  const [selectedBookIds, setSelectedBookIds] = useState<number[]>([]);
   const theme = useTheme();
 
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -33,6 +37,13 @@ const CategoryBookPage = () => {
       dispatch(getCategoriesByIdRequest(categoryId));
     }
   }, [categoriesById, dispatch]);
+
+  useEffect(() => {
+    if (selectedBookIds.length !== 0) {
+      const selectedBooks = categoryBooks.filter((book) => selectedBookIds.includes(book.id));
+      dispatch(setSelectedBooks(selectedBooks));
+    }
+  }, [selectedBookIds]);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -49,8 +60,8 @@ const CategoryBookPage = () => {
   }, [categoryId, selectedCategory, sortBy]);
 
   const handleCheckboxChange = (bookId: number) => {
-    setSelectedBooks((prevSelectedBooks) =>
-      prevSelectedBooks.includes(bookId) ? prevSelectedBooks.filter((id) => id !== bookId) : [...prevSelectedBooks, bookId],
+    setSelectedBookIds((prevSelectedBookIds) =>
+      prevSelectedBookIds.includes(bookId) ? prevSelectedBookIds.filter((id) => id !== bookId) : [...prevSelectedBookIds, bookId],
     );
   };
 
@@ -75,15 +86,30 @@ const CategoryBookPage = () => {
     borderBottomLeftRadius: '0px',
     borderBottomRightRadius: '0px',
   };
-  const actionButtonNames = ['전체 선택', '장바구니 담기', '보관함 담기', '마이리스트 담기'];
+  const actionButtonNames = ['전체 선택', '장바구니 담기', '보관함 담기'];
   const handleOnClick = (name: string) => {
     switch (name) {
       case '전체 선택': {
-        if (selectedBooks.length === categoryBooks.length) {
-          setSelectedBooks([]);
+        if (selectedBookIds.length === categoryBooks.length) {
+          setSelectedBookIds([]);
         } else {
-          setSelectedBooks(categoryBooks.map((book) => book.id));
+          setSelectedBookIds(categoryBooks.map((book) => book.id));
         }
+        break;
+      }
+      case '장바구니 담기': {
+        const cartItem: CartItemDto[] = [];
+        selectedBookIds.map((bookId) => {
+          return cartItem.push({ bookId: bookId, quantity: 1 });
+        });
+        if (user) {
+          addToCart(cartItem, selectedBooks, dispatch, isAddToCartDone, user);
+          setSelectedBookIds([]);
+        } else {
+          addToCart(cartItem, selectedBooks, dispatch, isAddToCartDone);
+          setSelectedBookIds([]);
+        }
+        break;
       }
     }
   };
@@ -91,7 +117,7 @@ const CategoryBookPage = () => {
     if (name === '전체 선택') {
       return false;
     } else {
-      return selectedBooks.length === 0;
+      return selectedBookIds.length === 0;
     }
   };
   const actionButtonStyle = {
@@ -163,7 +189,7 @@ const CategoryBookPage = () => {
                   className="book-detail-card"
                   key={index}
                   sx={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', zIndex: 'revert-layer', justifyContent: 'center' }}>
-                  <Checkbox checked={selectedBooks.includes(book.id)} onChange={() => handleCheckboxChange(book.id)} />
+                  <Checkbox checked={selectedBookIds.includes(book.id)} onChange={() => handleCheckboxChange(book.id)} />
                   <BookDetailCard key={index} book={book} />
                 </Box>
               ))}

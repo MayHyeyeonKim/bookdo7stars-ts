@@ -1,15 +1,19 @@
 import { useState } from 'react';
 
+import { toggleWishlistRequest } from '@/app/actions/types';
 import { Book } from '@/app/models/book';
+import { CartItemDto } from '@/app/models/cart';
+import { RootState } from '@/app/reducers';
+import { addToCart } from '@/utils/cartUtils';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import PaymentIcon from '@mui/icons-material/Payment';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Box, Card, CardContent, CardMedia, Typography, Button, CircularProgress } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Typography, CircularProgress } from '@mui/material';
 import { pink } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
 
 import AddressChange from '../../../utils/AddressChange';
 import { currencyFormat } from '../../../utils/helpers';
@@ -19,28 +23,12 @@ interface BookDetailCardProps {
   book: Book;
 }
 
-const StyledCard = styled(Card)`
-  display: flex;
-  align-items: center;
-  border-radius: 12px;
-  box-shadow: 3;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  &:hover {
-    transform: scale(1.009);
-    box-shadow: 6;
-  }
-  /* 모바일에서만 max-width 적용 */
-  @media (max-width: 900px) {
-    max-width: 440px;
-  }
-`;
-
 const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-
+  const { user } = useSelector((store: RootState) => store.user);
+  const { isAddToCartDone } = useSelector((store: RootState) => store.cart);
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(book.isBookmarked);
   const [address, setAddress] = useState('Select your region');
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
@@ -54,12 +42,27 @@ const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
   const buttonIcons = {
     장바구니: { component: <ShoppingCartIcon />, style: { color: 'inherit', marginRight: 0.5 } },
     바로구매: { component: <PaymentIcon />, style: { color: 'primary', marginRight: 0.5 } },
-    보관함: { component: <FavoriteBorderIcon />, style: { color: pink[500], marginRight: 0.5 } },
+    보관함: { component: isBookmarked ? <FavoriteIcon /> : <FavoriteBorderIcon />, style: { color: pink[500], marginRight: 0.5 } },
   };
 
-  const handleOnClick = (e: React.MouseEvent, name: string) => {
-    e.stopPropagation();
-    console.log('보관함에 추가', name);
+  const handleOnClick = (name: string) => {
+    switch (name) {
+      case '장바구니': {
+        const cartItem: CartItemDto[] = [{ bookId: book.id, quantity: 1 }];
+        const books: Book[] = [book];
+        if (user) {
+          addToCart(cartItem, books, dispatch, isAddToCartDone, user);
+        } else {
+          addToCart(cartItem, books, dispatch, isAddToCartDone);
+        }
+        break;
+      }
+      case '보관함': {
+        dispatch(toggleWishlistRequest([book.id]));
+        setIsBookmarked(!isBookmarked);
+        break;
+      }
+    }
   };
 
   const buttonStyle = { width: '120px', height: '50px', display: 'flex', alignItems: 'center' };
@@ -83,8 +86,7 @@ const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
             maxWidth: 800,
             height: 300,
             padding: 0,
-          }}
-          onClick={() => clickBookCard(book)}>
+          }}>
           <CardMedia
             component="img"
             image={book.cover}
@@ -96,6 +98,7 @@ const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
               borderTopLeftRadius: '12px',
               borderBottomLeftRadius: '12px',
             }}
+            onClick={() => clickBookCard(book)}
           />
           <CardContent
             sx={{
@@ -124,7 +127,6 @@ const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
                 }}>
                 <Typography
                   variant="h6"
-                  onClick={() => clickBookCard(book)}
                   sx={{ cursor: 'pointer', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>
                   {book.title.split('-')[0].trim()}
                 </Typography>
@@ -200,7 +202,7 @@ const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
                 width: '30%',
                 height: '100%',
               }}>
-              <ActionButtons names={actionButtonNames} handleOnClick={() => handleOnClick} icons={buttonIcons} style={buttonStyle} />
+              <ActionButtons names={actionButtonNames} handleOnClick={handleOnClick} icons={buttonIcons} style={buttonStyle} />
             </Box>
           </CardContent>
         </Card>

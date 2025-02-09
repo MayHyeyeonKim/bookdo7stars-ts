@@ -22,6 +22,7 @@ import {
   GET_MAINPAGE_BESTSELLER_BOOKS_REQUEST,
   GET_MAINPAGE_BESTSELLER_BOOKS_SUCCESS,
   GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE,
+  RESET_MAINPAGE_BOOKS,
   RESET_GROUP_BOOKS,
   GET_BOOKS_BY_CATEGORY_FAILURE,
   GET_BOOKS_BY_CATEGORY_REQUEST,
@@ -30,6 +31,7 @@ import {
   SET_FILTERS,
   SET_PAGE,
   SET_SORTBY,
+  SET_SELECTED_BOOKS,
 } from '../constants';
 
 // Action type
@@ -181,6 +183,10 @@ export interface GetMainpageBestSellerBooksFailureAction {
   error: string;
 }
 
+export interface ResetMainpageBooksAction {
+  type: typeof RESET_MAINPAGE_BOOKS;
+}
+
 export interface GetBookFailureAction {
   type: typeof GET_BOOK_FAILURE;
   error: string;
@@ -212,6 +218,11 @@ export interface SetSortByAction {
   data: string;
 }
 
+export interface SetSelectedBooksAction {
+  type: typeof SET_SELECTED_BOOKS;
+  data: Book[];
+}
+
 //Union type
 export type BookActionTypes =
   | GetAllBooksRequestAction
@@ -236,13 +247,15 @@ export type BookActionTypes =
   | GetMainpageBestSellerBooksRequestAction
   | GetMainpageBestSellerBooksSuccessAction
   | GetMainpageBestSellerBooksFailureAction
+  | ResetMainpageBooksAction
   | ResetBookAction
   | SetFiltersAction
   | GetBooksByCategoryRequestAction
   | GetBooksByCategorySuccessAction
   | GetBooksByCategoryFailureAction
   | SetPageAction
-  | SetSortByAction;
+  | SetSortByAction
+  | SetSelectedBooksAction;
 
 // Action creater
 
@@ -385,6 +398,10 @@ export const getMainpageBestSellerBooksFailure = (error: string): GetMainpageBes
   error,
 });
 
+export const resetMainpageBooks = (): ResetMainpageBooksAction => ({
+  type: RESET_MAINPAGE_BOOKS,
+});
+
 export const resetGroupBooks = (): ResetGroupBooksAction => ({
   type: RESET_GROUP_BOOKS,
 });
@@ -405,5 +422,10 @@ export const setPage = (data: SetPageAction['data']): SetPageAction => ({
 
 export const setSortBy = (data: SetSortByAction['data']): SetSortByAction => ({
   type: SET_SORTBY,
+  data: data,
+});
+
+export const setSelectedBooks = (data: SetSelectedBooksAction['data']): SetSelectedBooksAction => ({
+  type: SET_SELECTED_BOOKS,
   data: data,
 });

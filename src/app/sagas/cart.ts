@@ -9,11 +9,14 @@ import {
   GET_ITEMS_IN_CART_REQUEST,
   GET_ITEMS_IN_CART_SUCCESS,
   GET_ITEMS_IN_CART_FAILURE,
-  REMOVE_FROM_CART_REQUEST,
-  REMOVE_FROM_CART_SUCCESS,
-  REMOVE_FROM_CART_FAILURE,
+  UPDATE_CART_ITEM_REQUEST,
+  UPDATE_CART_ITEM_SUCCESS,
+  UPDATE_CART_ITEM_FAILURE,
+  DELETE_CART_ITEM_REQUEST,
+  DELETE_CART_ITEM_SUCCESS,
+  DELETE_CART_ITEM_FAILURE,
 } from '../actions/constants';
-import { AddToCartRequestAction, RemoveFromCartRequestAction } from '../actions/types';
+import { AddToCartRequestAction, UpdateCartItemRequestAction } from '../actions/types';
 
 function getItemsInCartAPI() {
   return axios.get('/cart', { withCredentials: true });
@@ -55,23 +58,53 @@ export function* addToCart(action: AddToCartRequestAction): SagaIterator {
   }
 }
 
-function removeFromCartAPI(data: RemoveFromCartRequestAction['data']) {
-  return axios.delete(`cart/${data}`);
+function updateCartItemAPI(data: UpdateCartItemRequestAction['data']) {
+  return axios.put(`/cart/${data.bookId}`, data, {
+    withCredentials: true,
+  });
 }
 
-export function* removeFromCart(action: RemoveFromCartRequestAction): SagaIterator {
+export function* updateCartItem(action: UpdateCartItemRequestAction): SagaIterator {
   try {
-    const response: any = yield call(removeFromCartAPI, action.data);
+    const response: any = yield call(updateCartItemAPI, action.data);
     yield put({
-      type: REMOVE_FROM_CART_SUCCESS,
+      type: UPDATE_CART_ITEM_SUCCESS,
       payload: response.data,
     });
   } catch (err: any) {
     yield put({
-      type: REMOVE_FROM_CART_FAILURE,
+      type: UPDATE_CART_ITEM_FAILURE,
       error: err.response.data.message,
     });
   }
+}
+
+function deleteCartItemAPI(data: UpdateCartItemRequestAction['data']) {
+  return axios.delete(`/cart/${data.bookId}`, {
+    withCredentials: true,
+  });
+}
+
+export function* deleteCartItem(action: UpdateCartItemRequestAction): SagaIterator {
+  try {
+    yield call(deleteCartItemAPI, action.data);
+    yield put({
+      type: DELETE_CART_ITEM_SUCCESS,
+    });
+  } catch (err: any) {
+    yield put({
+      type: DELETE_CART_ITEM_FAILURE,
+      error: err.response.data.message,
+    });
+  }
+}
+
+function* watchDeleteCartItem() {
+  yield takeLatest(DELETE_CART_ITEM_REQUEST, deleteCartItem);
+}
+
+function* watchUpdateCartItem() {
+  yield takeLatest(UPDATE_CART_ITEM_REQUEST, updateCartItem);
 }
 
 function* watchGetItemsInCart() {
@@ -82,10 +115,6 @@ function* watchAddCart() {
   yield takeLatest(ADD_TO_CART_REQUEST, addToCart);
 }
 
-function* watchRemoveFromCart() {
-  yield takeLatest(REMOVE_FROM_CART_REQUEST, removeFromCart);
-}
-
-export default function* bookSaga() {
-  yield all([fork(watchAddCart), fork(watchGetItemsInCart), fork(watchRemoveFromCart)]);
+export default function* cartSaga() {
+  yield all([fork(watchAddCart), fork(watchGetItemsInCart), fork(watchUpdateCartItem), fork(watchDeleteCartItem)]);
 }

@@ -23,11 +23,13 @@ import {
   GET_MAINPAGE_BESTSELLER_BOOKS_REQUEST,
   GET_MAINPAGE_BESTSELLER_BOOKS_SUCCESS,
   GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE,
+  RESET_MAINPAGE_BOOKS,
   RESET_GROUP_BOOKS,
   RESET_BOOK,
   SET_FILTERS,
   SET_PAGE,
   SET_SORTBY,
+  SET_SELECTED_BOOKS,
 } from '../actions/constants';
 import { BookActionTypes } from '../actions/types';
 import { Book } from '../models/book';
@@ -69,6 +71,7 @@ type InitialState = {
   };
   currentPage: number;
   sortBy: string;
+  selectedBooks: Book[];
 };
 
 export const initialState: InitialState = {
@@ -115,6 +118,7 @@ export const initialState: InitialState = {
   },
   currentPage: 1,
   sortBy: 'accuracy',
+  selectedBooks: [],
 };
 
 function bookReducer(state = initialState, action: BookActionTypes) {
@@ -163,7 +167,7 @@ function bookReducer(state = initialState, action: BookActionTypes) {
     case GET_MAINPAGE_BESTSELLER_BOOKS_REQUEST:
       return { ...state, isGetMainPageBestSellerBooksLoading: true };
     case GET_MAINPAGE_BESTSELLER_BOOKS_SUCCESS:
-      return { ...state, isGetMainPageBestSellerBooksLoading: false, isGetMainPageBestSellerBooksDone: true, books: action.payload };
+      return { ...state, isGetMainPageBestSellerBooksLoading: false, isGetMainPageBestSellerBooksDone: true, groupBooks: action.payload };
     case GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE:
       return { ...state, isGetMainPageBestSellerBooksLoading: false, book: null, isGetMainPageBestSellerBooksError: action.error };
 
@@ -178,6 +182,8 @@ function bookReducer(state = initialState, action: BookActionTypes) {
       return { ...state, currentPage: action.data };
     case SET_SORTBY:
       return { ...state, sortBy: action.data };
+    case SET_SELECTED_BOOKS:
+      return { ...state, selectedBooks: action.data };
     default:
       return state;
   }
@@ -191,6 +197,8 @@ function mainpageBookReducer(state = initialState, action: BookActionTypes) {
       return { ...state, isGetMainpageBooksLoading: false, isGetMainpageBooksDone: true, mainpageBooks: action.payload };
     case GET_MAINPAGE_BOOKS_FAILURE:
       return { ...state, isGetBookLoading: false, book: null, isGetMainpageBooksError: action.error };
+    case RESET_MAINPAGE_BOOKS:
+      return { ...state, mainpageBooks: { banner: [], itemNewSpecial: [], bestSellerCategory: [], itemNewAll: [], itemEditorChoice: [] } };
     default:
       return state;
   }

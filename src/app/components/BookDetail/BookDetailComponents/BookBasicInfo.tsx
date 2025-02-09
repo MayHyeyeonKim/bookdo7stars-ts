@@ -20,18 +20,11 @@ interface BookBasicInfo {
   publisher: string;
   priceStandard: number;
   quantity: number;
-  handleQuantityChange: (newQuantity: number) => void;
+  handleIncrease: () => void;
+  handleDecrease: () => void;
 }
 
-const BookBasicInfo: React.FC<BookBasicInfo> = ({ title, author, publisher, priceStandard, quantity, handleQuantityChange }) => {
-  const handleIncrease = () => {
-    handleQuantityChange(quantity + 1);
-  };
-
-  const handleDecrease = () => {
-    handleQuantityChange(quantity > 1 ? quantity - 1 : 1);
-  };
-
+const BookBasicInfo: React.FC<BookBasicInfo> = ({ title, author, publisher, priceStandard, quantity, handleIncrease, handleDecrease }) => {
   return (
     <Box>
       <TaxDeductionLabel>소득공제</TaxDeductionLabel>
@@ -48,7 +41,7 @@ const BookBasicInfo: React.FC<BookBasicInfo> = ({ title, author, publisher, pric
         ₩ {currencyFormat(priceStandard)}
       </Typography>
       <Box display="flex" alignItems="center" border={1} borderRadius={4} width="fit-content" p={1} mb={5}>
-        <IconButton onClick={handleDecrease} size="small">
+        <IconButton onClick={handleDecrease} size="small" disabled={quantity === 1}>
           <RemoveIcon />
         </IconButton>
         <Typography variant="body1" mx={2}>

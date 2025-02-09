@@ -2,7 +2,7 @@
 'use client';
 import React, { useEffect } from 'react';
 
-import { getMainpageBooksRequest, getMainpageBestSellerBooksRequest } from '@/app/actions/types';
+import { getMainpageBooksRequest, getMainpageBestSellerBooksRequest, resetMainpageBooks, resetGroupBooks } from '@/app/actions/types';
 import BookCard from '@/app/components/Book/BookCard';
 import MoreButton from '@/app/components/MoreButton';
 import { RootState } from '@/app/reducers';
@@ -19,9 +19,11 @@ import 'react-multi-carousel/lib/styles.css';
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
   const { mainpageBooks } = useSelector((store: RootState) => store.mainpageBook);
-  const { books } = useSelector((store: RootState) => store.book);
+  const { groupBooks } = useSelector((store: RootState) => store.book);
 
   useEffect(() => {
+    dispatch(resetMainpageBooks());
+    dispatch(resetGroupBooks());
     dispatch(getMainpageBooksRequest());
     dispatch(getMainpageBestSellerBooksRequest(1230, 1, 12));
   }, []);
@@ -202,7 +204,7 @@ export default function Home() {
         </Carousel>
         <Box>
           <Grid container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            {books.map((book: Book, index: React.Key | null | undefined) => (
+            {groupBooks.map((book: Book, index: React.Key | null | undefined) => (
               <Grid
                 data-testid="book-card"
                 key={index}
@@ -217,7 +219,7 @@ export default function Home() {
               </Grid>
             ))}
           </Grid>
-          {books.length == 0 && <div style={{ textAlign: 'center', fontWeight: 600 }}>검색 결과가 없습니다.</div>}
+          {groupBooks.length == 0 && <div style={{ textAlign: 'center', fontWeight: 600 }}>검색 결과가 없습니다.</div>}
         </Box>
 
         <Container

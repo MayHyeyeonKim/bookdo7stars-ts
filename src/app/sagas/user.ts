@@ -28,9 +28,14 @@ function checkSessionAPI() {
 export function* checkSession(): SagaIterator {
   try {
     const response: any = yield call(checkSessionAPI);
+    const { id, name, grade } = response.data.user;
     yield put({
       type: CHECK_SESSION_SUCCESS,
-      payload: response.data,
+      payload: {
+        id,
+        name,
+        grade,
+      },
     });
   } catch (err: any) {
     yield put({

@@ -19,4 +19,5 @@ export interface Book {
   deleted: boolean;
   pubDate: Date;
   salesPoint: number;
+  isBookmarked: boolean;
 }

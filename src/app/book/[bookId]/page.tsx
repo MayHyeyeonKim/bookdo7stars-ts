@@ -13,6 +13,7 @@ import { AppDispatch } from '../../store/store';
 const BookDetailPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { book } = useSelector((store: RootState) => store.book);
+  const { user } = useSelector((store: RootState) => store.user);
   const { bookId } = useParams<{ bookId: string }>();
 
   useEffect(() => {
@@ -30,7 +31,7 @@ const BookDetailPage = () => {
   return (
     <div>
       <BookOverview book={book} />
-      <BookDetails book={book} />
+      <BookDetails book={book} user={user} />
     </div>
   );
 };

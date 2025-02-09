@@ -2,46 +2,47 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { removeFromCartRequest, getItemsInCartRequest } from '@/app/actions/types';
 import { RootState } from '@/app/reducers';
 import { AppDispatch } from '@/app/store/store';
 import { Box, Button, Typography, Grid } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { deleteCartItemRequest, getItemsInCartRequest, setQuantityInLocalstorage, updateCartItemRequest } from '../actions/types';
 import CartCard from '../components/Cart/CartCard';
+import { CartItem } from '../models/cart';
 
 const CartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { items } = useSelector((state: RootState) => state.cart);
+  const { items, isUpdateCartItemDone, isDeleteCartItemDone } = useSelector((state: RootState) => state.cart);
+  const { user } = useSelector((store: RootState) => store.user);
+  const [itemsFromLocalstorage, setItemsFromLocalstorage] = useState<CartItem[]>([]);
 
   const [checkedIds, setCheckedIds] = useState<Record<string, boolean>>({});
-  const handleChange = (id: string, isChecked: boolean) => {
-    setCheckedIds((prev) => ({
-      ...prev,
-      [id]: isChecked,
-    }));
-  };
+
+  const itemsInLocalStorage = localStorage.getItem('cartItems');
+  const itemsInArray = itemsInLocalStorage ? JSON.parse(itemsInLocalStorage) : [];
 
   useEffect(() => {
-    dispatch(getItemsInCartRequest());
-  }, []);
+    if (user || isUpdateCartItemDone || isDeleteCartItemDone) {
+      dispatch(getItemsInCartRequest());
+    } else {
+      setItemsFromLocalstorage(itemsInArray);
+    }
+  }, [user, isUpdateCartItemDone, isDeleteCartItemDone]);
 
-  const handleCartDelete = (bookId: string) => {
-    dispatch(removeFromCartRequest(bookId));
-    dispatch(getItemsInCartRequest());
-  };
+  const cartItems = user ? items : itemsFromLocalstorage;
 
   // 전체 선택/해제
   const handleToggleSelectAll = () => {
-    if (checkedItems.length === items.length) {
-      items.map((item) => {
+    if (checkedItems.length === cartItems.length) {
+      cartItems.map((item) => {
         setCheckedIds((prev) => ({
           ...prev,
           [item.book.id.toString()]: false,
         }));
       });
     } else {
-      items.map((item) => {
+      cartItems.map((item) => {
         setCheckedIds((prev) => ({
           ...prev,
           [item.book.id.toString()]: true,
@@ -64,24 +65,50 @@ const CartPage = () => {
 
   // 수량 증가
   const handleIncrease = (id: string, quantity: number) => {
-    // dispatch(updateCartItemQuantity(id, quantity + 1));
+    if (user) {
+      const updatedQuantity = quantity + 1;
+      dispatch(updateCartItemRequest({ bookId: id, quantity: updatedQuantity }));
+    } else {
+      const existingCartItemIndex = itemsInArray.findIndex((item: CartItem) => item.book.id.toString() === id);
+      if (existingCartItemIndex !== -1) {
+        itemsInArray[existingCartItemIndex].quantity += 1;
+      }
+      localStorage.setItem('cartItems', JSON.stringify(itemsInArray));
+      setItemsFromLocalstorage(itemsInArray);
+      dispatch(setQuantityInLocalstorage({ totalItems: itemsInArray.length }));
+    }
   };
 
   // 수량 감소
   const handleDecrease = (id: string, quantity: number) => {
-    if (quantity > 1) {
-      // dispatch(updateCartItemQuantity(id, quantity - 1));
+    if (user) {
+      const updatedQuantity = quantity - 1;
+      dispatch(updateCartItemRequest({ bookId: id, quantity: updatedQuantity }));
+    } else {
+      const existingCartItemIndex = itemsInArray.findIndex((item: CartItem) => item.book.id.toString() === id);
+      if (existingCartItemIndex !== -1) {
+        itemsInArray[existingCartItemIndex].quantity -= 1;
+      }
+      localStorage.setItem('cartItems', JSON.stringify(itemsInArray));
+      setItemsFromLocalstorage(itemsInArray);
+      dispatch(setQuantityInLocalstorage({ totalItems: itemsInArray.length }));
     }
   };
 
   // 아이템 삭제
   const handleDelete = (id: string) => {
-    // dispatch(removeFromCart(id));
-    // setCheckedItems((prev) => prev.filter((itemId) => itemId !== id));
+    if (user) {
+      dispatch(deleteCartItemRequest({ bookId: id }));
+    } else {
+      const updatedItems = itemsInArray.filter((item: CartItem) => item.book.id.toString() !== id);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      setItemsFromLocalstorage(updatedItems);
+      dispatch(setQuantityInLocalstorage({ totalItems: updatedItems.length }));
+    }
   };
 
   // 총 금액 및 상품 수 계산
-  const selectedItems = items.filter((item) => checkedItems.includes(item.book.id.toString()));
+  const selectedItems = cartItems.filter((item) => checkedItems.includes(item.book.id.toString()));
 
   let totalPrice;
   let totalItems;
@@ -95,20 +122,22 @@ const CartPage = () => {
       {/* Select All / Deselect All Button */}
       <Box display="flex" justifyContent="space-between" mb={2}>
         <Button variant="outlined" onClick={handleToggleSelectAll}>
-          {checkedItems.length === items.length ? '전체 해제' : '전체 선택'}
+          {checkedItems.length === cartItems.length ? '전체 해제' : '전체 선택'}
         </Button>
       </Box>
 
       {/* Cart Items */}
-      {items.length > 0 ? (
-        items.map((item) => (
+      {cartItems.length > 0 ? (
+        cartItems.map((item) => (
           <CartCard
             key={item.id}
             book={item.book}
             quantity={item.quantity}
             handleCheckboxChange={handleCheckboxChange}
             checkedIds={checkedIds}
-            handleCartDelete={handleCartDelete}
+            handleIncrease={handleIncrease}
+            handleDecrease={handleDecrease}
+            handleDelete={handleDelete}
           />
         ))
       ) : (
