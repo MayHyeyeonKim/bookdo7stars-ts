@@ -81,6 +81,13 @@ const BookDetails: React.FC<BookDetailsProps> = ({ book, user }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleOnChangeReview = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setReview(event.target.value);
+  };
+  const handleOnChangeEditReview = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditedReview(event.target.value);
+  };
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
     setTimeout(() => {
@@ -89,6 +96,43 @@ const BookDetails: React.FC<BookDetailsProps> = ({ book, user }) => {
         window.scrollTo({ top: sectionElement.offsetTop - 50, behavior: 'smooth' });
       }
     }, 20);
+  };
+
+  const postReview = (reviewId?: string) => {
+    if (!isEditing[reviewId!]) {
+      dispatch(addReviewRequest({ bookId: book.id, content: review }));
+      dispatch(getAllReviewsOfBookRequest({ bookId: book.id }));
+    } else {
+      dispatch(editReviewRequest({ bookId: book.id, reviewId: reviewId, content: editedReview }));
+      dispatch(getAllReviewsOfBookRequest({ bookId: book.id }));
+    }
+    setReview('');
+    setEditedReview('');
+    setIsEditing((prevState) => ({
+      ...prevState,
+      [reviewId!]: false,
+    }));
+  };
+  const editReview = (reviewId: string) => {
+    const selectedReview = reviews.find((review) => review.id === reviewId);
+    setEditedReview(selectedReview ? selectedReview.content : '');
+    setIsEditing((prevState) => ({
+      ...prevState,
+      [reviewId]: true,
+    }));
+  };
+
+  const deleteReview = (reviewId: string) => {
+    dispatch(deleteReviewRequest({ bookId: book.id, reviewId: reviewId }));
+    dispatch(getAllReviewsOfBookRequest({ bookId: book.id }));
+  };
+
+  const cancelEditReview = (reviewId: string) => {
+    setEditedReview('');
+    setIsEditing((prevState) => ({
+      ...prevState,
+      [reviewId]: false,
+    }));
   };
 
   if (!book) return <p>책 정보를 불러오지 못했습니다.</p>;
@@ -122,10 +166,26 @@ const BookDetails: React.FC<BookDetailsProps> = ({ book, user }) => {
             {section.id === 'author' && <BookDetailOtherByAuthor author={book.author} bookId={book.id} />}
             {section.id === 'reviews' && (
               <>
-                {reviews.map((review) => (
-                  <ReviewCard key={review.id} user={user} review={review} handleEditReview={() => {}} handleDeleteReview={() => {}} />
-                ))}
-                <Review handleOnClick={() => {}} handleOnChange={(e) => setReview(e.target.value)} review={review} />
+                {reviews.length > 0 &&
+                  reviews.map((review, index) => (
+                    <ReviewCard
+                      key={index}
+                      user={user}
+                      review={review}
+                      editedReviewContent={editedReview}
+                      handleDeleteReview={deleteReview}
+                      handleEditReview={editReview}
+                      isEditing={isEditing}
+                      handleOnChange={(event: React.ChangeEvent<HTMLInputElement>) => handleOnChangeEditReview(event)}
+                      handleOnClick={postReview}
+                      handleOnClickCancel={cancelEditReview}
+                    />
+                  ))}
+                <Review
+                  handleOnClick={postReview}
+                  handleOnChange={(event: React.ChangeEvent<HTMLInputElement>) => handleOnChangeReview(event)}
+                  review={review}
+                />
               </>
             )}
             {section.id === 'delivery' && <BookDetailShippingPolicy />}

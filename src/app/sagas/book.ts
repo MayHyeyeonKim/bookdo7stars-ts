@@ -18,6 +18,9 @@ import {
   GET_BOOK_ISBN_SEARCH_REQUEST,
   GET_BOOK_ISBN_SEARCH_SUCCESS,
   GET_BOOK_ISBN_SEARCH_FAILURE,
+  GET_BOOKS_AUTHOR_SEARCH_REQUEST,
+  GET_BOOKS_AUTHOR_SEARCH_SUCCESS,
+  GET_BOOKS_AUTHOR_SEARCH_FAILURE,
   GET_MAINPAGE_BOOKS_REQUEST,
   GET_MAINPAGE_BOOKS_SUCCESS,
   GET_MAINPAGE_BOOKS_FAILURE,
@@ -34,6 +37,7 @@ import {
   GetBooksByGroupRequestAction,
   GetBooksSearchRequestAction,
   GetBookIsbnSearchRequestAction,
+  GetBooksAuthorSearchRequestAction,
   GetMainpageBestSellerBooksRequestAction,
   GetBooksByCategoryRequestAction,
 } from '../actions/types';
@@ -125,7 +129,7 @@ export function* getBooksSearch(action: GetBooksSearchRequestAction): SagaIterat
 }
 
 function getBookIsbnSearchAPI(isbn: string) {
-  return axios.get(`/book/search/${isbn}`);
+  return axios.get(`/book/search/isbn/${isbn}`);
 }
 
 export function* getBookIsbnSearch(action: GetBookIsbnSearchRequestAction): SagaIterator {
@@ -141,6 +145,28 @@ export function* getBookIsbnSearch(action: GetBookIsbnSearchRequestAction): Saga
   } catch (error: any) {
     yield put({
       type: GET_BOOK_ISBN_SEARCH_FAILURE,
+      error: error.response.data.message || 'Error occurred while fetching the book.',
+    });
+  }
+}
+
+function getBooksAuthorSearchAPI(author: string, bookId: number, page: number, pageSize: number) {
+  return axios.get(`/book/search/author?author=${author}&bookId=${bookId}&page=${page}&pageSize=${pageSize}`);
+}
+
+export function* getBooksAuthorSearch(action: GetBooksAuthorSearchRequestAction): SagaIterator {
+  try {
+    if (!action.author) {
+      return;
+    }
+    const response: any = yield call(getBooksAuthorSearchAPI, action.author, action.bookId, action.page, action.pageSize);
+    yield put({
+      type: GET_BOOKS_AUTHOR_SEARCH_SUCCESS,
+      payload: response.data.books,
+    });
+  } catch (error: any) {
+    yield put({
+      type: GET_BOOKS_AUTHOR_SEARCH_FAILURE,
       error: error.response.data.message || 'Error occurred while fetching the book.',
     });
   }
@@ -223,6 +249,10 @@ function* watchGetBookIsbnSearch() {
   yield takeLatest(GET_BOOK_ISBN_SEARCH_REQUEST, getBookIsbnSearch);
 }
 
+function* watchGetBooksAuthorSearch() {
+  yield takeLatest(GET_BOOKS_AUTHOR_SEARCH_REQUEST, getBooksAuthorSearch);
+}
+
 function* watchGetBook() {
   yield takeLatest(GET_BOOK_REQUEST, getBook);
 }
@@ -242,6 +272,7 @@ export default function* bookSaga() {
     fork(watchGetBooksByGroup),
     fork(watchGetBooksSearch),
     fork(watchGetBookIsbnSearch),
+    fork(watchGetBooksAuthorSearch),
     fork(watchGetMainpageBooks),
     fork(watchGetMainpageBestSellerBooks),
     fork(watchGetBooksByCategory),

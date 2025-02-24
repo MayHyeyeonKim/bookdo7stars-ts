@@ -1,4 +1,5 @@
 import { RootState } from '@/app/reducers';
+import { AppDispatch } from '@/app/store/store';
 import { Container, Box, Typography, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -6,7 +7,7 @@ import FilterSlider from './FilterSlider';
 import { GET_BOOKS_SEARCH_REQUEST, SET_FILTERS } from '../../actions/constants/book'; // 액션 정의된 경로
 
 const ResultFilters = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const searchData = useSelector((store: RootState) => store.book.searchData);
   const filters = useSelector((store: RootState) => store.book.filters);
 

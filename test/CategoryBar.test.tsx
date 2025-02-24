@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import CategoryBar from '@/app/components/CategoryBar';
+import CategoryBar from '@/app/components/Category/CategoryBar';
 import rootSaga from '@/app/sagas';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';

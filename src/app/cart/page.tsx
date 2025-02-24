@@ -5,9 +5,18 @@ import React, { useEffect, useState } from 'react';
 import { RootState } from '@/app/reducers';
 import { AppDispatch } from '@/app/store/store';
 import { Box, Button, Typography, Grid } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
-import { deleteCartItemRequest, getItemsInCartRequest, setQuantityInLocalstorage, updateCartItemRequest } from '../actions/types';
+import {
+  deleteCartItemRequest,
+  getItemsInCartRequest,
+  setQuantityInLocalstorage,
+  setSelectedItemsForOrder,
+  setTotalPrice,
+  updateCartItemRequest,
+} from '../actions/types';
 import CartCard from '../components/Cart/CartCard';
 import { CartItem } from '../models/cart';
 
@@ -21,6 +30,8 @@ const CartPage = () => {
 
   const itemsInLocalStorage = localStorage.getItem('cartItems');
   const itemsInArray = itemsInLocalStorage ? JSON.parse(itemsInLocalStorage) : [];
+
+  const router = useRouter();
 
   useEffect(() => {
     if (user || isUpdateCartItemDone || isDeleteCartItemDone) {
@@ -60,7 +71,7 @@ const CartPage = () => {
   };
 
   const checkedItems = Object.entries(checkedIds)
-    .filter(([key, value]) => value)
+    .filter(([, value]) => value)
     .map(([key]) => key);
 
   // 수량 증가
@@ -110,12 +121,23 @@ const CartPage = () => {
   // 총 금액 및 상품 수 계산
   const selectedItems = cartItems.filter((item) => checkedItems.includes(item.book.id.toString()));
 
-  let totalPrice;
+  let totalPrice: number;
   let totalItems;
   if (selectedItems) {
     totalPrice = selectedItems.reduce((sum, item) => sum + item.quantity * item.book.priceSales, 0);
     totalItems = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
   }
+
+  const goToOrderPage = () => {
+    dispatch(setSelectedItemsForOrder(selectedItems));
+    dispatch(setTotalPrice(totalPrice));
+    if (user) {
+      router.push(`/order/${user?.id}`);
+    } else {
+      toast.error('You must be logged in first!');
+      router.push('/login');
+    }
+  };
 
   return (
     <Box sx={{ mt: '50px' }} p={2} maxWidth="800px" mx="auto">
@@ -151,7 +173,7 @@ const CartPage = () => {
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Typography>
-              총 상품가격: <b>₩{totalPrice?.toLocaleString()}</b> (1,500원 할인)
+              총 상품가격: <b>₩{totalPrice!.toLocaleString()}</b> (1,500원 할인)
             </Typography>
             <Typography>
               배송비: <b>2,500원</b>
@@ -174,7 +196,7 @@ const CartPage = () => {
         </Grid>
         <Box sx={{ mt: 2, borderTop: '1px solid #ddd', pt: 2 }}>
           <Typography variant="h6">
-            총 결제 예상 금액: <b>16,000원</b>
+            총 결제 예상 금액: <b>₩{totalPrice!.toLocaleString()}</b>
           </Typography>
           <Typography variant="h6">
             총 적립 예상 마일리지: <b>750원</b>
@@ -184,7 +206,7 @@ const CartPage = () => {
 
       {/* Order Button */}
       <Box display="flex" justifyContent="center">
-        <Button variant="contained" color="primary" disabled={checkedItems.length === 0}>
+        <Button variant="contained" color="primary" disabled={checkedItems.length === 0} onClick={goToOrderPage}>
           선택 상품 주문하기
         </Button>
       </Box>

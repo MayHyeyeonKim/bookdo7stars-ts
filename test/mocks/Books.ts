@@ -21,6 +21,7 @@ export const mockBooks: Book[] = [
     queryType: 'queryType1',
     deleted: false,
     pubDate: new Date(),
+    salesPoint: 0,
   },
   {
     id: 2,
@@ -42,5 +43,6 @@ export const mockBooks: Book[] = [
     queryType: 'queryType1',
     deleted: false,
     pubDate: new Date(),
+    salesPoint: 0,
   },
 ];

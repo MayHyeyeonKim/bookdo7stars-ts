@@ -29,6 +29,7 @@ import Tab from '@mui/material/Tab';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getWishlistRequest } from '../actions/types';
+import OrderHistory from '../components/OrderHistory';
 import { AppDispatch } from '../store/store';
 
 interface TablePaginationActionsProps {
@@ -141,9 +142,9 @@ const MyPage = () => {
 
         {/* 오른쪽 유동적 영역 */}
         <Grid item xs>
-          <Typography variant="subtitle1" gutterBottom>
-            최근 주문 내역
-          </Typography>
+          {/* 최근 주문 내역 */}
+          <OrderHistory></OrderHistory>
+
           <Typography variant="subtitle1" gutterBottom>
             나의 1:1 문의
           </Typography>
@@ -156,7 +157,7 @@ const MyPage = () => {
               </TabList>
             </Box>
             <TabPanel value="1">
-              <Paper sx={{ height: 500, width: '100%' }}>
+              <Paper sx={{ width: '100%' }}>
                 <TableContainer component={Paper}>
                   <Table sx={{ minWidth: 500 }}>
                     <TableHead>

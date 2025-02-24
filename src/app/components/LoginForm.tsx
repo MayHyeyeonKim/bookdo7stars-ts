@@ -62,7 +62,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+    <Container maxWidth="md" sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>
       <Box>
         <Grid container spacing={1} justifyContent="center">
           <Grid item xs={12} sm={6} md={5}>
@@ -110,6 +110,15 @@ const LoginForm = () => {
           </Grid>
         </Grid>
       </Box>
+      <Button
+        variant="contained"
+        sx={{ marginTop: '2rem' }}
+        onClick={() => {
+          router.push('/register');
+        }}>
+        {' '}
+        not a member yet?{' '}
+      </Button>
     </Container>
   );
 };

@@ -12,6 +12,8 @@ import {
   DELETE_CART_ITEM_REQUEST,
   DELETE_CART_ITEM_SUCCESS,
   SET_QUANTITY_IN_LOCALSTORAGE,
+  SET_SELECTED_ITEMS_FOR_ORDER,
+  SET_TOTAL_PRICE,
 } from '../actions/constants';
 import { CartActionTypes } from '../actions/types';
 import { CartItem } from '../models/cart';
@@ -35,6 +37,7 @@ interface CartState {
   isDeleteCartItemLoading: boolean;
   isDeleteCartItemDone: boolean;
   isDeleteCartItemError: string;
+  selectedItems: CartItem[];
 }
 const initialCartState: CartState = {
   items: [],
@@ -55,6 +58,7 @@ const initialCartState: CartState = {
   isDeleteCartItemLoading: false,
   isDeleteCartItemDone: false,
   isDeleteCartItemError: '',
+  selectedItems: [],
 };
 function cartReducer(state = initialCartState, action: CartActionTypes): CartState {
   switch (action.type) {
@@ -116,6 +120,14 @@ function cartReducer(state = initialCartState, action: CartActionTypes): CartSta
 
     case SET_QUANTITY_IN_LOCALSTORAGE: {
       return { ...state, totalItems: action.data.totalItems };
+    }
+
+    case SET_SELECTED_ITEMS_FOR_ORDER: {
+      return { ...state, selectedItems: action.data };
+    }
+
+    case SET_TOTAL_PRICE: {
+      return { ...state, totalPrice: action.data };
     }
 
     default:

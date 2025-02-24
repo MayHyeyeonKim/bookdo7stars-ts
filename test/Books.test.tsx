@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import { getAllBooksFailure, getAllBooksRequest, getAllBooksSuccess } from '@/app/actions/types';
-import BooksGroup from '@/app/books/[groupName]/page';
+import BooksGroup from '@/app/books/group/[groupName]/page';
 import { bookGroups, QueryTypes } from '@/app/books/constants';
 import Books from '@/app/books/page';
 import BooksContainer from '@/app/components/Book/BooksContainer';

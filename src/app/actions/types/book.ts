@@ -16,6 +16,9 @@ import {
   GET_BOOK_ISBN_SEARCH_REQUEST,
   GET_BOOK_ISBN_SEARCH_SUCCESS,
   GET_BOOK_ISBN_SEARCH_FAILURE,
+  GET_BOOKS_AUTHOR_SEARCH_REQUEST,
+  GET_BOOKS_AUTHOR_SEARCH_SUCCESS,
+  GET_BOOKS_AUTHOR_SEARCH_FAILURE,
   GET_MAINPAGE_BOOKS_REQUEST,
   GET_MAINPAGE_BOOKS_SUCCESS,
   GET_MAINPAGE_BOOKS_FAILURE,
@@ -24,6 +27,7 @@ import {
   GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE,
   RESET_MAINPAGE_BOOKS,
   RESET_GROUP_BOOKS,
+  RESET_AUTHOR_BOOKS,
   GET_BOOKS_BY_CATEGORY_FAILURE,
   GET_BOOKS_BY_CATEGORY_REQUEST,
   GET_BOOKS_BY_CATEGORY_SUCCESS,
@@ -139,6 +143,25 @@ export interface GetBookIsbnSearchFailureAction {
   error: string;
 }
 
+//Book Author Search
+export interface GetBooksAuthorSearchRequestAction {
+  type: typeof GET_BOOKS_AUTHOR_SEARCH_REQUEST;
+  author: string | undefined;
+  bookId: number;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface GetBooksAuthorSearchSuccessAction {
+  type: typeof GET_BOOKS_AUTHOR_SEARCH_SUCCESS;
+  payload: Book[];
+}
+
+export interface GetBooksAuthorSearchFailureAction {
+  type: typeof GET_BOOKS_AUTHOR_SEARCH_FAILURE;
+  error: string;
+}
+
 // Book Detail
 export interface GetBookRequestAction {
   type: typeof GET_BOOK_REQUEST;
@@ -196,6 +219,10 @@ export interface ResetGroupBooksAction {
   type: typeof RESET_GROUP_BOOKS;
 }
 
+export interface ResetAuthorBooksAction {
+  type: typeof RESET_AUTHOR_BOOKS;
+}
+
 export interface ResetBookAction {
   type: typeof RESET_BOOK;
 }
@@ -241,6 +268,9 @@ export type BookActionTypes =
   | GetBookIsbnSearchRequestAction
   | GetBookIsbnSearchSuccessAction
   | GetBookIsbnSearchFailureAction
+  | GetBooksAuthorSearchRequestAction
+  | GetBooksAuthorSearchSuccessAction
+  | GetBooksAuthorSearchFailureAction
   | GetMainpageBooksRequestAction
   | GetMainpageBooksSuccessAction
   | GetMainpageBooksFailureAction
@@ -249,6 +279,7 @@ export type BookActionTypes =
   | GetMainpageBestSellerBooksFailureAction
   | ResetMainpageBooksAction
   | ResetBookAction
+  | ResetAuthorBooksAction
   | SetFiltersAction
   | GetBooksByCategoryRequestAction
   | GetBooksByCategorySuccessAction
@@ -349,6 +380,30 @@ export const getBookIsbnSearchFailure = (error: string): GetBookIsbnSearchFailur
   error,
 });
 
+//Book Author Search
+export const getBooksAuthorSearchRequest = (
+  author: GetBooksAuthorSearchRequestAction['author'],
+  bookId: GetBooksAuthorSearchRequestAction['bookId'],
+  page: GetBooksAuthorSearchRequestAction['page'],
+  pageSize: GetBooksAuthorSearchRequestAction['pageSize'],
+): GetBooksAuthorSearchRequestAction => ({
+  type: GET_BOOKS_AUTHOR_SEARCH_REQUEST,
+  author,
+  bookId,
+  page,
+  pageSize,
+});
+
+export const getBooksAuthorSearchSuccess = (payload: GetBooksAuthorSearchSuccessAction['payload']): GetBooksAuthorSearchSuccessAction => ({
+  type: GET_BOOKS_AUTHOR_SEARCH_SUCCESS,
+  payload,
+});
+
+export const getBooksAuthorSearchFailure = (error: string): GetBooksAuthorSearchFailureAction => ({
+  type: GET_BOOKS_AUTHOR_SEARCH_FAILURE,
+  error,
+});
+
 //Book Detail
 export const getBookRequest = (data: GetBookRequestAction['data']): GetBookRequestAction => ({
   type: GET_BOOK_REQUEST,
@@ -404,6 +459,10 @@ export const resetMainpageBooks = (): ResetMainpageBooksAction => ({
 
 export const resetGroupBooks = (): ResetGroupBooksAction => ({
   type: RESET_GROUP_BOOKS,
+});
+
+export const resetAuthorBooks = (): ResetAuthorBooksAction => ({
+  type: RESET_AUTHOR_BOOKS,
 });
 
 export const resetBook = (): ResetBookAction => ({

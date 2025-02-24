@@ -17,6 +17,9 @@ import {
   GET_BOOK_ISBN_SEARCH_REQUEST,
   GET_BOOK_ISBN_SEARCH_SUCCESS,
   GET_BOOK_ISBN_SEARCH_FAILURE,
+  GET_BOOKS_AUTHOR_SEARCH_REQUEST,
+  GET_BOOKS_AUTHOR_SEARCH_SUCCESS,
+  GET_BOOKS_AUTHOR_SEARCH_FAILURE,
   GET_MAINPAGE_BOOKS_REQUEST,
   GET_MAINPAGE_BOOKS_SUCCESS,
   GET_MAINPAGE_BOOKS_FAILURE,
@@ -25,6 +28,7 @@ import {
   GET_MAINPAGE_BESTSELLER_BOOKS_FAILURE,
   RESET_MAINPAGE_BOOKS,
   RESET_GROUP_BOOKS,
+  RESET_AUTHOR_BOOKS,
   RESET_BOOK,
   SET_FILTERS,
   SET_PAGE,
@@ -72,6 +76,7 @@ type InitialState = {
   currentPage: number;
   sortBy: string;
   selectedBooks: Book[];
+  authorBooks: Book[];
 };
 
 export const initialState: InitialState = {
@@ -119,6 +124,7 @@ export const initialState: InitialState = {
   currentPage: 1,
   sortBy: 'accuracy',
   selectedBooks: [],
+  authorBooks: [],
 };
 
 function bookReducer(state = initialState, action: BookActionTypes) {
@@ -158,6 +164,13 @@ function bookReducer(state = initialState, action: BookActionTypes) {
     case GET_BOOK_ISBN_SEARCH_FAILURE:
       return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: false, isGetBooksSearchError: action.error, books: [] };
 
+    case GET_BOOKS_AUTHOR_SEARCH_REQUEST:
+      return { ...state, isGetBooksSearchLoading: true };
+    case GET_BOOKS_AUTHOR_SEARCH_SUCCESS:
+      return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: true, authorBooks: state.authorBooks.concat(action.payload), count: 1 };
+    case GET_BOOKS_AUTHOR_SEARCH_FAILURE:
+      return { ...state, isGetBooksSearchLoading: false, isGetBooksSearchDone: false, isGetBooksSearchError: action.error, authorBooks: [] };
+
     case GET_BOOK_REQUEST:
       return { ...state, isGetBookLoading: true };
     case GET_BOOK_SUCCESS:
@@ -175,6 +188,8 @@ function bookReducer(state = initialState, action: BookActionTypes) {
       return { ...state, book: null };
     case RESET_GROUP_BOOKS:
       return { ...state, groupBooks: [] };
+    case RESET_AUTHOR_BOOKS:
+      return { ...state, authorBooks: [] };
 
     case SET_FILTERS:
       return { ...state, filters: action.data };

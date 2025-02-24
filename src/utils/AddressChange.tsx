@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
+import { AppDispatch } from '@/app/store/store';
 import { Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -26,7 +27,7 @@ interface AddressChangeProps {
 const AddressChange: React.FC<AddressChangeProps> = ({ setAddress }) => {
   const [isPostcodeOpen, setIsPostcodeOpen] = useState<boolean>(false);
   const elementRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const script = document.createElement('script');
