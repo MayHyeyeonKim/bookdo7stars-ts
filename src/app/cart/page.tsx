@@ -24,24 +24,25 @@ const CartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { items, isUpdateCartItemDone, isDeleteCartItemDone } = useSelector((state: RootState) => state.cart);
   const { user } = useSelector((store: RootState) => store.user);
-  const [itemsFromLocalstorage, setItemsFromLocalstorage] = useState<CartItem[]>([]);
+  const [itemsInArray, setItemsInArray] = useState<CartItem[]>([]);
 
   const [checkedIds, setCheckedIds] = useState<Record<string, boolean>>({});
-
-  const itemsInLocalStorage = localStorage.getItem('cartItems');
-  const itemsInArray = itemsInLocalStorage ? JSON.parse(itemsInLocalStorage) : [];
 
   const router = useRouter();
 
   useEffect(() => {
+    const savedCartItems = window.localStorage.getItem('cartItems');
+    setItemsInArray(savedCartItems ? JSON.parse(savedCartItems) : []);
+  }, []);
+
+  useEffect(() => {
     if (user || isUpdateCartItemDone || isDeleteCartItemDone) {
       dispatch(getItemsInCartRequest());
-    } else {
-      setItemsFromLocalstorage(itemsInArray);
     }
-  }, [user, isUpdateCartItemDone, isDeleteCartItemDone]);
+  }, [dispatch, user, isUpdateCartItemDone, isDeleteCartItemDone]);
 
-  const cartItems = user ? items : itemsFromLocalstorage;
+  const cartItems = user ? items : itemsInArray;
+  const productMileage = cartItems.length === 0 ? 0 : 750;
 
   // 전체 선택/해제
   const handleToggleSelectAll = () => {
@@ -80,13 +81,10 @@ const CartPage = () => {
       const updatedQuantity = quantity + 1;
       dispatch(updateCartItemRequest({ bookId: id, quantity: updatedQuantity }));
     } else {
-      const existingCartItemIndex = itemsInArray.findIndex((item: CartItem) => item.book.id.toString() === id);
-      if (existingCartItemIndex !== -1) {
-        itemsInArray[existingCartItemIndex].quantity += 1;
-      }
-      localStorage.setItem('cartItems', JSON.stringify(itemsInArray));
-      setItemsFromLocalstorage(itemsInArray);
-      dispatch(setQuantityInLocalstorage({ totalItems: itemsInArray.length }));
+      const updatedItems = itemsInArray.map((item) => (item.book.id.toString() === id ? { ...item, quantity: item.quantity + 1 } : item));
+      window.localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      setItemsInArray(updatedItems);
+      dispatch(setQuantityInLocalstorage({ totalItems: updatedItems.length }));
     }
   };
 
@@ -96,13 +94,10 @@ const CartPage = () => {
       const updatedQuantity = quantity - 1;
       dispatch(updateCartItemRequest({ bookId: id, quantity: updatedQuantity }));
     } else {
-      const existingCartItemIndex = itemsInArray.findIndex((item: CartItem) => item.book.id.toString() === id);
-      if (existingCartItemIndex !== -1) {
-        itemsInArray[existingCartItemIndex].quantity -= 1;
-      }
-      localStorage.setItem('cartItems', JSON.stringify(itemsInArray));
-      setItemsFromLocalstorage(itemsInArray);
-      dispatch(setQuantityInLocalstorage({ totalItems: itemsInArray.length }));
+      const updatedItems = itemsInArray.map((item) => (item.book.id.toString() === id ? { ...item, quantity: item.quantity - 1 } : item));
+      window.localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      setItemsInArray(updatedItems);
+      dispatch(setQuantityInLocalstorage({ totalItems: updatedItems.length }));
     }
   };
 
@@ -112,8 +107,8 @@ const CartPage = () => {
       dispatch(deleteCartItemRequest({ bookId: id }));
     } else {
       const updatedItems = itemsInArray.filter((item: CartItem) => item.book.id.toString() !== id);
-      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-      setItemsFromLocalstorage(updatedItems);
+      window.localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      setItemsInArray(updatedItems);
       dispatch(setQuantityInLocalstorage({ totalItems: updatedItems.length }));
     }
   };
@@ -187,7 +182,8 @@ const CartPage = () => {
               멤버십 마일리지: <b>0원</b>
             </Typography>
             <Typography>
-              상품 마일리지: <b>750원</b> (5%)
+              상품 마일리지: <b>{productMileage.toLocaleString()}원</b>
+              {cartItems.length > 0 && ' (5%)'}
             </Typography>
             <Typography color="primary">
               5만 원 이상 추가 마일리지: <b>0원</b>
@@ -199,7 +195,7 @@ const CartPage = () => {
             총 결제 예상 금액: <b>₩{totalPrice!.toLocaleString()}</b>
           </Typography>
           <Typography variant="h6">
-            총 적립 예상 마일리지: <b>750원</b>
+            총 적립 예상 마일리지: <b>{productMileage.toLocaleString()}원</b>
           </Typography>
         </Box>
       </Box>

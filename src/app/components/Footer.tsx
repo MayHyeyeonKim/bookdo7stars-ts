@@ -77,7 +77,7 @@ const Footer = () => {
               mt: 2,
               fontSize: { xs: '1rem', sm: '1.05rem' },
             }}>
-            Email:bookdo7stars@book.com
+            Email: devmay202@gmail.com
           </Typography>
           <Typography
             variant="h6"
@@ -85,7 +85,7 @@ const Footer = () => {
             sx={{
               fontSize: { xs: '1rem', sm: '1.05rem' },
             }}>
-            Phone: +123 456 7890
+            Phone: +707 729 0000
           </Typography>
           <Typography
             variant="h6"

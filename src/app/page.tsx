@@ -93,7 +93,7 @@ export default function Home() {
           <Typography variant="h4" style={{ fontWeight: 600 }}>
             화제의 신간
           </Typography>
-          <MoreButton href="/books/ItemNewSpecial" />
+          <MoreButton href="/books/group/ItemNewSpecial" />
         </Container>
 
         <Carousel
@@ -149,7 +149,7 @@ export default function Home() {
           <Typography variant="h4" style={{ fontWeight: 600 }}>
             베스트 셀러
           </Typography>
-          <MoreButton href="/books/Bestseller" />
+          <MoreButton href="/books/group/Bestseller" />
         </Container>
         <Carousel
           arrows={true}
@@ -234,7 +234,7 @@ export default function Home() {
           <Typography variant="h4" style={{ fontWeight: 600 }}>
             새로 나온 책
           </Typography>
-          <MoreButton href="/books/ItemNewAll" />
+          <MoreButton href="/books/group/ItemNewAll" />
         </Container>
         <Box>
           <Grid container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -267,7 +267,7 @@ export default function Home() {
           <Typography variant="h4" style={{ fontWeight: 600 }}>
             에디터 추천
           </Typography>
-          <MoreButton href="/books/ItemEditorChoice" />
+          <MoreButton href="/books/group/ItemEditorChoice" />
         </Container>
         <Carousel
           itemClass="carousel-item carousel-item-padding-40-px"
