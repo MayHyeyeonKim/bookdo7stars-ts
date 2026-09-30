@@ -9,7 +9,7 @@ import reviewSaga from './review';
 import userSaga from './user';
 import wishlistSaga from './wishlist';
 
-axios.defaults.baseURL = 'http://localhost:4000';
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
 axios.defaults.withCredentials = true;
 
 export function* rootSaga() {

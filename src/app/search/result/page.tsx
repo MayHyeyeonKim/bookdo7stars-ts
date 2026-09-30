@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ import { AppDispatch } from '../../store/store';
 import { IsbnType } from '../types/isbnType';
 import { SearchType } from '../types/searchType';
 
-const ResultPage = () => {
+const ResultPageContent = () => {
   const queryParams = useSearchParams();
   const isbn = queryParams.get('isbn');
   const searchCondition = queryParams.get('searchCondition');
@@ -61,5 +61,11 @@ const ResultPage = () => {
     </>
   );
 };
+
+const ResultPage = () => (
+  <Suspense fallback={<LoadingSpinner />}> // Suspense wrapper is used to show a loading spinner while the component is being loaded
+    <ResultPageContent />
+  </Suspense>
+);
 
 export default ResultPage;
