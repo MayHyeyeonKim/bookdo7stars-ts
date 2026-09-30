@@ -1,0 +1,129 @@
+import axios from 'axios';
+import { SagaIterator } from 'redux-saga';
+import { all, fork, takeLatest, put, call } from 'redux-saga/effects';
+
+import {
+  REGISTER_REQUEST,
+  REGISTER_SUCCESS,
+  REGISTER_FAILURE,
+  LOGIN_REQUEST,
+  LOGIN_SUCCESS,
+  LOGIN_FAILURE,
+  LOGOUT_SUCCESS,
+  LOGOUT_REQUEST,
+  CHECK_SESSION_REQUEST,
+  CHECK_SESSION_SUCCESS,
+  CHECK_SESSION_FAILURE,
+} from '../actions/constants';
+import { LoginRequestAction, RegisterRequestAction } from '../actions/types';
+
+// CheckSession API
+function checkSessionAPI() {
+  return axios.get('/user/session', {
+    withCredentials: true, // 쿠키를 포함하여 서버에 요청
+  });
+}
+
+// CheckSession saga
+export function* checkSession(): SagaIterator {
+  try {
+    const response: any = yield call(checkSessionAPI);
+    const { id, name, grade } = response.data.user;
+    yield put({
+      type: CHECK_SESSION_SUCCESS,
+      payload: {
+        id,
+        name,
+        grade,
+      },
+    });
+  } catch (err: any) {
+    yield put({
+      type: CHECK_SESSION_FAILURE,
+      error: err.response.data.message,
+    });
+  }
+}
+
+// Register API
+function registerAPI(data: RegisterRequestAction['data']) {
+  return axios.post('/user', data);
+}
+
+// Register saga
+function* register(action: RegisterRequestAction): SagaIterator {
+  try {
+    const response: any = yield call(registerAPI, action.data);
+    yield put({
+      type: REGISTER_SUCCESS,
+      payload: response.data.message,
+    });
+  } catch (err: any) {
+    yield put({
+      type: REGISTER_FAILURE,
+      error: err.response.data.message,
+    });
+  }
+}
+
+// Login API
+function loginAPI(data: LoginRequestAction['data']) {
+  return axios.post('/user/login', data);
+}
+
+// Login saga
+export function* login(action: LoginRequestAction): SagaIterator {
+  try {
+    const response: any = yield call(loginAPI, action.data);
+    yield put({
+      type: LOGIN_SUCCESS,
+      payload: response.data,
+    });
+  } catch (err: any) {
+    yield put({
+      type: LOGIN_FAILURE,
+      error: err.response.data.message,
+    });
+  }
+}
+
+// Logout API
+function logoutAPI() {
+  return axios.post('/user/logout');
+}
+
+//Logout saga
+function* logout(): SagaIterator {
+  try {
+    const response: any = yield call(logoutAPI); //{ message: 'User logged out successfully' }
+    yield put({ type: LOGOUT_SUCCESS, payload: response.data.message }); //'User logged out successfully'
+  } catch (err: any) {
+    const errMessage = err.response.data.message || 'Unknown error occured'; //{ message: 'Error logging out' }
+    yield put({
+      type: LOGIN_FAILURE,
+      error: errMessage, //'Error logging out'
+    });
+  }
+}
+
+// Watchers
+function* watchCheckSession() {
+  yield takeLatest(CHECK_SESSION_REQUEST, checkSession);
+}
+
+function* watchRegister() {
+  yield takeLatest(REGISTER_REQUEST, register);
+}
+
+function* watchLogin() {
+  yield takeLatest(LOGIN_REQUEST, login);
+}
+
+function* watchLogout() {
+  yield takeLatest(LOGOUT_REQUEST, logout);
+}
+
+// Root Saga
+export default function* userSaga() {
+  yield all([fork(watchRegister), fork(watchLogin), fork(watchLogout), fork(watchCheckSession)]);
+}
